@@ -50,12 +50,12 @@ export default function Landing() {
             </svg>
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-12">
+        {/* <div className="hidden lg:flex lg:gap-x-12">
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">Product</a>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">Features</a>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">Company</a>
-        </div>
+        </div> */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Link href={'/auth/login'} className="text-sm font-semibold leading-6 text-gray-900">Gabeth App <span aria-hidden="true">&rarr;</span></Link>
         </div>
