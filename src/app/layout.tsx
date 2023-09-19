@@ -8,8 +8,8 @@ import Providers from "@/components/Providers";
 const font = JetBrains_Mono({ subsets: ["cyrillic"] });
 
 export const metadata: Metadata = {
-  title: "ChatGPT",
-  description: "ChatGPT clone with simple design",
+  title: "Gabeth",
+  description: "Gabeth.ai: Your Ultimate AI Assistant.",
 };
 
 export default function RootLayout({

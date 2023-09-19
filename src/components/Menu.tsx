@@ -36,6 +36,7 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { httpRequest } from "@/lib/interceptor";
+import { useSession,signOut } from "next-auth/react";
 
 const EDIT_INITIAL = {
   username: "",
@@ -49,6 +50,8 @@ export default function Menu({ clear }: { clear: () => void }) {
   const [mode, setMode] = useState("dark");
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(EDIT_INITIAL);
+  const { data: session } = useSession();
+
 
   useEffect(() => {
     let localMode = localStorage.getItem("mode");
@@ -162,7 +165,9 @@ export default function Menu({ clear }: { clear: () => void }) {
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleLogout}>
+          <DropdownMenuItem onClick={() => {
+            signOut()
+          }}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
@@ -203,7 +208,7 @@ export default function Menu({ clear }: { clear: () => void }) {
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            {/* <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="api" className="text-right">
                 API Key
               </Label>
@@ -215,7 +220,7 @@ export default function Menu({ clear }: { clear: () => void }) {
                 }
                 className="col-span-3"
               />
-            </div>
+            </div> */}
           </div>
           <DialogFooter>
             <Button
