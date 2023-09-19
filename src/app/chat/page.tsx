@@ -43,11 +43,11 @@ export default function Chat() {
         );
       })
       .catch((err) => {
-        if (err instanceof AxiosError)
-          toast({
-            title: "Error",
-            description: err.response?.data.message,
-          });
+        // if (err instanceof AxiosError)
+          // toast({
+          //   title: "Error",
+          //   description: err.response?.data.message,
+          // });
       })
       .finally(() => {
         setLoading(false);

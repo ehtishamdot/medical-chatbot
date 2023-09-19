@@ -9,10 +9,11 @@ const messageSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    
     const { message } = messageSchema.parse(await req.json());
     // const token = req.cookies.get("accessToken")!.value!;
     // const { apiKey, userId } = decryptToken(token, process.env.JWT_SECRET!);
-    const chatgpt = getOpenAIApiInstance("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");
+    const chatgpt = getOpenAIApiInstance(process.env.OPENAI_GPT_KEY || "");
     const chat_completion = await chatgpt.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: message }],
