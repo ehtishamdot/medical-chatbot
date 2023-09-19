@@ -150,12 +150,6 @@ export default function Menu({ clear }: { clear: () => void }) {
             <span>Clear conversation</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <Link href="https://github.com/nisabmohd/ChatGPT" target="_blank">
-            <DropdownMenuItem>
-              <Github className="mr-2 h-4 w-4" />
-              <span>GitHub</span>
-            </DropdownMenuItem>
-          </Link>
           {mode === "dark" ? (
             <DropdownMenuItem onClick={toggleMode}>
               <Sun className="mr-2 h-4 w-4" />
@@ -167,13 +161,6 @@ export default function Menu({ clear }: { clear: () => void }) {
               <span>Dark mode</span>
             </DropdownMenuItem>
           )}
-
-          <Link href="https://platform.openai.com/docs/" target="_blank">
-            <DropdownMenuItem>
-              <Cloud className="mr-2 h-4 w-4" />
-              <span>API</span>
-            </DropdownMenuItem>
-          </Link>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
