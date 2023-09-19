@@ -94,12 +94,11 @@ export default function Chat() {
 
   useEffect(updateScroll, [messages]);
 
-  useEffect(() => {
-    if(!session) {
-      signOut();
-      push("/auth/login");
-    } 
-  }, [session])
+  // useEffect(() => {
+  //   if(!session) {
+  //     push("/auth/login");
+  //   } 
+  // }, [session.user])
 
 
   return (
