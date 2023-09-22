@@ -48,7 +48,7 @@ export default function Landing() {
             {/* <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg> */}
-             <Link href={'/auth/login'} className="text-sm font-semibold leading-6 text-gray-900">Gabeth App <span aria-hidden="true">&rarr;</span></Link>
+             <Link href={'/chat'} className="text-sm font-semibold leading-6 text-gray-900">Gabeth App <span aria-hidden="true">&rarr;</span></Link>
           </button>
         </div>
         {/* <div className="hidden lg:flex lg:gap-x-12">
@@ -58,7 +58,7 @@ export default function Landing() {
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">Company</a>
         </div> */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link href={'/auth/login'} className="text-sm font-semibold leading-6 text-gray-900">Gabeth App <span aria-hidden="true">&rarr;</span></Link>
+          <Link href={'/chat'} className="text-sm font-semibold leading-6 text-gray-900">Gabeth App <span aria-hidden="true">&rarr;</span></Link>
         </div>
       </nav>
       {/* <div className="lg:hidden" role="dialog" aria-modal="true">

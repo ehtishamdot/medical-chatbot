@@ -165,12 +165,12 @@ export default function Menu({ clear }: { clear: () => void }) {
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {
+          {/* <DropdownMenuItem onClick={() => {
             signOut()
           }}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={open} onOpenChange={(val) => setOpen(val)}>
