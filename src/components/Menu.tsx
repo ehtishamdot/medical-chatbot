@@ -95,17 +95,19 @@ export default function Menu({ clear }: { clear: () => void }) {
   }
 
   function handleClear() {
-    httpRequest
-      .delete("/api/chat")
-      .then(() => {
-        clear();
-      })
-      .catch((err) => {
-        toast({
-          title: "Error",
-          description: err.response?.data.message,
-        });
-      });
+    console.log("dsf")
+    location.reload()
+    // httpRequest
+    //   .delete("/api/chat")
+    //   .then(() => {
+    //     clear();
+    //   })
+    //   .catch((err) => {
+    //     toast({
+    //       title: "Error",
+    //       description: err.response?.data.message,
+    //     });
+    //   // });
   }
 
   function handleUpdate() {
