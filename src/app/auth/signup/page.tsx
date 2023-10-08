@@ -51,7 +51,7 @@ export default function Signup() {
       <span className="mt-12">{Logo}</span>
       <Card className="w-[380px] py-5 mt-20 max-[900px]:mt-10 max-[400px]:w-[95%]">
         <CardHeader>
-          <CardTitle>New to ChatGPT</CardTitle>
+          <CardTitle>New to Gabeth</CardTitle>
           <CardDescription>Create your account.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,7 +79,7 @@ export default function Signup() {
                   placeholder="johndoe"
                 />
               </div>
-              <div className="flex flex-col gap-3  space-y-1.5">
+              {/* <div className="flex flex-col gap-3  space-y-1.5">
                 <Label htmlFor="avatar">
                   Avatar URL
                   <span className="text-neutral-400">(optional)</span>
@@ -92,8 +92,8 @@ export default function Signup() {
                   id="avatar"
                   placeholder="https://github.com/johndoe.png"
                 />
-              </div>
-              <div className="flex flex-col gap-3  space-y-1.5">
+              </div> */}
+              {/* <div className="flex flex-col gap-3  space-y-1.5">
                 <Label htmlFor="api">API key</Label>
                 <Input
                   value={inputs.apiKey}
@@ -103,7 +103,7 @@ export default function Signup() {
                   id="api"
                   placeholder="xy125y7Trf786Something"
                 />
-              </div>
+              </div> */}
               <div className="flex flex-col gap-3 mt-2 space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input

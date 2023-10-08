@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
@@ -59,7 +59,7 @@ export default function Login() {
           <CardDescription>Login to your account.</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* <form>
+          <form>
             <div className="grid w-full items-center gap-4 mt-1">
               <div className="flex flex-col gap-3  space-y-1.5">
                 <Label htmlFor="email">Email or username</Label>
@@ -86,8 +86,21 @@ export default function Login() {
                 />
               </div>
             </div>
-          </form> */}
+          </form>
         </CardContent>
+        <CardFooter className="flex mt-1">
+          <Button
+            onClick={() => handleLogin()}           
+            variant="custom"
+            className="w-full"
+            // disabled={!inputs.input || !inputs.password}
+          >
+           Login
+          </Button>
+        </CardFooter>
+        <CardHeader style={{textAlign:'center'}}>
+          <CardTitle>OR</CardTitle>
+        </CardHeader>
         <CardFooter className="flex mt-1">
           <Button
             onClick={() => signIn()}           
@@ -99,12 +112,12 @@ export default function Login() {
           </Button>
         </CardFooter>
       </Card>
-      {/* <span className="mt-6 text-sm">
+      <span className="mt-6 text-sm">
         Dont have an account?{" "}
         <Link className="text-neutral-400" href="/auth/signup">
           Sign up
         </Link>{" "}
-      </span> */}
+      </span>
     </div>
   );
 }
