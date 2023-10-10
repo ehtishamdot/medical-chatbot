@@ -121,7 +121,6 @@ export default function Signup() {
         <CardFooter className="flex mt-1">
           <Button
             disabled={
-              !inputs.apiKey ||
               !inputs.email ||
               !inputs.password ||
               !inputs.username

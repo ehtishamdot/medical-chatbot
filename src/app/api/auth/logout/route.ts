@@ -13,6 +13,7 @@ export async function DELETE(req: NextRequest) {
         token,
       },
     });
+    console.log(token)
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     await prisma.token.delete({
       where: {

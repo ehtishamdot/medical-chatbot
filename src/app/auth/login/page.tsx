@@ -29,10 +29,9 @@ export default function Login() {
   const { push } = useRouter();
   const { data: session } = useSession();
 
-  console.log(session)
-  if(session){
-    push("/chat");
-  }
+  // if(session){
+  //   push("/chat");
+  // }
 
   async function handleLogin() {
     const { input, password } = inputs;
@@ -40,6 +39,7 @@ export default function Login() {
       .post("/api/auth/login", { input, password })
       .then(({ data }) => {
         localStorage.setItem("user", JSON.stringify(data));
+        push("/chat")
       })
       .catch((err) => {
         if (err instanceof AxiosError)
@@ -103,6 +103,7 @@ export default function Login() {
         </CardHeader>
         <CardFooter className="flex mt-1">
           <Button
+            disabled
             onClick={() => signIn()}           
             variant="custom"
             className="w-full"

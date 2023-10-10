@@ -9,8 +9,6 @@ import { httpRequest } from "@/lib/interceptor";
 import axios, { AxiosError } from "axios";
 import { useEffect, useRef, useState } from "react";
 import { v4 as idGen } from "uuid";
-import {useSession,signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 type Message = {
   id: string;
@@ -25,8 +23,6 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
-  const { data: session } = useSession();
-  const {push} = useRouter()
 
   useEffect(() => {
     httpRequest
@@ -43,11 +39,11 @@ export default function Chat() {
         );
       })
       .catch((err) => {
-        // if (err instanceof AxiosError)
-          // toast({
-          //   title: "Error",
-          //   description: err.response?.data.message,
-          // });
+        if (err instanceof AxiosError)
+          toast({
+            title: "Error",
+            description: err.response?.data.message,
+          });
       })
       .finally(() => {
         setLoading(false);
@@ -94,21 +90,8 @@ export default function Chat() {
 
   useEffect(updateScroll, [messages]);
 
-  // useEffect(() => {
-  //   if(!session) {
-  //     push("/auth/login");
-  //   } 
-  // }, [session.user])
-
-
   return (
     <div>
-      {/* {session && session.user && <button style={{position:"absolute", top:"4%", right:"2%"}} onClick={() => {
-        signOut()
-        push("/auth/login")
-      }} className="text-red-600">
-          Sign Out
-        </button>} */}
       <Menu clear={clear} />
       <div className="input w-full flex flex-col justify-between h-screen">
         <div
@@ -147,7 +130,7 @@ export default function Chat() {
           </Button>
         </div>
         <span className="mx-auto mb-6 text-xs mt-3 text-center">
-          Gabeth may produce inaccurate information about people, places, or
+          ChatGPT may produce inaccurate information about people, places, or
           facts.
         </span>
       </div>

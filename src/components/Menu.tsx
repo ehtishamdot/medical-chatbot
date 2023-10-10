@@ -52,7 +52,6 @@ export default function Menu({ clear }: { clear: () => void }) {
   const [edit, setEdit] = useState(EDIT_INITIAL);
   const { data: session } = useSession();
 
-
   useEffect(() => {
     let localMode = localStorage.getItem("mode");
     if (!localMode) {
@@ -97,17 +96,17 @@ export default function Menu({ clear }: { clear: () => void }) {
   function handleClear() {
     console.log("dsf")
     location.reload()
-    // httpRequest
-    //   .delete("/api/chat")
-    //   .then(() => {
-    //     clear();
-    //   })
-    //   .catch((err) => {
-    //     toast({
-    //       title: "Error",
-    //       description: err.response?.data.message,
-    //     });
-    //   // });
+    httpRequest
+      .delete("/api/chat")
+      .then(() => {
+        clear();
+      })
+      .catch((err) => {
+        toast({
+          title: "Error",
+          description: err.response?.data.message,
+        });
+      });
   }
 
   function handleUpdate() {
@@ -116,7 +115,7 @@ export default function Menu({ clear }: { clear: () => void }) {
         ...edit,
       })
       .then(({ data }) => {
-        // localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify(data));
         // window.location.reload();
       })
       .catch((err) => {
@@ -167,12 +166,13 @@ export default function Menu({ clear }: { clear: () => void }) {
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          {/* <DropdownMenuItem onClick={() => {
-            signOut()
+          <DropdownMenuItem onClick={() => {
+            // signOut()
+            handleLogout()
           }}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
-          </DropdownMenuItem> */}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={open} onOpenChange={(val) => setOpen(val)}>

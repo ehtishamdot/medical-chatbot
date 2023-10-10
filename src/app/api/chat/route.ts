@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   try {
     
     const { message } = messageSchema.parse(await req.json());
-    // const token = req.cookies.get("accessToken")!.value!;
-    // const { apiKey, userId } = decryptToken(token, process.env.JWT_SECRET!);
+    const token = req.cookies.get("accessToken")!.value!;
+    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
     const chatgpt = getOpenAIApiInstance(process.env.OPENAI_GPT_KEY || "");
     const chat_completion = await chatgpt.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -20,20 +20,20 @@ export async function POST(req: NextRequest) {
     });
 
 
-    // await prisma.query.createMany({
-    //   data: [
-    //     {
-    //       data: message,
-    //       isUser: true,
-    //       userId,
-    //     },
-    //     {
-    //       data: chat_completion.data.choices[0].message?.content ?? "",
-    //       isUser: false,
-    //       userId,
-    //     },
-    //   ],
-    // });
+    await prisma.query.createMany({
+      data: [
+        {
+          data: message,
+          isUser: true,
+          userId,
+        },
+        {
+          data: chat_completion.data.choices[0].message?.content ?? "",
+          isUser: false,
+          userId,
+        },
+      ],
+    });
     return NextResponse.json({
       message: chat_completion.data.choices[0].message?.content ?? "",
     });
