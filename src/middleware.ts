@@ -15,17 +15,24 @@ export function middleware(request: NextRequest) {
 
   if (
     !pathname.startsWith("/api") &&
-    !(pathname == "/auth/login" || pathname == "/auth/signup") &&
-    !token
+    (pathname == "/auth/login" || pathname == "/auth/signup") &&
+    token
   ) {
-    url.pathname = "/auth/login";
+    url.pathname = "/chat";
     return NextResponse.redirect(url);
   }
 
   if (
-    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/api") && 
     (pathname == "/auth/login" || pathname == "/auth/signup") &&
     token
+  ) {
+    url.pathname = "/chat";
+    return NextResponse.redirect(url);
+  }
+
+  if (
+    (pathname == "/landing" || pathname == "/landing") 
   ) {
     url.pathname = "/chat";
     return NextResponse.redirect(url);

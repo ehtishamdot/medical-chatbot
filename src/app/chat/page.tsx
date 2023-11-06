@@ -17,53 +17,63 @@ type Message = {
   isNew?: boolean;
 };
 
+interface IHistory {
+  role:string;
+  content:string;
+}
+
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
+  const [history,setHistory] = useState<IHistory[]>([]);
 
-  useEffect(() => {
-    httpRequest
-      .get("/api/chat")
-      .then((res) => {
-        setMessages(
-          res.data.queries.map((item: any) => {
-            return {
-              id: item.id,
-              message: item.data,
-              isUser: item.isUser,
-            };
-          })
-        );
-      })
-      .catch((err) => {
-        if (err instanceof AxiosError)
-          toast({
-            title: "Error",
-            description: err.response?.data.message,
-          });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [toast]);
+  // useEffect(() => {
+  //   httpRequest
+  //     .get("/api/chat")
+  //     .then((res) => {
+  //       setMessages(
+  //         res.data.queries.map((item: any) => {
+  //           return {
+  //             id: item.id,
+  //             message: item.data,
+  //             isUser: item.isUser,
+  //           };
+  //         })
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       if (err instanceof AxiosError)
+  //         toast({
+  //           title: "Error",
+  //           description: err.response?.data.message,
+  //         });
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // }, [toast]);
 
   function handleEmit() {
     setLoading(true);
     setMessages((prev) => [...prev, { id: idGen(), isUser: true, message }]);
     const t = message;
     setMessage("");
+    const latestMessage = {role:"user",content:t}
     httpRequest
-      .post("/api/chat", {
-        message: t,
-      })
+      .post("/api/bot/chat", [...history, latestMessage])
       .then(({ data }) => {
         setMessages((prev) => [
           ...prev,
-          { id: idGen(), isUser: false, message: data.message, isNew: true },
+          { id: idGen(), isUser: false, message: data.content, isNew: true },
         ]);
+        setHistory([
+          ...history,
+          data,
+          latestMessage,
+        ])
       })
       .catch((err) => {
         if (err instanceof AxiosError)
