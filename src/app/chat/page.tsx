@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { httpRequest } from "@/lib/interceptor";
 import axios, { AxiosError } from "axios";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 as idGen } from "uuid";
 
 type Message = {
@@ -108,6 +108,9 @@ console.log(messages)
     <div>
       <Menu clear={clear} />
       <div className="input w-full flex flex-col justify-between h-screen">
+        <div className="flex justify-center mx-auto w-full max-w-3xl p-4">
+          <p className="text-3xl font-semibold">Esper Wise</p>
+        </div>
         <div
           className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
           ref={scrollRef}
@@ -123,7 +126,7 @@ console.log(messages)
           ))}
           {loading && <Skeleton />}
         </div>
-        <div className="w-[50%] max-[900px]:w-[90%] flex flex-row gap-3 mx-auto mt-auto">
+        <div className="w-[50%] max-[900px]:w-[90%] flex flex-row gap-3 mx-auto mt-auto pb-6">
           <Input
             onKeyDown={(e) => {
               if (e.keyCode == 13 && message) {
