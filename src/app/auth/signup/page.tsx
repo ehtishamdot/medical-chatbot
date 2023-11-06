@@ -51,7 +51,7 @@ export default function Signup() {
       <span className="mt-12">{Logo}</span>
       <Card className="w-[380px] py-5 mt-20 max-[900px]:mt-10 max-[400px]:w-[95%]">
         <CardHeader>
-          <CardTitle>New to Gabeth</CardTitle>
+          <CardTitle>New to Esper Wise</CardTitle>
           <CardDescription>Create your account.</CardDescription>
         </CardHeader>
         <CardContent>

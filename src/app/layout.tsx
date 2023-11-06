@@ -8,8 +8,8 @@ import Providers from "@/components/Providers";
 const font = JetBrains_Mono({ subsets: ["cyrillic"] });
 
 export const metadata: Metadata = {
-  title: "Gabeth",
-  description: "Gabeth.ai: Your Ultimate AI Assistant.",
+  title: "Esper Wise",
+  description: "Esper Wise: Your Ultimate AI Assistant.",
 };
 
 export default function RootLayout({
