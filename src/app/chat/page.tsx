@@ -24,7 +24,7 @@ interface IHistory {
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("Hello");
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
@@ -55,6 +55,10 @@ export default function Chat() {
   //       setLoading(false);
   //     });
   // }, [toast]);
+
+  useEffect(() => {
+    handleEmit();
+  },[])
 
   function handleEmit() {
     setLoading(true);
@@ -99,7 +103,7 @@ export default function Chat() {
   }
 
   useEffect(updateScroll, [messages]);
-
+console.log(messages)
   return (
     <div>
       <Menu clear={clear} />
@@ -139,10 +143,10 @@ export default function Chat() {
             Send
           </Button>
         </div>
-        <span className="mx-auto mb-6 text-xs mt-3 text-center">
+        {/* <span className="mx-auto mb-6 text-xs mt-3 text-center">
           ChatGPT may produce inaccurate information about people, places, or
           facts.
-        </span>
+        </span> */}
       </div>
     </div>
   );
