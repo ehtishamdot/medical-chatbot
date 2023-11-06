@@ -49,7 +49,7 @@ export default function Message({
             </Avatar>
           </>
         ) : (
-          <span className="">{Logo}</span>
+          <span className="" style={{color:"#fff", fontWeight:"bolder", marginTop:"3px"}}>Esper</span>
         )}
         <span className="leading-8 w-[97%]">
           {isUser || !isNew ? (
