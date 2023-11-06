@@ -134,7 +134,8 @@ export default function Menu({ clear }: { clear: () => void }) {
 
   return (
     <>
-      <DropdownMenu>
+    <div></div>
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             className="absolute top-7 left-5 max-[500px]:left-2 border-2 dark:border-neutral-700 dark:bg-neutral-950 bg-neutral-100 border-neutral-300"
@@ -223,18 +224,7 @@ export default function Menu({ clear }: { clear: () => void }) {
                 className="col-span-3"
               />
             </div> */}
-          </div>
-          <DialogFooter>
-            <Button
-              onClick={handleUpdate}
-              disabled={!edit.apiKey && !edit.avatar && !edit.username}
-              type="submit"
-            >
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        
     </>
   );
 }
