@@ -101,7 +101,7 @@ export function Skeleton() {
         <span className="leading-8">
           <Typewriter
             options={{
-              delay: 85,
+              delay: 20,
               loop: true,
               autoStart: true,
             }}
@@ -120,7 +120,7 @@ function TypeOnce({ children }: { children: string }) {
   return on ? (
     <Typewriter
       options={{
-        delay: 45,
+        delay: 20,
       }}
       onInit={(typewriter) => {
         typewriter

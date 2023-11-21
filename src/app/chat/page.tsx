@@ -18,8 +18,8 @@ type Message = {
 };
 
 interface IHistory {
-  role:string;
-  content:string;
+  role: string;
+  content: string;
 }
 
 export default function Chat() {
@@ -28,7 +28,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
-  const [history,setHistory] = useState<IHistory[]>([]);
+  const [history, setHistory] = useState<IHistory[]>([]);
 
   // useEffect(() => {
   //   httpRequest
@@ -58,33 +58,49 @@ export default function Chat() {
 
   useEffect(() => {
     handleEmit();
-  },[])
-
+  }, []);
+  
   function handleEmit() {
     setLoading(true);
     setMessages((prev) => [...prev, { id: idGen(), isUser: true, message }]);
     const t = message;
     setMessage("");
-    const latestMessage = {role:"user",content:t}
+    const latestMessage = { role: "user", content: t };
+    let updatedHistory;
+
+    if (t === "Hello") {
+      updatedHistory = [latestMessage, ...history];
+      console.log("Hello");
+    } else {
+      updatedHistory = [...history, latestMessage];
+    }
+
+    const requestBody = updatedHistory.map(({ role, content }) => ({
+      role,
+      content,
+    }));
+
     httpRequest
-      .post("/api/bot/chat", [...history, latestMessage])
+      .post("/api/bot/chat", requestBody)
       .then(({ data }) => {
         setMessages((prev) => [
           ...prev,
           { id: idGen(), isUser: false, message: data.content, isNew: true },
         ]);
-        setHistory([
-          ...history,
-          data,
-          latestMessage,
-        ])
+
+        if (t === "Hello") {
+          setHistory((prev) => [latestMessage, data, ...prev]);
+        } else {
+          setHistory((prev) => [...prev, latestMessage, data]);
+        }
       })
       .catch((err) => {
-        if (err instanceof AxiosError)
+        if (err instanceof AxiosError) {
           toast({
             title: "Error",
             description: err.response?.data.message,
           });
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -103,7 +119,7 @@ export default function Chat() {
   }
 
   useEffect(updateScroll, [messages]);
-console.log(messages)
+  console.log(messages);
   return (
     <div>
       <Menu clear={clear} />
