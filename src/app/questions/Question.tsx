@@ -10,21 +10,19 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import EditImage from "./edit-button.png";
-import { Edit, Save, Trash2 } from "lucide-react";
+import { ChevronsDown, ChevronsUp, Edit, Equal, Save, Trash2 } from "lucide-react";
+import { start } from "repl";
 
 const Question: React.FC = (props) => {
   interface Question {
     id: string;
     question: string;
+    status: string;
   }
 
   const { phase } = props;
 
-  const initialData: Question[] = [
-    { id: "1", question: "What is your age?" },
-    { id: "2", question: "What is your gender?" },
-    { id: "3", question: "  What are the syptoms?" },
-  ];
+  const initialData: Question[] = phase.questions;
 
   const inputFocus = useRef(null);
 
@@ -54,6 +52,7 @@ const Question: React.FC = (props) => {
     if (!result.destination) {
       return;
     }
+    console.log(result);
 
     const startIndex = result.source.index;
     const endIndex = result.destination.index;
@@ -65,10 +64,33 @@ const Question: React.FC = (props) => {
     const updatedData = reorderedData.map((item, index) => ({
       ...item,
       id: String(index + 1),
+      status: getStatus(index, startIndex, endIndex)
     }));
 
     setData(updatedData);
   };
+
+  
+const getStatus = (currentIndex, startIndex, endIndex) => {
+  console.log(currentIndex, "start",startIndex,"end", endIndex);
+  if(startIndex > endIndex) {
+    if(currentIndex === endIndex) {
+      return "up";
+    }
+    if(currentIndex <= startIndex ) {
+      return "down";
+    }
+    return "none";
+  } else {
+    if(currentIndex === startIndex) {
+      return "up";
+    }
+    if(currentIndex <= endIndex ) {
+      return "down";
+    }
+    return "none";
+  }
+};
 
   const handleDeleteQuestion = (questionID: Number) => {
     const updatedQuestions: Question[] = data
@@ -129,7 +151,8 @@ const Question: React.FC = (props) => {
               onChange={(e) => setEditedQuestion(e.target.value)}
             />
           ) : (
-            <p className="py-3" style={{ lineHeight: "30px" }}>
+            <p className="py-3 flex items-center gap-3" style={{ lineHeight: "30px" }}>
+              {renderPriorityIcon(question.status)}
               {question.question}
             </p>
           )}
@@ -174,11 +197,24 @@ const Question: React.FC = (props) => {
     </div>
   );
 
+  const renderPriorityIcon = (status: String) => {
+    switch (status) {
+      case "none":
+        return <Equal color="white" size={25} />;
+      case "up":
+        return <ChevronsUp color="green" size={25} />;
+      case "down":
+        return <ChevronsDown color="red" size={25} />;
+      default:
+        return null; // Default case, you might want to return something else or handle it differently
+    }
+  };
+
   return (
     <>
       <form onSubmit={handleAddQuestion} className="flex gap-2">
         <div className="flex justify-between items-center w-full mb-8">
-          <h2 className="p-2 py-4 w-15 text-2xl">{phase}</h2>
+          <h2 className="p-2 py-4 w-15 text-2xl">{phase.name}</h2>
           <Button type="submit" variant="custom" size="xl">
             Add Question
           </Button>
