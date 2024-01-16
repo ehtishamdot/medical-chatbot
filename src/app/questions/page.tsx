@@ -201,9 +201,14 @@ function Page() {
 
   return (
     <div className="question-answer-container p-5">
-      <h2 className="text-center text-3xl mb-14">
-        Question Answers For Medical ChatBot
+      <h2 className="text-center text-3xl mb-10 mt-10">
+      Questions For Nurologist
       </h2>
+      <div className="updateButton flex justify-end md:w-100 lg:w-2/3 m-auto mb-4 px-8 sticky top-4">
+      <Button variant="custom" size="xl">
+            Update All
+          </Button>
+      </div>
       {phases.map((phase, index) => {
         return (
           <div
