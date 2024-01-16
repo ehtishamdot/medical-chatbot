@@ -64,33 +64,33 @@ const Question: React.FC = (props) => {
     const updatedData = reorderedData.map((item, index) => ({
       ...item,
       id: String(index + 1),
-      status: getStatus(index, startIndex, endIndex)
+      // status: getStatus(index, startIndex, endIndex)
     }));
 
     setData(updatedData);
   };
 
   
-const getStatus = (currentIndex, startIndex, endIndex) => {
-  console.log(currentIndex, "start",startIndex,"end", endIndex);
-  if(startIndex > endIndex) {
-    if(currentIndex === endIndex) {
-      return "up";
-    }
-    if(currentIndex <= startIndex ) {
-      return "down";
-    }
-    return "none";
-  } else {
-    if(currentIndex === startIndex) {
-      return "up";
-    }
-    if(currentIndex <= endIndex ) {
-      return "down";
-    }
-    return "none";
-  }
-};
+// const getStatus = (currentIndex, startIndex, endIndex) => {
+//   console.log(currentIndex, "start",startIndex,"end", endIndex);
+//   if(startIndex > endIndex) {
+//     if(currentIndex === endIndex) {
+//       return "up";
+//     }
+//     if(currentIndex <= startIndex ) {
+//       return "down";
+//     }
+//     return "none";
+//   } else {
+//     if(currentIndex === startIndex) {
+//       return "up";
+//     }
+//     if(currentIndex <= endIndex ) {
+//       return "down";
+//     }
+//     return "none";
+//   }
+// };
 
   const handleDeleteQuestion = (questionID: Number) => {
     const updatedQuestions: Question[] = data
@@ -152,7 +152,7 @@ const getStatus = (currentIndex, startIndex, endIndex) => {
             />
           ) : (
             <p className="py-3 flex items-center gap-3" style={{ lineHeight: "30px" }}>
-              {renderPriorityIcon(question.status)}
+              <span>{question.id})</span>
               {question.question}
             </p>
           )}
