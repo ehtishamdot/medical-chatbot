@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     //     },
     //   ],
     // });
-
+    
     // return NextResponse.json({
     //   message: chat_completion.data.choices[0].message?.content ?? "",
     // });
