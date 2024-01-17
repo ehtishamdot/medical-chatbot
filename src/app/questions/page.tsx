@@ -530,7 +530,7 @@ function Page() {
   //     .finally(() => {
   //       setLoading(false);
   //     });
-  // }
+  // };
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user")));
