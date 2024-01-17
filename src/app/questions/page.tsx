@@ -503,6 +503,8 @@ function Page() {
   const [phases, setPhases] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [user, setUser] = useState();
+
   // function handleEmit() {
   //   setLoading(true);
   //   setMessages((prev) => [...prev, { id: idGen(), isUser: true, message }]);
@@ -529,6 +531,10 @@ function Page() {
   //       setLoading(false);
   //     });
   // }
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem("user")));
+  }, []);
 
   useEffect(() => {
     httpRequestLocal
@@ -610,7 +616,7 @@ function Page() {
   return (
     <div className="question-answer-container p-5">
       <h2 className="text-center text-3xl mb-10 mt-10">
-        Questions For {JSON.parse(localStorage.getItem("user"))?.specialty}
+        Questions For {user?.specialty}
       </h2>
       <div className="updateButton flex justify-end md:w-100 lg:w-2/3 m-auto mb-4 px-8 sticky top-4">
         <Button onClick={onUpdateAllPhaseHandler} variant="custom" size="xl">
