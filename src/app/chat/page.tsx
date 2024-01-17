@@ -5,7 +5,7 @@ import Message, { Skeleton } from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { httpRequest } from "@/lib/interceptor";
+import { httpRequest, httpRequestLocal } from "@/lib/interceptor";
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { v4 as idGen } from "uuid";
@@ -13,6 +13,7 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import "./index.css";
+import { decryptToken } from "@/lib/utils";
 
 type Message = {
   id: string;
@@ -39,7 +40,7 @@ export default function Chat() {
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
 
   useEffect(() => {
-    httpRequest
+    httpRequestLocal
       .get(`/api/chat`)
       .then((res) => {
         setMessages(
@@ -93,7 +94,7 @@ export default function Chat() {
       content,
     }));
 
-    httpRequest
+    httpRequestLocal
       .post(`/api/bot/chat?bot=${bot}`, requestBody)
       .then(({ data }) => {
         setMessages((prev) => [

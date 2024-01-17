@@ -18,23 +18,26 @@ export function middleware(request: NextRequest) {
     (pathname == "/auth/login" || pathname == "/auth/signup") &&
     token
   ) {
-    url.pathname = "/chat";
+    url.pathname = "/questions";
     return NextResponse.redirect(url);
   }
 
-  if (
-    !pathname.startsWith("/api") && 
-    (pathname == "/auth/login" || pathname == "/auth/signup") &&
-    token
-  ) {
-    url.pathname = "/chat";
+  if (pathname.startsWith("/questions") && !token) {
+    url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
 
-  if (
-    (pathname == "/landing" || pathname == "/landing") 
-  ) {
-    url.pathname = "/chat";
+  // if (
+  //   !pathname.startsWith("/api") &&
+  //   (pathname == "/auth/login" || pathname == "/auth/signup") &&
+  //   token
+  // ) {
+  //   url.pathname = "/chat";
+  //   return NextResponse.redirect(url);
+  // }
+
+  if (pathname == "/landing" || pathname == "/landing") {
+    url.pathname = "/questions";
     return NextResponse.redirect(url);
   }
 

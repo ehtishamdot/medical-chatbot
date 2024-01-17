@@ -18,8 +18,8 @@ model User {
   avatar    String?
   email     String   @unique
   password  String
+  specialty String
   queries   Query[]
-  apiKey    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -32,4 +32,38 @@ model Query {
   userId    String?  @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Specialty {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phases    Phase[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Phase {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  specialtyId String    
+  questions   Question[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  specialty   Specialty @relation(fields: [specialtyId], references: [id])
+}
+
+model Question {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  phaseId   String
+  question  String
+  priority  Int
+  status    String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  phase     Phase?    @relation(fields: [phaseId], references: [id])
 }

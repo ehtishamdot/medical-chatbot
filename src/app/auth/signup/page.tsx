@@ -28,14 +28,30 @@ export default function Signup() {
   });
   const { toast } = useToast();
   const { push } = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
 
   function handleSignup() {
     const { email, apiKey, avatar, username, password } = inputs;
+    if (selectedSpecialty === "") {
+      toast({
+        title: "Signup unsuccessfu",
+        description: "please select your specialty",
+      });
+      return;
+    }
     axios
-      .post("/api/auth/signup", { email, apiKey, avatar, username, password })
+      .post("/api/auth/signup", {
+        email,
+        apiKey,
+        avatar,
+        username,
+        password,
+        specialty: selectedSpecialty,
+      })
       .then(({ data }) => {
         localStorage.setItem("user", JSON.stringify(data));
-        push("/chat");
+        push("/questions");
       })
       .catch((err) => {
         if (err instanceof AxiosError)
@@ -45,6 +61,19 @@ export default function Signup() {
           });
       });
   }
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsOpen(false);
+  };
+
+  const handleSpecialtySelect = (specialty) => {
+    setSelectedSpecialty(specialty);
+    closeDropdown();
+  };
 
   return (
     <div className="flex flex-col items-center h-screen">
@@ -67,6 +96,67 @@ export default function Signup() {
                   id="email"
                   placeholder="john.doe@example.com"
                 />
+              </div>
+              <div className="flex flex-col gap-3  space-y-1.5">
+                <div className="w-full ">
+                  <div className="relative inline-block">
+                    <button
+                      type="button"
+                      className="px-4 py-2 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm inline-flex items-center"
+                      onClick={toggleDropdown}
+                    >
+                      {selectedSpecialty || "Select Specialty"}
+                      <svg
+                        class="w-2.5 h-2.5 ml-2.5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 10 6"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m1 1 4 4 4-4"
+                        />
+                      </svg>
+                    </button>
+
+                    {isOpen && (
+                      <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <ul
+                          role="menu"
+                          aria-orientation="vertical"
+                          aria-labelledby="options-menu"
+                        >
+                          <li>
+                            <a
+                              href="#"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() =>
+                                handleSpecialtySelect("orthopedic")
+                              }
+                            >
+                              orthopedic
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() =>
+                                handleSpecialtySelect("neurologist")
+                              }
+                            >
+                              neurologist
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col gap-3  space-y-1.5">
                 <Label htmlFor="username">Username</Label>
@@ -120,11 +210,7 @@ export default function Signup() {
         </CardContent>
         <CardFooter className="flex mt-1">
           <Button
-            disabled={
-              !inputs.email ||
-              !inputs.password ||
-              !inputs.username
-            }
+            disabled={!inputs.email || !inputs.password || !inputs.username}
             onClick={handleSignup}
             variant="custom"
             className="w-full"

@@ -17,8 +17,7 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { signIn,useSession} from "next-auth/react";
-
+import { signIn, useSession } from "next-auth/react";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
@@ -38,9 +37,9 @@ export default function Login() {
     axios
       .post("/api/auth/login", { input, password })
       .then(({ data }) => {
-        window.location.reload()
+        window.location.reload();
         localStorage.setItem("user", JSON.stringify(data));
-        push("/chat")
+        push("/questions");
       })
       .catch((err) => {
         if (err instanceof AxiosError)
@@ -91,26 +90,26 @@ export default function Login() {
         </CardContent>
         <CardFooter className="flex mt-1">
           <Button
-            onClick={() => handleLogin()}           
+            onClick={() => handleLogin()}
             variant="custom"
             className="w-full"
             // disabled={!inputs.input || !inputs.password}
           >
-           Login
+            Login
           </Button>
         </CardFooter>
-        <CardHeader style={{textAlign:'center'}}>
+        <CardHeader style={{ textAlign: "center" }}>
           <CardTitle>OR</CardTitle>
         </CardHeader>
         <CardFooter className="flex mt-1">
           <Button
             disabled
-            onClick={() => signIn()}           
+            onClick={() => signIn()}
             variant="custom"
             className="w-full"
             // disabled={!inputs.input || !inputs.password}
           >
-           Google Login
+            Google Login
           </Button>
         </CardFooter>
       </Card>

@@ -35,8 +35,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { httpRequest } from "@/lib/interceptor";
-import { useSession,signOut } from "next-auth/react";
+import { httpRequest, httpRequestLocal } from "@/lib/interceptor";
+import { useSession, signOut } from "next-auth/react";
 
 const EDIT_INITIAL = {
   username: "",
@@ -94,9 +94,9 @@ export default function Menu({ clear }: { clear: () => void }) {
   }
 
   function handleClear() {
-    console.log("dsf")
-    location.reload()
-    httpRequest
+    console.log("dsf");
+    location.reload();
+    httpRequestLocal
       .delete("/api/chat")
       .then(() => {
         clear();
@@ -110,7 +110,7 @@ export default function Menu({ clear }: { clear: () => void }) {
   }
 
   function handleUpdate() {
-    httpRequest
+    httpRequestLocal
       .put("/api/profile", {
         ...edit,
       })
@@ -134,7 +134,52 @@ export default function Menu({ clear }: { clear: () => void }) {
 
   return (
     <>
-    <div></div>
+      <div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              className="absolute top-7 left-5 max-[500px]:left-2 border-2 dark:border-neutral-700 dark:bg-neutral-950 bg-neutral-100 border-neutral-300"
+              variant="ghost"
+            >
+              <MenuIcon className="w-5 h-5" />{" "}
+              <span className="ml-2">Menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 ml-6">
+            {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Edit profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleClear}>
+              <XCircle className="mr-2 h-4 w-4" />
+              <span>Clear conversation</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {mode === "dark" ? (
+              <DropdownMenuItem onClick={toggleMode}>
+                <Sun className="mr-2 h-4 w-4" />
+                <span>Light mode</span>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={toggleMode}>
+                <Moon className="mr-2 h-4 w-4" />
+                <span>Dark mode</span>
+              </DropdownMenuItem>
+            )} */}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                // signOut()
+                handleLogout();
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -224,7 +269,6 @@ export default function Menu({ clear }: { clear: () => void }) {
                 className="col-span-3"
               />
             </div> */}
-        
     </>
   );
 }

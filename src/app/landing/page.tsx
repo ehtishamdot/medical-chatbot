@@ -18,9 +18,8 @@ import { useEffect, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { signIn,useSession} from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-
 
 export default function Landing() {
   const [inputs, setInputs] = useState({
@@ -30,14 +29,9 @@ export default function Landing() {
   const { toast } = useToast();
   const { push } = useRouter();
   const { data: session } = useSession();
-  useEffect(() => {
-    push("/chat")
-  },[push])
+  // useEffect(() => {
+  //   push("/chat")
+  // },[push])
 
-  return (
-    <div className="bg-white">
-  
-   
-  </div>
-  );
+  return <div className="bg-white"></div>;
 }

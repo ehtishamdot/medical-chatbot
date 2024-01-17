@@ -1,5 +1,6 @@
 import { prisma } from "@/db/config";
 import { decryptToken, errorHandler, getOpenAIApiInstance } from "@/lib/utils";
+import { deepEqual } from "assert";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -11,6 +12,7 @@ const questionSchema = z.object({
 });
 
 const phaseSchema = z.object({
+  id: z.string(),
   name: z.string(),
   questions: z.array(questionSchema),
 });
@@ -21,21 +23,24 @@ export async function PUT(req: NextRequest) {
     const token = req.cookies.get("accessToken")!.value!;
     const { userId } = decryptToken(token, process.env.JWT_SECRET!);
 
-    // Update each phase in the database
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
-        // Update the phase with new data
-        await prisma.query.update({
+        return await prisma.phase.update({
           where: {
-            name: phase.name,
+            id: phase.id || "65a7dc2e38aa154e4c6b27e5",
           },
           data: {
             questions: {
-              updateMany: phase.questions.map((q) => ({
+              upsert: phase.questions.map((q) => ({
                 where: {
-                  id: q.id,
+                  id: q.id || "0",
                 },
-                data: {
+                update: {
+                  question: q.question,
+                  priority: q.priority,
+                  status: q.status,
+                },
+                create: {
                   question: q.question,
                   priority: q.priority,
                   status: q.status,
@@ -44,11 +49,6 @@ export async function PUT(req: NextRequest) {
             },
           },
         });
-
-        return {
-          name: phase.name,
-          message: chat_completion.data.choices[0].message?.content ?? "",
-        };
       })
     );
 
@@ -59,67 +59,95 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// export async function POST(req: NextRequest) {
-//   try {
-//     const phases = phaseSchema.array().parse(await req.json());
-//     const token = req.cookies.get("accessToken")!.value!;
-//     const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+export async function POST(req: NextRequest) {
+  try {
+    const specialties = await req.json();
+    if (specialties.length === 0) return;
+    const token = req.cookies.get("accessToken")!.value!;
+    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
 
-//     // Create each phase and its questions in the database
-//     const createdPhases = await Promise.all(
-//       phases.map(async (phase) => {
-//         const createdPhase = await prisma.query.create({
-//           data: {
-//             name: phase.name,
-//             questions: {
-//               createMany: {
-//                 data: phase.questions.map((q) => ({
-//                   id: q.id,
-//                   question: q.question,
-//                   priority: q.priority,
-//                   status: q.status,
-//                   userId,
-//                 })),
-//               },
-//             },
-//           },
-//           include: {
-//             questions: true,
-//           },
-//         });
+    const createdSpecialties = await Promise.all(
+      specialties.map(async (specialty) => {
+        const createdPhases = await Promise.all(
+          specialty.phases.map(async (phase) => {
+            const createdQuestions = await Promise.all(
+              phase.questions.map((q) => ({
+                question: q.question,
+                priority: q.priority,
+                status: q.status || "none",
+              }))
+            );
 
-//         // Your existing code for chat completion
-//         // ...
+            const createdPhase = await prisma.phase.create({
+              data: {
+                name: phase.phase,
+                specialty: {
+                  create: {
+                    name: specialty.name,
+                  },
+                },
+                questions: {
+                  create: createdQuestions,
+                },
+              },
+            });
 
-//         return {
-//           name: createdPhase.name,
-//           questions: createdPhase.questions,
-//           message: chat_completion.data.choices[0].message?.content ?? "",
-//         };
-//       })
-//     );
+            return createdPhase;
+          })
+        );
 
-//     return NextResponse.json({ createdPhases });
-//   } catch (err) {
-//     console.log(err);
-//     return errorHandler(err);
-//   }
-// }
+        console.log(specialty);
+
+        const createdSpecialty = await prisma.specialty.create({
+          data: {
+            name: specialty.name,
+            phases: {
+              connect: createdPhases.map((createdPhase) => ({
+                id: createdPhase.id,
+              })),
+            },
+          },
+        });
+
+        return createdSpecialty;
+      })
+    );
+
+    return NextResponse.json({ createdSpecialties });
+  } catch (err) {
+    console.error(err);
+    return errorHandler(err);
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
-    const phases = await prisma.query.findMany({
-      include: {
-        questions: true,
-      },
+    const specialty = req.nextUrl.searchParams.get("specialty");
+    if (!specialty) {
+      return NextResponse.status(400).json({
+        error: "Specialty name is required in the query parameters",
+      });
+    }
+
+    const phases = await prisma.specialty.findMany({
       where: {
-        userId,
+        name: specialty,
+        // phases: {
+        //   gt: 0,
+        // },
+      },
+      include: {
+        phases: {
+          include: {
+            questions: true,
+          },
+        },
       },
     });
+
     return NextResponse.json({ phases });
   } catch (err) {
+    console.error(err);
     return errorHandler(err);
   }
 }

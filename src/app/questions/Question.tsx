@@ -10,29 +10,46 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import EditImage from "./edit-button.png";
-import { ChevronsDown, ChevronsUp, Edit, Equal, Save, Trash2 } from "lucide-react";
+import {
+  ChevronsDown,
+  ChevronsUp,
+  Edit,
+  Equal,
+  Save,
+  Trash2,
+} from "lucide-react";
 import { start } from "repl";
+import { useSession } from "next-auth/react";
+
+interface Question {
+  id: string | undefined;
+  priority: number;
+  question: string;
+  status: string;
+}
 
 const Question: React.FC = (props) => {
-  interface Question {
-    id: string;
-    question: string;
-    status: string;
-  }
-
-  const { phase } = props;
+  const { phase, updatePhase, updateAllPhases } = props;
 
   const initialData: Question[] = phase.questions;
 
   const inputFocus = useRef(null);
+  const { data: session } = useSession();
+
+  console.log(session);
+
+  console.log(phase);
 
   const handleAddQuestion = (e) => {
     e.preventDefault();
 
     const newId = String(data.length + 1);
     const newQuestion: Question = {
-      id: newId,
       question: question.trim(),
+      priority: data.length + 1,
+      status: "none",
+      phaseId: phase.questions[0].phaseId,
+      id: new Date().getTime().toString(16).padStart(24, "0"),
     };
 
     setData((prevData) => [...prevData, newQuestion]);
@@ -47,6 +64,8 @@ const Question: React.FC = (props) => {
   const [editedQuestion, setEditedQuestion] = useState<string>("");
   const [data, setData] = useState<Question[]>(initialData);
   const [question, setQuestion] = useState("");
+
+  console.log(data);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -63,41 +82,47 @@ const Question: React.FC = (props) => {
 
     const updatedData = reorderedData.map((item, index) => ({
       ...item,
-      id: String(index + 1),
+      priority: index + 1,
       // status: getStatus(index, startIndex, endIndex)
     }));
 
     setData(updatedData);
   };
 
-  
-// const getStatus = (currentIndex, startIndex, endIndex) => {
-//   console.log(currentIndex, "start",startIndex,"end", endIndex);
-//   if(startIndex > endIndex) {
-//     if(currentIndex === endIndex) {
-//       return "up";
-//     }
-//     if(currentIndex <= startIndex ) {
-//       return "down";
-//     }
-//     return "none";
-//   } else {
-//     if(currentIndex === startIndex) {
-//       return "up";
-//     }
-//     if(currentIndex <= endIndex ) {
-//       return "down";
-//     }
-//     return "none";
-//   }
-// };
+  useEffect(() => {
+    updatePhase({
+      questions: data,
+      name: phase.name,
+      id: phase.id,
+    });
+  }, [data]);
+
+  // const getStatus = (currentIndex, startIndex, endIndex) => {
+  //   console.log(currentIndex, "start",startIndex,"end", endIndex);
+  //   if(startIndex > endIndex) {
+  //     if(currentIndex === endIndex) {
+  //       return "up";
+  //     }
+  //     if(currentIndex <= startIndex ) {
+  //       return "down";
+  //     }
+  //     return "none";
+  //   } else {
+  //     if(currentIndex === startIndex) {
+  //       return "up";
+  //     }
+  //     if(currentIndex <= endIndex ) {
+  //       return "down";
+  //     }
+  //     return "none";
+  //   }
+  // };
 
   const handleDeleteQuestion = (questionID: Number) => {
     const updatedQuestions: Question[] = data
       .filter((eachQuestion) => eachQuestion.id !== questionID)
       .map((question, index) => ({
         ...question,
-        id: (index + 1).toString(), // Update the id based on the new index
       }));
     setData(updatedQuestions);
   };
@@ -151,8 +176,11 @@ const Question: React.FC = (props) => {
               onChange={(e) => setEditedQuestion(e.target.value)}
             />
           ) : (
-            <p className="py-3 flex items-center gap-3" style={{ lineHeight: "30px" }}>
-              <span>{question.id})</span>
+            <p
+              className="py-3 flex items-center gap-3"
+              style={{ lineHeight: "30px" }}
+            >
+              <span>{question.priority})</span>
               {question.question}
             </p>
           )}

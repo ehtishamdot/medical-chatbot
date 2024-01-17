@@ -13,14 +13,14 @@ const signupSchema = z
     password: z.string().min(8).max(16),
     apiKey: z.string(),
     avatar: z.string().optional(),
+    specialty: z.string(),
   })
   .strict();
 
 export async function POST(req: NextRequest) {
   try {
-    const { apiKey, email, password, username, avatar } = signupSchema.parse(
-      await req.json()
-    );
+    const { apiKey, email, password, username, avatar, specialty } =
+      signupSchema.parse(await req.json());
     let user = await prisma.user.findUnique({
       where: {
         email,
@@ -30,11 +30,11 @@ export async function POST(req: NextRequest) {
     if (user) throw new ServerError("User already exist", 409);
     user = await prisma.user.create({
       data: {
-        apiKey,
         email,
         password: hashSync(password, 10),
         username,
         avatar,
+        specialty,
       },
     });
     const payload: JWTPayload = { userId: user.id, apiKey: user.apiKey };
