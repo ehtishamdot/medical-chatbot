@@ -27,3 +27,12 @@
     border-radius: 7px;
     border: 2px solid #a0a0a0;
 }
+
+
+.card-shadow{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.card-bg {
+    background: rgb(204, 212, 253);
+    background: linear-gradient(45deg, rgba(204, 212, 253, 1) 15%, rgba(242, 206, 255, 1) 100%);
+}

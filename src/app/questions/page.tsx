@@ -51,7 +51,7 @@ function Page() {
   //       {
   //         id: "5",
   //         question:
-  //           "Do you have frequent headaches, and if so, can you describe the type and location?",
+  //           "Do you have frequent headaches, and if so, can you describe the types and location?",
   //         status: "none",
   //         priority: 5,
   //       },
@@ -166,7 +166,7 @@ function Page() {
   //       {
   //         id: "20",
   //         question:
-  //           "Do you engage in regular physical exercise, and if so, what type and frequency?",
+  //           "Do you engage in regular physical exercise, and if so, what types and frequency?",
   //         status: "none",
   //         priority: 20,
   //       },
@@ -235,7 +235,7 @@ function Page() {
             },
             {
               question:
-                "Do you have frequent headaches, and if so, can you describe the type and location?",
+                "Do you have frequent headaches, and if so, can you describe the types and location?",
               priority: 5,
             },
             {
@@ -322,7 +322,7 @@ function Page() {
             },
             {
               question:
-                "Do you engage in regular physical exercise, and if so, what type and frequency?",
+                "Do you engage in regular physical exercise, and if so, what types and frequency?",
               priority: 20,
             },
             {
@@ -533,14 +533,14 @@ function Page() {
   // };
 
   useEffect(() => {
-    setUser(JSON.parse(localStorage.getItem("user")));
+    setUser(JSON.parse(localStorage.getItem("user")??""));
   }, []);
 
   useEffect(() => {
     httpRequestLocal
       .get(
         `/api/questions/?specialty=${JSON.parse(
-          localStorage.getItem("user")
+          localStorage.getItem("user")??""
         )?.specialty?.toLowerCase()}`
       )
       .then(({ data }) => {

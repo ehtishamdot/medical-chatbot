@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import {JetBrains_Mono, Mulish} from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import Providers from "@/components/Providers";
 
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" id="mode" className="dark">
+    <html lang="en" id="mode" className="light">
       <body
         className={`${font.className} dark:bg-neutral-950 bg-white dark:text-neutral-200`}
       >
