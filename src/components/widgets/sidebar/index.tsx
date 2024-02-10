@@ -179,7 +179,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Forms --> */}
               <SidebarLinkGroup
                   activeCondition={
-                      pathname === "/forms" || pathname.includes("forms")
+                      pathname === "/patient" || pathname.includes("patient")
                   }
               >
                 {(handleClick, open) => {
@@ -188,8 +188,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         <Link
                             href="#"
                             className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                                (pathname === "/forms" ||
-                                    pathname.includes("forms")) &&
+                                (pathname === "/patient" ||
+                                    pathname.includes("patient")) &&
                                 "bg-graydark dark:bg-meta-4"
                             }`}
                             onClick={(e) => {
@@ -256,24 +256,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                             <li>
                               <Link
-                                  href="/forms/form-elements"
+                                  href="/patient/new"
                                   className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                      pathname === "/forms/form-elements" &&
+                                      pathname === "/patient/new" &&
                                       "text-white"
                                   }`}
                               >
-                                Form Elements
+                                Add Patients
                               </Link>
                             </li>
                             <li>
                               <Link
-                                  href="/forms/form-layout"
+                                  href="/patient/view"
                                   className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                      pathname === "/forms/form-layout" &&
+                                      pathname === "/patient/view" &&
                                       "text-white"
                                   } `}
                               >
-                                Form Layout
+                                View Patients
                               </Link>
                             </li>
                           </ul>
