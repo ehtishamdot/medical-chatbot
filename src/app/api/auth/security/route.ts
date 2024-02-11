@@ -15,11 +15,14 @@ const securitySchema = z.object({
 export async function PUT(req: NextRequest) {
   try {
     const { username, password } = securitySchema.parse(await req.json());
-    const authorizationHeader = req.headers.get("Authorization");
-    if (!authorizationHeader) {
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+
+    if (!refreshTokenStartIndex) {
       throw new ServerError("Unauthorized", 401);
     }
-    const accessToken = authorizationHeader.replace("Bearer ", "");
+    const accessToken = refreshTokenStartIndex;
     const dbToken = await prisma.token.findFirst({
       where: {
         token: accessToken,
