@@ -7,5 +7,6 @@ export default class ServerError extends Error {
 }
 
 export type JWTPayload = {
-  userId: string;
+  id: string;
+  iat?: number;
 };
