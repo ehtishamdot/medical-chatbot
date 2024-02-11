@@ -14,43 +14,33 @@ export function middleware(request: NextRequest) {
   }
 
   if (
-    !pathname.startsWith("/api") &&
-    (pathname == "/auth/login" || pathname == "/auth/signup") &&
-    token
+      !pathname.startsWith("/api") &&
+      (pathname == "/auth/login" || pathname == "/auth/signup") &&
+      token
   ) {
-    url.pathname = "/[specialization]";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/[specialization]") && !token) {
+  if ((pathname.startsWith("/dashboard")||pathname.startsWith("/profile")||pathname.startsWith("/patient")||pathname.startsWith("/chatbots") )&& !token) {
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
-
-  // if (
-  //   !pathname.startsWith("/api") &&
-  //   (pathname == "/auth/login" || pathname == "/auth/signup") &&
-  //   token
-  // ) {
-  //   url.pathname = "/chat";
-  //   return NextResponse.redirect(url);
-  // }
-
   if (pathname == "/landing" || pathname == "/landing") {
-    url.pathname = "/[specialization]";
+    url.pathname = "/questions";
     return NextResponse.redirect(url);
   }
 
   if (pathname.startsWith("/api")) {
     if (
-      !(pathname == "/api/auth/login" || pathname == "/api/auth/signup") &&
-      !token
+        !(pathname == "/api/auth/login" || pathname == "/api/auth/signup") &&
+        !token
     ) {
       return NextResponse.json(
-        {
-          message: "Unauthorised",
-        },
-        { status: 401 }
+          {
+            message: "Unauthorised",
+          },
+          { status: 401 }
       );
     }
   }

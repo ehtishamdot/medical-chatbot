@@ -9,3 +9,12 @@ export default class ServerError extends Error {
 export type JWTPayload = {
   userId: string;
 };
+
+
+export type errorType = {
+  response: {
+    data: {
+      message: string | string[];
+    };
+  };
+};

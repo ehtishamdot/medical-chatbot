@@ -1,8 +1,9 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import {JetBrains_Mono, Mulish} from "next/font/google";
-import { Toaster } from "@/components/ui/toaster";
-import Providers from "@/components/Providers";
+import {JetBrains_Mono} from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
+import AuthProvider from "@/providers/AuthProvider";
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
 
 
 const font = JetBrains_Mono({ subsets: ["cyrillic"] });
@@ -23,10 +24,12 @@ export default function RootLayout({
         className={`${font.className} dark:bg-neutral-950  dark:text-neutral-200`}
       >
         <main>
-        <Providers>
-          <Toaster />
-          {children}
-        </Providers>
+        <AuthProvider>
+            <ReactQueryProvider>
+                <Toaster />
+                {children}
+            </ReactQueryProvider>
+        </AuthProvider>
         </main>
       </body>
     </html>

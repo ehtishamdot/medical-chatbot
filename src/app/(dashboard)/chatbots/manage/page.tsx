@@ -2,6 +2,7 @@ import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import {Switch} from "@/components/ui/switch";
 import {
     Card,
+    CardContent,
     CardDescription,
     CardFooter,
     CardHeader,
@@ -13,6 +14,7 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,

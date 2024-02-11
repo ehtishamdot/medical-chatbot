@@ -7,4 +7,10 @@ export type userType={
   specialty:string;
   updatedAt:string;
   username:string;
+  jobTitle:string;
+  placeOfWork:string;
+  licenseNumber:string;
+  countryAndLanguage:string;
+  countryOfPractice:string;
+  preferredLanguage:string;
 }

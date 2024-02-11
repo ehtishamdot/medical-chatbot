@@ -18,11 +18,13 @@ import axios, { AxiosError } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import tokenService from "@/services/token/token.service";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
     input: "",
     password: "",
+    role:"DOCTOR"
   });
   const { toast } = useToast();
   const { push } = useRouter();
@@ -33,12 +35,12 @@ export default function Login() {
   // }
 
   async function handleLogin() {
-    const { input, password } = inputs;
+    const { input, password ,role} = inputs;
     axios
-      .post("/api/auth/login", { input, password })
+      .post("/api/auth/login", { input, password,role })
       .then(({ data }) => {
         window.location.reload();
-        localStorage.setItem("user", JSON.stringify(data));
+        tokenService.setUser(data);
         push("/questions");
       })
       .catch((err) => {
