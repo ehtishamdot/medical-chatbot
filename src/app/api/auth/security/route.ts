@@ -8,7 +8,6 @@ import ServerError, { JWTPayload } from "@/lib/types";
 
 const securitySchema = z
   .object({
-    userId: z.string(),
     username: z.string().min(6).max(12),
     password: z.string().min(8).max(16),
   })
@@ -16,37 +15,32 @@ const securitySchema = z
 
 export async function PUT(req: NextRequest) {
   try {
-    const { userId, username, password } = securitySchema.parse(
-      await req.json()
-    );
-    const c = req.cookies;
-    const token = c.get("refreshToken")?.value;
-    if (!token) throw new ServerError("Token not provided", 409);
+    const { username, password } = securitySchema.parse(await req.json());
+    const authorizationHeader = req.headers.get("Authorization");
+    if (!authorizationHeader) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = authorizationHeader.replace("Bearer ", "");
     const dbToken = await prisma.token.findFirst({
       where: {
-        token,
+        token: accessToken,
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
 
     let user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        username: username,
       },
     });
     if (!user) throw new ServerError("User not found", 404);
     user = await prisma.user.update({
       where: {
-        id: userId,
+        username: username,
       },
       data: {
-        specialty,
-        jobTitle,
-        placeOfWork,
-        licenseNumber,
-        countryAndLanguage,
-        countryOfPractice,
-        preferredLanguage,
+        password: hashSync(password, 10),
+        username,
       },
     });
     return new Response(JSON.stringify(user), {
