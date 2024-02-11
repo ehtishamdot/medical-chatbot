@@ -14,19 +14,19 @@ export async function POST(req: NextRequest) {
         token,
       },
     });
-    if (!dbToken) throw new ServerError("Invalid token provided", 409);
-    const { userId } = decryptToken(token, process.env.JWT_REFRESH_SECRET!);
+    // if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    // const { userId } = decryptToken(token, process.env.JWT_REFRESH_SECRET!);
 
-    const accessToken = sign({ userId }, process.env.JWT_SECRET!, {
-      expiresIn: "50m",
-    });
+    // const accessToken = sign({ userId }, process.env.JWT_SECRET!, {
+    //   expiresIn: "50m",
+    // });
 
-    return new Response(JSON.stringify({ message: "success" }), {
-      status: 200,
-      headers: {
-        "Set-Cookie": `accessToken=${accessToken};Secure;HttpOnly;path=/`,
-      },
-    });
+    // return new Response(JSON.stringify({ message: "success" }), {
+    //   status: 200,
+    //   headers: {
+    //     "Set-Cookie": `accessToken=${accessToken};Secure;HttpOnly;path=/`,
+    //   },
+    // });
   } catch (err) {
     return errorHandler(err);
   }

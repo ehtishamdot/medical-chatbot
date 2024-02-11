@@ -1,17 +1,16 @@
 import { prisma } from "@/db/config";
-import { errorHandler } from "@/lib/utils";
+import { decryptToken, errorHandler } from "@/lib/utils";
 import { NextRequest } from "next/server";
 import { hashSync } from "bcrypt";
 import { z } from "zod";
-import { sign } from "jsonwebtoken";
+import { JwtPayload, sign } from "jsonwebtoken";
 import ServerError, { JWTPayload } from "@/lib/types";
+import { verify } from "jsonwebtoken";
 
-const securitySchema = z
-  .object({
-    username: z.string().min(6).max(12),
-    password: z.string().min(8).max(16),
-  })
-  .strict();
+const securitySchema = z.object({
+  username: z.string().optional(),
+  password: z.string().optional(),
+});
 
 export async function PUT(req: NextRequest) {
   try {
@@ -27,20 +26,21 @@ export async function PUT(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
 
     let user = await prisma.user.findUnique({
       where: {
-        username: username,
+        id,
       },
     });
     if (!user) throw new ServerError("User not found", 404);
     user = await prisma.user.update({
       where: {
-        username: username,
+        id,
       },
       data: {
-        password: hashSync(password, 10),
-        username,
+        ...(username && { username }),
+        ...(password && { password: hashSync(password, 10) }),
       },
     });
     return new Response(JSON.stringify(user), {
