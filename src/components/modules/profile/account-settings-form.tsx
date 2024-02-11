@@ -16,8 +16,8 @@ import AuthServices from "@/services/auth/auth.service";
 import {userType} from "@/lib/types/user";
 
 export const securityFormSchema = z.object({
-    username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50),
-    password:z.string(),
+    username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50).optional(),
+    password:z.string().min(8,"Password Must Be Of Atleast 8 Characters").optional()
 })
 
 const AccountSettingsForm = ({user}:{user:userType}) => {
@@ -32,7 +32,13 @@ const AccountSettingsForm = ({user}:{user:userType}) => {
     const {useHandleUpdateSecuritySettings}=AuthServices();
     const {mutate:handleUpdateSecurity,isPending:isHandleUpdateSecurityPending}=useHandleUpdateSecuritySettings();
     function onSubmit(data: z.infer<typeof securityFormSchema>) {
-        handleUpdateSecurity(data);
+        const updatedFields=Object.keys(form.formState.dirtyFields);
+        console.log(updatedFields,'updatedFields')
+        const updatedData:z.infer<typeof securityFormSchema>={};
+        updatedFields.map((el,index)=>{
+            updatedData[el as keyof z.infer<typeof securityFormSchema>]=data[el as  keyof z.infer<typeof securityFormSchema>]
+        })
+        handleUpdateSecurity(updatedData);
     }
     return (
         <div className="w-full mx-auto">

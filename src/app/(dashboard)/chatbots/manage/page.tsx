@@ -1,3 +1,4 @@
+"use client";
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import {Switch} from "@/components/ui/switch";
 import {
@@ -27,6 +28,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 const chatbotData=[
     {
         name:"Esper 01",
@@ -51,6 +54,8 @@ const chatbotData=[
 ]
 
 const ManageChatbot=()=>{
+    const [specialty,setSpecialty]=useState("");
+    const router=useRouter();
  return(
      <div>
          <Breadcrumb pageName={"Chatbots"}/>
@@ -71,9 +76,9 @@ const ManageChatbot=()=>{
                              <Label htmlFor="link" className="sr-only">
                                  Preference
                              </Label>
-                             <Select>
+                             <Select onValueChange={(e)=>setSpecialty(e)}>
                                  <SelectTrigger className="w-full">
-                                     <SelectValue placeholder="Theme" />
+                                     <SelectValue placeholder="Select Specialty" />
                                  </SelectTrigger>
                                  <SelectContent>
                                      <SelectItem value="orthopedic">Orthopedic</SelectItem>
@@ -82,7 +87,7 @@ const ManageChatbot=()=>{
                              </Select>
                          </div>
                      </div>
-                     <Button className={'bg-primary'}>
+                     <Button disabled={specialty===""} className={'bg-primary'} onClick={()=>router.push(`/questions/${specialty}`)}>
                          Proceed
                      </Button>
                  </DialogContent>
@@ -92,7 +97,7 @@ const ManageChatbot=()=>{
          <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
              {chatbotData.map((el,index)=>{
                  return(
-                     <Card className="w-[350px]">
+                     <Card key={index} className="w-[350px]">
                          <CardHeader>
                              <CardTitle className={'flex justify-between'}>
                                  {el.name}

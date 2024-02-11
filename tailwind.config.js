@@ -1,7 +1,6 @@
-import type { Config } from "tailwindcss";
 import defaultTheme from "tailwindcss/defaultTheme";
 
-const config: Config = {
+const config = {
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",

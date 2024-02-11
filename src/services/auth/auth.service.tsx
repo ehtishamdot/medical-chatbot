@@ -9,9 +9,9 @@ import {userType} from "@/lib/types/user";
 import {z} from "zod";
 import {profileFormSchema} from "@/components/modules/profile/profile-update-form";
 import {securityFormSchema} from "@/components/modules/profile/account-settings-form";
-import {httpRequest, httpRequestLocal} from "@/lib/interceptor";
+import {httpRequestLocal} from "@/lib/interceptor";
 import tokenService from "@/services/token/token.service";
-import {axiosInstanceLocal} from "@/lib/httpLocalInterceptor";
+import TokenService from "@/services/token/token.service";
 
 export default function AuthServices() {
     const router=useRouter();
@@ -43,11 +43,12 @@ export default function AuthServices() {
         function handleSignupRequest(
             data: z.infer<typeof profileFormSchema>,
         ): Promise<userType> {
-            return axiosInstanceLocal.put("/api/auth/profile", data).then((res) => res.data);
+            return httpRequestLocal.put("/api/auth/profile", data).then((res) => res.data);
         }
 
         const onSuccess = async (response: userType) => {
             toast.success("Profile Updated Successfully");
+            TokenService.setUser(response)
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));
@@ -64,11 +65,12 @@ export default function AuthServices() {
         function handleSignupRequest(
             data: z.infer<typeof securityFormSchema>,
         ): Promise<userType> {
-            return axiosInstanceLocal.put("/api/auth/security", data).then((res) => res.data);
+            return httpRequestLocal.put("/api/auth/security", data).then((res) => res.data);
         }
 
         const onSuccess = async (response: userType) => {
             toast.success("Security Details Updated Successfully");
+            TokenService.setUser(response)
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));

@@ -33,10 +33,18 @@ const formSchema = z.object({
     username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50),
     email: z.string().email("Should Be A Valid Email"),
     password:z.string().min(1,"Password Is Required").min(6,"Password Should be Atleast 6 Characters"),
-    specialty:z.string().min(1,"Speciality Is Required"),
-    jobTitle:z.string().min(1,"Job Title Is Required"),
-    placeOfWork:z.string().min(1,"Place Of Work Is Required"),
-    licenseNumber:z.string().min(1,"License Number Is Required"),
+    specialty:z.string({
+        required_error: "Specialty Is Required",
+    }),
+    jobTitle:z.string({
+        required_error: "Job Title Is Required",
+    }),
+    placeOfWork:z.string({
+        required_error: "Place Of Work Is Required",
+    }),
+    licenseNumber:z.string({
+        required_error: "License Number Is Required",
+    }),
     countryAndLanguage:z.string({
         required_error: "Country Is Required",
     }),
@@ -183,7 +191,7 @@ export default function SignupForm({countries}:{countries:countryType[]}) {
                                 <BaseAutoComplete form={form} data={LANGUAGES} name={"preferredLanguage"} label={"Preferred Language"} title={"Select Your Preferred Language"} placeholder={"Search Language ..."}/>
                             </div>
                             <Button
-                                disabled={!form.formState.isValid}
+                                // disabled={!form.formState.isValid}
                                 type={'submit'}
                                 variant="custom"
                                 className="w-full mt-4"

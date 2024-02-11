@@ -10,23 +10,16 @@ import {userType} from "@/lib/types/user";
 import {Card} from "@/components/ui/card";
 
 
-function QuestionsList() {
+function QuestionsList({user}:{user:userType}) {
 
     const [phases, setPhases] = useState<phases[]>([]);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [user, setUser] = useState<userType>();
 
-
-    useEffect(() => {
-        setUser(JSON.parse(localStorage.getItem("user")??""));
-    }, []);
 
     useEffect(() => {
         httpRequestLocal
             .get(
-                `/api/questions/?specialty=${JSON.parse(
-                    localStorage.getItem("user")??""
-                )?.specialty?.toLowerCase()}`
+                `/api/questions/?specialty=${user.specialty}`
             )
             .then(({ data }:{data:phasesApiResponseType}) => {
                 console.log(data);
