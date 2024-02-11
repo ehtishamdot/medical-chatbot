@@ -3,8 +3,13 @@ import { errorHandler } from "@/lib/utils";
 import { NextRequest } from "next/server";
 import { compareSync } from "bcrypt";
 import { z } from "zod";
+import { getSession } from "next-auth/react";
 import { sign } from "jsonwebtoken";
 import ServerError, { JWTPayload } from "@/lib/types";
+import { Session } from "next-auth";
+
+type AccessToken = string;
+type RefreshToken = string;
 
 const loginSchema = z
   .object({
@@ -24,27 +29,39 @@ export async function POST(req: NextRequest) {
       },
     });
     if (!user) throw new ServerError("User does not exist or Forbidden", 409);
+
     const correctPassword = compareSync(password, user.password);
-    if (!correctPassword) throw new ServerError("Wrong email or passwrod", 401);
+    if (!correctPassword) throw new ServerError("Wrong email or password", 401);
+
     const payload: JWTPayload = { userId: user.id };
-    const accessToken = sign(payload, process.env.JWT_SECRET!, {
+    const accessToken: AccessToken = sign(payload, process.env.JWT_SECRET!, {
       expiresIn: "50m",
     });
-    const refreshToken = sign({ id: user.id }, process.env.JWT_REFRESH_SECRET!);
+    const refreshToken: RefreshToken = sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET!
+    );
     await prisma.token.create({
       data: {
         token: refreshToken,
       },
     });
+
     const userCopy = {
       ...user,
       password: undefined,
     };
+
+    // Update: Replace the manual cookie setting with the Next.js authentication
+    const session = (await getSession({ req })) as Session & {
+      accessToken: AccessToken;
+      refreshToken: RefreshToken;
+    };
+    session.accessToken = accessToken;
+    session.refreshToken = refreshToken;
+
     return new Response(JSON.stringify(userCopy), {
       status: 200,
-      headers: {
-        "Set-Cookie": `accessToken=${accessToken};Secure;HttpOnly;path=/,refreshToken=${refreshToken};Secure;HttpOnly;path=/`,
-      },
     });
   } catch (err) {
     console.log(err);
