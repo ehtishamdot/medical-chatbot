@@ -151,18 +151,3 @@ export async function GET(req: NextRequest) {
     return errorHandler(err);
   }
 }
-
-// export async function DELETE(req: NextRequest) {
-//   try {
-//     const token = req.cookies.get("accessToken")!.value!;
-//     const { userId } = decryptToken(token, process.env.JWT_SECRET!);
-//     await prisma.query.deleteMany({
-//       where: {
-//         userId,
-//       },
-//     });
-//     return NextResponse.json({ message: "Successfully cleared conversation" });
-//   } catch (err) {
-//     return errorHandler(err);
-//   }
-// }

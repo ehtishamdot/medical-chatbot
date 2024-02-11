@@ -10,28 +10,27 @@ const loginSchema = z
   .object({
     input: z.string(),
     password: z.string().min(8).max(16),
+    role: z.enum(["ASSISTANT", "DOCTOR"]),
   })
   .strict();
 
 export async function POST(req: NextRequest) {
   try {
-    const { input, password } = loginSchema.parse(await req.json());
+    const { input, password, role } = loginSchema.parse(await req.json());
     let user = await prisma.user.findFirst({
       where: {
         OR: [{ email: input }, { username: input }],
+        role: role,
       },
     });
-    if (!user) throw new ServerError("User does not exist", 409);
+    if (!user) throw new ServerError("User does not exist or Forbidden", 409);
     const correctPassword = compareSync(password, user.password);
     if (!correctPassword) throw new ServerError("Wrong email or passwrod", 401);
-    const payload: JWTPayload = { userId: user.id, apiKey: user.apiKey };
+    const payload: JWTPayload = { userId: user.id };
     const accessToken = sign(payload, process.env.JWT_SECRET!, {
       expiresIn: "50m",
     });
-    const refreshToken = sign(
-      { id: user.id, apiKey: user.apiKey },
-      process.env.JWT_REFRESH_SECRET!
-    );
+    const refreshToken = sign({ id: user.id }, process.env.JWT_REFRESH_SECRET!);
     await prisma.token.create({
       data: {
         token: refreshToken,
@@ -39,7 +38,6 @@ export async function POST(req: NextRequest) {
     });
     const userCopy = {
       ...user,
-      apiKey: undefined,
       password: undefined,
     };
     return new Response(JSON.stringify(userCopy), {
@@ -49,6 +47,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (err) {
+    console.log(err);
     return errorHandler(err);
   }
 }
