@@ -4,6 +4,7 @@ import {JetBrains_Mono} from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import AuthProvider from "@/providers/AuthProvider";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
+import InterceptorInitialization from "@/lib/interceptor-initialization";
 
 
 const font = JetBrains_Mono({ subsets: ["cyrillic"] });
@@ -26,6 +27,7 @@ export default function RootLayout({
         <main>
         <AuthProvider>
             <ReactQueryProvider>
+                <InterceptorInitialization/>
                 <Toaster />
                 {children}
             </ReactQueryProvider>

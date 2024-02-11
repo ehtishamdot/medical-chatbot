@@ -11,6 +11,7 @@ import {profileFormSchema} from "@/components/modules/profile/profile-update-for
 import {securityFormSchema} from "@/components/modules/profile/account-settings-form";
 import {httpRequest, httpRequestLocal} from "@/lib/interceptor";
 import tokenService from "@/services/token/token.service";
+import {axiosInstanceLocal} from "@/lib/httpLocalInterceptor";
 
 export default function AuthServices() {
     const router=useRouter();
@@ -42,7 +43,7 @@ export default function AuthServices() {
         function handleSignupRequest(
             data: z.infer<typeof profileFormSchema>,
         ): Promise<userType> {
-            return httpRequestLocal.put("/api/auth/profile", data).then((res) => res.data);
+            return axiosInstanceLocal.put("/api/auth/profile", data).then((res) => res.data);
         }
 
         const onSuccess = async (response: userType) => {
@@ -63,7 +64,7 @@ export default function AuthServices() {
         function handleSignupRequest(
             data: z.infer<typeof securityFormSchema>,
         ): Promise<userType> {
-            return httpRequestLocal.put("/api/auth/security", data).then((res) => res.data);
+            return axiosInstanceLocal.put("/api/auth/security", data).then((res) => res.data);
         }
 
         const onSuccess = async (response: userType) => {

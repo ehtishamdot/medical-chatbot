@@ -3,7 +3,16 @@ import Cookies from "js-cookie";
 
 import {userType} from "@/lib/types/user";
 class TokenService {
+    getLocalAccessToken = () => {
+        return Cookies.get("accessToken");
+    };
+    saveLocalAccessToken = (token: string) => {
+        Cookies.set("accessToken", token, { sameSite: "strict" });
+    };
 
+    getLocalRefreshToken = () => {
+        return Cookies.get("refreshToken");
+    };
     getUser = (): null | userType => {
         const userData = Cookies.get("user");
         if (typeof window !== "undefined" && !!userData) {
