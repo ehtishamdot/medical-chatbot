@@ -1,14 +1,8 @@
 "use client";
 
 import {
-  Cloud,
-  Github,
   LogOut,
-  User,
   Menu as MenuIcon,
-  Sun,
-  Moon,
-  XCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,27 +10,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import axios, { AxiosError } from "axios";
 import { useToast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { httpRequest, httpRequestLocal } from "@/lib/interceptor";
-import { useSession, signOut } from "next-auth/react";
+import {httpRequestLocal } from "@/lib/interceptor";
+import { useSession } from "next-auth/react";
 
 const EDIT_INITIAL = {
   username: "",
@@ -44,7 +26,7 @@ const EDIT_INITIAL = {
   apiKey: "",
 };
 
-export default function Menu({ clear }: { clear: () => void }) {
+export default function Menu({ clear }: { clear?: () => void }) {
   const { toast } = useToast();
   const { push } = useRouter();
   const [mode, setMode] = useState("dark");
@@ -99,7 +81,9 @@ export default function Menu({ clear }: { clear: () => void }) {
     httpRequestLocal
       .delete("/api/chat")
       .then(() => {
-        clear();
+        if(clear){
+          clear();
+        }
       })
       .catch((err) => {
         toast({
@@ -116,7 +100,6 @@ export default function Menu({ clear }: { clear: () => void }) {
       })
       .then(({ data }) => {
         localStorage.setItem("user", JSON.stringify(data));
-        // window.location.reload();
       })
       .catch((err) => {
         toast({
@@ -146,31 +129,9 @@ export default function Menu({ clear }: { clear: () => void }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 ml-6">
-            {/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => setOpen(true)}>
-              <User className="mr-2 h-4 w-4" />
-              <span>Edit profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleClear}>
-              <XCircle className="mr-2 h-4 w-4" />
-              <span>Clear conversation</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {mode === "dark" ? (
-              <DropdownMenuItem onClick={toggleMode}>
-                <Sun className="mr-2 h-4 w-4" />
-                <span>Light mode</span>
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem onClick={toggleMode}>
-                <Moon className="mr-2 h-4 w-4" />
-                <span>Dark mode</span>
-              </DropdownMenuItem>
-            )} */}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                // signOut()
                 handleLogout();
               }}
             >
@@ -180,95 +141,6 @@ export default function Menu({ clear }: { clear: () => void }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {/* <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            className="absolute top-7 left-5 max-[500px]:left-2 border-2 dark:border-neutral-700 dark:bg-neutral-950 bg-neutral-100 border-neutral-300"
-            variant="ghost"
-          >
-            <MenuIcon className="w-5 h-5" /> <span className="ml-2">Menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 ml-6">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <User className="mr-2 h-4 w-4" />
-            <span>Edit profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleClear}>
-            <XCircle className="mr-2 h-4 w-4" />
-            <span>Clear conversation</span>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          {mode === "dark" ? (
-            <DropdownMenuItem onClick={toggleMode}>
-              <Sun className="mr-2 h-4 w-4" />
-              <span>Light mode</span>
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem onClick={toggleMode}>
-              <Moon className="mr-2 h-4 w-4" />
-              <span>Dark mode</span>
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {
-            // signOut()
-            handleLogout()
-          }}>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Dialog open={open} onOpenChange={(val) => setOpen(val)}>
-        <DialogContent className="sm:max-w-[495px]">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when youre done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <Input
-                id="username"
-                value={edit.username}
-                onChange={(e) =>
-                  setEdit((prev) => ({ ...prev, username: e?.target?.value }))
-                }
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="avatar" className="text-right">
-                Avatar URL
-              </Label>
-              <Input
-                id="avatar"
-                value={edit.avatar}
-                onChange={(e) =>
-                  setEdit((prev) => ({ ...prev, avatar: e.target.value }))
-                }
-                className="col-span-3"
-              />
-            </div>
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="api" className="text-right">
-                API Key
-              </Label>
-              <Input
-                id="api"
-                value={edit.apiKey}
-                onChange={(e) =>
-                  setEdit((prev) => ({ ...prev, apiKey: e.target.value }))
-                }
-                className="col-span-3"
-              />
-            </div> */}
     </>
   );
 }

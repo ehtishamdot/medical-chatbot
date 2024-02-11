@@ -20,7 +20,7 @@ interface AppDraggableListProps<T> {
   direction?: "vertical" | "horizontal";
 }
 
-export const AppDraggableList = <T extends { id: number }>({
+export const AppDraggableList = <T extends { id: string }>({
   droppableId,
   data,
   onDragEnd,

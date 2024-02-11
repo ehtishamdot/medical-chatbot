@@ -58,7 +58,7 @@ const invoices = [
 
 const ViewPatients=()=>{
   return(
-      <Table>
+      <Table className={'bg-white'}>
         <TableHeader>
           <TableRow className={'border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4'}>
             <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Invoice</TableHead>

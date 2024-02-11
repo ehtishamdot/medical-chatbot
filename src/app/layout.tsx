@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" id="mode" className="light">
       <body
-        className={`${font.className} dark:bg-neutral-950 bg-white dark:text-neutral-200`}
+        className={`${font.className} dark:bg-neutral-950  dark:text-neutral-200`}
       >
         <main>
         <Providers>

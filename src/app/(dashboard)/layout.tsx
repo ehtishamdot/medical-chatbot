@@ -7,7 +7,7 @@ const DashboardLayout=({children}:{children:React.ReactNode})=>{
 
 
     return(
-        <main className={`${MulishFont.className}`}>
+        <main className={`${MulishFont.className} bg-whiten dark:bg-neutral-950`}>
           <DefaultLayout>
               {children}
           </DefaultLayout>

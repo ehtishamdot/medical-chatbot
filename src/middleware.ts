@@ -18,11 +18,11 @@ export function middleware(request: NextRequest) {
     (pathname == "/auth/login" || pathname == "/auth/signup") &&
     token
   ) {
-    url.pathname = "/questions";
+    url.pathname = "/[specialization]";
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/questions") && !token) {
+  if (pathname.startsWith("/[specialization]") && !token) {
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
@@ -37,7 +37,7 @@ export function middleware(request: NextRequest) {
   // }
 
   if (pathname == "/landing" || pathname == "/landing") {
-    url.pathname = "/questions";
+    url.pathname = "/[specialization]";
     return NextResponse.redirect(url);
   }
 
