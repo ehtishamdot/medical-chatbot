@@ -24,7 +24,6 @@ export default function Login() {
   const [inputs, setInputs] = useState({
     input: "",
     password: "",
-    role:"DOCTOR"
   });
   const { toast } = useToast();
   const { push } = useRouter();
@@ -35,9 +34,9 @@ export default function Login() {
   // }
 
   async function handleLogin() {
-    const { input, password ,role} = inputs;
+    const { input, password} = inputs;
     axios
-      .post("/api/auth/login", { input, password,role })
+      .post("/api/auth/login", { input, password })
       .then(({ data }) => {
         window.location.reload();
         tokenService.setUser(data);

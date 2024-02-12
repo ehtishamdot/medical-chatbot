@@ -9,75 +9,47 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
+import {PATIENTS} from "@/lib/constants";
+import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 
 const ViewPatients=()=>{
   return(
-      <Table className={'bg-white'}>
-        <TableHeader>
-          <TableRow className={'border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4'}>
-            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Invoice</TableHead>
-            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Status</TableHead>
-            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Method</TableHead>
-            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {invoices.map((invoice) => (
-              <TableRow key={invoice.invoice}>
-                <TableCell className={"border-t border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{invoice.invoice}</TableCell>
-                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{invoice.paymentStatus}</TableCell>
-                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{invoice.paymentMethod}</TableCell>
-                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{invoice.totalAmount}</TableCell>
-              </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <div>
+        <Breadcrumb pageName={"View Patients"}/>
+        <Table className={'bg-white'}>
+          <TableHeader>
+            <TableRow className={'border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4'}>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>ID</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>First Name</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Last Name</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Email</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Gender</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>DOB</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Phone</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Address</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Medical Info</TableHead>
+              <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Medical History</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {PATIENTS.map((patient,index:number) => (
+                <TableRow key={index}>
+                  <TableCell className={"border-t border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.patientID}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.firstName}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.lastName}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.email}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.gender}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.dateOfBirth}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.phoneNumber}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.address}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.medicationInformation}</TableCell>
+                  <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.medicalHistory}</TableCell>
+                </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
   )
 }
 export default ViewPatients;

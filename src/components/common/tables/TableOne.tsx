@@ -1,18 +1,23 @@
 import { BRAND } from "@/lib/types/brand";
 import Image from "next/image";
+import {DASHBOARD_PATIENTS, PATIENTS} from "@/lib/constants";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
-const brandData: BRAND[] = [
+const brandData: any = [
   {
     logo: "/images/brand/brand-01.svg",
-    name: "Google",
-    visitors: 3.5,
-    revenues: "5,768",
-    sales: 590,
+    name: "Mohib",
+    age: 21,
+    gender: "Male",
+    country: "US",
     conversion: 4.8,
   },
   {
     logo: "/images/brand/brand-02.svg",
-    name: "Twitter",
+    name: "Ehti",
+    gender: "Male",
+    country: "US",
+    age: 21,
     visitors: 2.2,
     revenues: "4,635",
     sales: 467,
@@ -20,7 +25,10 @@ const brandData: BRAND[] = [
   },
   {
     logo: "/images/brand/brand-03.svg",
-    name: "Github",
+    name: "Marcus",
+    gender: "Male",
+    country: "US",
+    age: 21,
     visitors: 2.1,
     revenues: "4,290",
     sales: 420,
@@ -28,7 +36,10 @@ const brandData: BRAND[] = [
   },
   {
     logo: "/images/brand/brand-04.svg",
-    name: "Vimeo",
+    name: "John",
+    gender: "Male",
+    country: "US",
+    age: 21,
     visitors: 1.5,
     revenues: "3,580",
     sales: 389,
@@ -36,12 +47,38 @@ const brandData: BRAND[] = [
   },
   {
     logo: "/images/brand/brand-05.svg",
-    name: "Facebook",
+    name: "Micheal",
+    gender: "Male",
+    country: "US",
+    age: 21,
     visitors: 3.5,
     revenues: "6,768",
     sales: 390,
     conversion: 4.2,
   },
+  {
+    logo: "/images/brand/brand-05.svg",
+    name: "Sarah",
+    gender: "Female",
+    country: "US",
+    age: 21,
+    visitors: 3.5,
+    revenues: "6,768",
+    sales: 390,
+    conversion: 4.2,
+  },
+  {
+    logo: "/images/brand/brand-05.svg",
+    name: "Clarke",
+    gender: "Male",
+    country: "US",
+    age: 21,
+    visitors: 3.5,
+    revenues: "6,768",
+    sales: 390,
+    conversion: 4.2,
+  },
+
 ];
 
 const TableOne = () => {
@@ -51,71 +88,32 @@ const TableOne = () => {
         Patients Overview
       </h4>
 
-      <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5">
-          <div className="p-2.5 xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
-            </h5>
-          </div>
-          <div className="p-2.5 text-center xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
-            </h5>
-          </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
-            </h5>
-          </div>
-        </div>
-
-        {brandData.map((brand, key) => (
-          <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ""
-                : "border-b border-stroke dark:border-strokedark"
-            }`}
-            key={key}
-          >
-            <div className="flex items-center gap-3 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
-                <Image src={brand.logo} alt="Brand" width={48} height={48} />
-              </div>
-              <p className="hidden text-black dark:text-white sm:block">
-                {brand.name}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.visitors}K</p>
-            </div>
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-meta-3">${brand.revenues}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-black dark:text-white">{brand.sales}</p>
-            </div>
-
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <p className="text-meta-5">{brand.conversion}%</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <Table className={'bg-white'}>
+        <TableHeader>
+          <TableRow className={'border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4'}>
+            <TableHead className={'min-w-[100px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>ID</TableHead>
+            <TableHead className={'min-w-[100px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Name</TableHead>
+            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Email</TableHead>
+            <TableHead className={'min-w-[100px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Gender</TableHead>
+            <TableHead className={'min-w-[150px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>DOB</TableHead>
+            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Clinical Assessment</TableHead>
+            <TableHead className={'min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11'}>Medical History</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {PATIENTS.map((patient,index:number) => (
+              <TableRow key={index}>
+                <TableCell className={"border-t border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.patientID}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.firstName}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.email}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.gender}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.dateOfBirth}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.medicationInformation}</TableCell>
+                <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"}>{patient.medicalHistory}</TableCell>
+              </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
