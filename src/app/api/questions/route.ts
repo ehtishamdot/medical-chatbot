@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest) {
   try {
     const phases = phaseSchema.array().parse(await req.json());
     const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+    const { id } = decryptToken(token, process.env.JWT_SECRET!);
 
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     const specialties = await req.json();
     if (specialties.length === 0) return;
     const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+    const { id } = decryptToken(token, process.env.JWT_SECRET!);
 
     const createdSpecialties = await Promise.all(
       specialties.map(async (specialty) => {
@@ -155,10 +155,10 @@ export async function GET(req: NextRequest) {
 // export async function DELETE(req: NextRequest) {
 //   try {
 //     const token = req.cookies.get("accessToken")!.value!;
-//     const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+//     const { id } = decryptToken(token, process.env.JWT_SECRET!);
 //     await prisma.query.deleteMany({
 //       where: {
-//         userId,
+//         id,
 //       },
 //     });
 //     return NextResponse.json({ message: "Successfully cleared conversation" });
