@@ -116,9 +116,10 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
     //   }
     // };
 
-    const handleDeleteQuestion = (questionID: Number) => {
+    const handleDeleteQuestion = (questionID: string) => {
+        console.log(data,"data")
         const updatedQuestions: questionsType[] = data
-            .filter((eachQuestion) => Number(eachQuestion.id) !== questionID)
+            .filter((eachQuestion) => eachQuestion.id !== questionID)
             .map((question, index) => ({
                 ...question,
             }));
@@ -202,7 +203,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
                         )}
                         <button
                             className="border-1"
-                            onClick={() => handleDeleteQuestion(Number(question.id))}
+                            onClick={() => handleDeleteQuestion(question.id)}
                         >
                             <Trash2 color="black" size={20} />
                         </button>
