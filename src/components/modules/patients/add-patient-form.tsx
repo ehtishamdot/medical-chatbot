@@ -15,9 +15,10 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import AuthServices from "@/services/auth/auth.service";
 import {Textarea} from "@/components/ui/textarea";
+import PatientsServices from "@/services/patients/patients.service";
 
 export const patientFormSchema = z.object({
-    firstName:z.string({
+    name:z.string({
         required_error: "First Name Is Required",
     }),
     lastName:z.string({
@@ -29,7 +30,7 @@ export const patientFormSchema = z.object({
     gender:z.string({
         required_error: "Gender Is Required",
     }),
-    dob:z.string({
+    dateOfBirth:z.string({
         required_error: "Date Of Birth Is Required",
     }),
     phone:z.string(),
@@ -40,6 +41,8 @@ export const patientFormSchema = z.object({
         required_error: "Medical History Is Required",
     }),
 })
+export const patientSchema = patientFormSchema.omit({ lastName: true });
+
 interface countryType{
     name:{
         common:string;
@@ -52,10 +55,18 @@ const AddPatientForm = () => {
         resolver: zodResolver(patientFormSchema),
 
     })
-    const {useHandleUpdateProfileService}=AuthServices();
-    const {mutate:handleUpdateProfile,isPending:isHandleUpdateProfile}=useHandleUpdateProfileService();
+   const {useHandleAddPatientService}=PatientsServices();
+    const {mutate:handleAddPatient,isPending:isHandleAddPatientPending}=useHandleAddPatientService();
     function onSubmit(data: z.infer<typeof patientFormSchema>) {
-        console.log(data);
+        handleAddPatient({
+            name:data.name+" "+data.lastName,
+            email:data.email,
+            dateOfBirth:new Date(data.dateOfBirth).toISOString(),
+            gender:data.gender,
+            phone:data.phone,
+            address:data.address,
+            medicalHistory:data.medicalHistory
+        });
     }
     return (
         <div className="w-full mx-auto">
@@ -71,10 +82,10 @@ const AddPatientForm = () => {
                         <div className="p-7">
                             <Form {...form}>
                                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                                    <div className={"w-full grid grid-cols-1 grid-cols-2 gap-x-4"}>
+                                    <div className={"w-full grid grid-cols-1 md:grid-cols-2 gap-x-4"}>
                                         <FormField
                                             control={form.control}
-                                            name="firstName"
+                                            name="name"
                                             render={({field}) => (
                                                 <FormItem className={'mb-5.5'}>
                                                     <FormLabel>First Name </FormLabel>
@@ -142,12 +153,12 @@ const AddPatientForm = () => {
                                         />
                                         <FormField
                                             control={form.control}
-                                            name="dob"
+                                            name="dateOfBirth"
                                             render={({field}) => (
                                                 <FormItem className={'mb-5.5'}>
                                                     <FormLabel>Date Of Birth</FormLabel>
                                                     <FormControl>
-                                                        <Input type={"date"}
+                                                        <Input  type={"date"}
                                                                className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}
                                                                placeholder="11111111" {...field} />
                                                     </FormControl>
