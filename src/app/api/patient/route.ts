@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
-    console.log(id);
     const createdPatient = await prisma.patient.create({
       data: {
         ...patient,
