@@ -14,6 +14,7 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import "./index.css";
 import { decryptToken } from "@/lib/utils";
+import {usePathname} from "next/navigation";
 
 type Message = {
   id: string;
@@ -34,13 +35,13 @@ export default function Chat() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const { toast } = useToast();
   const [history, setHistory] = useState<IHistory[]>([]);
-  const [bot, setBot] = useState<String | null>(null);
+  // const [bot, setBot] = useState<String | null>(null);
   const [warningModal, setWarningModal] = useState<Boolean>(false);
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
 
   useEffect(() => {
-    httpRequestLocal
+    httpRequest
       .get(`/api/chat`)
       .then((res) => {
         setMessages(
@@ -66,12 +67,12 @@ export default function Chat() {
   }, [toast]);
 
   useEffect(() => {
-    if (bot === null) return;
+    // if (bot === null) return;
     if (message === "") setMessage("Hello");
     setHistory([]);
     setMessages([]);
     handleEmit("new");
-  }, [bot]);
+  }, []);
 
   function handleEmit(status: string) {
     console.log(history);
@@ -94,8 +95,8 @@ export default function Chat() {
       content,
     }));
 
-    httpRequestLocal
-      .post(`/api/bot/chat?bot=${bot}`, requestBody)
+    httpRequest
+      .post(`/api/bot/chat?bot=orthopedic`, requestBody)
       .then(({ data }) => {
         setMessages((prev) => [
           ...prev,
@@ -133,96 +134,19 @@ export default function Chat() {
   }
 
   useEffect(updateScroll, [messages]);
-  console.log(messages);
+  const pathname=usePathname();
   return (
     <div>
       <Menu clear={clear} />
       <div className="input w-full flex flex-col justify-between h-screen">
         <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
           <p className="text-3xl font-semibold">Esper Wise</p>
-          <DropdownMenu.Root open={dropdown}>
-            <DropdownMenu.Trigger asChild>
-              <button
-                className="flex items-center space-x-1 p-2 bg-gradient-to-r from-gray-900 to-gray-500 text-gray-800 rounded-lg focus:outline-none focus:ring-2 gap-2 shadow-md"
-                aria-label="Customize options"
-                onClick={() => {
-                  setDropdown(true);
-                }}
-              >
-                <span className="text-white">
-                  {bot ? bot : "Select Specialised bot "}
-                </span>
-                <svg
-                  className="w-3 h-3 transition-transform transform text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                </svg>
-              </button>
-            </DropdownMenu.Trigger>
-
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content
-                className="DropdownMenuContent"
-                sideOffset={5}
-              >
-                <DropdownMenu.Item
-                  onSelect={() => {
-                    if (bot === null) setBot("neurologist");
-                    else {
-                      setWarningModal(true);
-                      setPreConfirmationBot("neurologist");
-                    }
-                    setDropdown(false);
-                  }}
-                  className="DropdownMenuItem"
-                >
-                  Neurologist <div className="RightSlot">⌘+T</div>
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onSelect={() => {
-                    if (bot === null) setBot("orthopedic");
-                    else {
-                      setWarningModal(true);
-                      setPreConfirmationBot("orthopedic");
-                    }
-                    setDropdown(false);
-                  }}
-                  className="DropdownMenuItem"
-                >
-                  Orthopedic <div className="RightSlot">⌘+N</div>
-                </DropdownMenu.Item>
-                <DropdownMenu.Arrow className="DropdownMenuArrow" />
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root>
+          <p className="text-3xl text-primary font-semibold">{pathname.split("/")[2]}</p>
         </div>
 
-        {!bot && (
-          <p className="text-2xl center messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col justify-center items-center gap-10 pt-10 max-[900px]:pt-20 scroll-smooth">
-            Please select the bot!
-          </p>
-        )}
 
-        {bot && (
-          <>
-            <div
+        <>
+          <div
               className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
               ref={scrollRef}
             >
@@ -237,7 +161,7 @@ export default function Chat() {
               ))}
               {loading && <Skeleton />}
             </div>
-            <div className="w-[50%] max-[900px]:w-[90%] flex flex-row gap-3 mx-auto mt-auto pb-6">
+            <div className="w-[50%] max-[900px]:w-[90%] flex flex-row items-center gap-3 mx-auto mt-auto pb-6">
               <Input
                 onKeyDown={(e) => {
                   if (e.keyCode == 13 && message) {
@@ -252,17 +176,13 @@ export default function Chat() {
               <Button
                 disabled={!message}
                 onClick={handleEmit}
-                className="h-12 font-semibold"
+                className="font-semibold"
               >
                 Send
               </Button>
             </div>
           </>
-        )}
-        {/* <span className="mx-auto mb-6 text-xs mt-3 text-center">
-          ChatGPT may produce inaccurate information about people, places, or
-          facts.
-        </span> */}
+
       </div>
 
       <AlertDialog.Root open={warningModal}>
@@ -290,7 +210,7 @@ export default function Chat() {
               <AlertDialog.Action asChild>
                 <button
                   onClick={() => {
-                    setBot(preConfirmationBot);
+                    // setBot(preConfirmationBot);
                     setWarningModal(false);
                   }}
                   className="Button red"

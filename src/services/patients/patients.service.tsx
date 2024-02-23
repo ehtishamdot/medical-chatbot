@@ -8,6 +8,7 @@ import {userType} from "@/lib/types/user";
 import {z} from "zod";
 import tokenService from "@/services/token/token.service";
 import {patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";
+import {invitePayloadType} from "@/components/modules/patients/patient-invite-form";
 
 export default function PatientsServices() {
 
@@ -35,6 +36,28 @@ export default function PatientsServices() {
             retry: 0,
         });
     };
+    const useHandleSendInvite = () => {
+        function handleSendInvite(
+            data: invitePayloadType,
+        ): Promise<invitePayloadType> {
+            return axios.post("/api/patient/email", data).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Patient Invited Successfully");
+
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleSendInvite,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
     const useFetchAllPatients = () => {
         function fetchPatients(): Promise<z.infer<typeof patientSchema>[]> {
             return axios.get("/api/patient").then((res) => res.data);
@@ -57,6 +80,7 @@ export default function PatientsServices() {
 
     return {
         useHandleAddPatientService,
-        useFetchAllPatients
+        useFetchAllPatients,
+        useHandleSendInvite
     };
 }

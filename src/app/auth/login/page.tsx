@@ -40,7 +40,7 @@ export default function Login() {
       .then(({ data }) => {
         window.location.reload();
         tokenService.setUser(data);
-        push("/questions");
+        push("/dashboard");
       })
       .catch((err) => {
         if (err instanceof AxiosError)

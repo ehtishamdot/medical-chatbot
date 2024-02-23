@@ -24,15 +24,15 @@ export default function Message({
     return codesArr[index] ? [item, codesArr[index]] : [item];
   });
 
-  useEffect(() => {
-    const local = localStorage.getItem("user");
-    if (local) {
-      const t = JSON.parse(local);
-      if (t.avatar) {
-        setAvatar(t.avatar);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   const local = localStorage.getItem("user");
+  //   if (local) {
+  //     const t = JSON.parse(local);
+  //     if (t.avatar) {
+  //       setAvatar(t.avatar);
+  //     }
+  //   }
+  // }, []);
   return (
     <div
       className={`${!isUser ? "py-7" : "py-1"} h-fit ${
@@ -49,7 +49,7 @@ export default function Message({
             </Avatar>
           </>
         ) : (
-          <span className="" style={{color:"#fff", fontWeight:"bolder", marginTop:"3px"}}>Esper</span>
+          <span className="" style={{ fontWeight:"bolder", marginTop:"3px"}}>Esper</span>
         )}
         <span className="leading-8 w-[97%]">
           {isUser || !isNew ? (
