@@ -11,6 +11,7 @@ const emailSchema = z.object({
   to: z.string(),
   patientName: z.string(),
   doctorName: z.string(),
+  notes: z.string(),
 });
 
 export async function POST(req: NextRequest) {
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
 
-    const { uri, to, patientName, doctorName } = emailSchema.parse(
+    const { uri, to, patientName, doctorName, notes } = emailSchema.parse(
       await req.json()
     );
     const msg: sgMail.MailDataRequired = {
@@ -40,6 +41,8 @@ export async function POST(req: NextRequest) {
       dynamicTemplateData: {
         uri,
         patientName,
+        doctorName,
+        notes,
       },
     };
     await sgMail
