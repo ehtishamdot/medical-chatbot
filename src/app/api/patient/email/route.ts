@@ -37,7 +37,6 @@ export async function POST(req: NextRequest) {
       from: "contact@seedinov.com",
       subject: `EsperWise from ${doctorName}`,
       templateId: process.env.SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID,
-      text: "and easy to do anywhere, even with Node.js",
       dynamicTemplateData: {
         uri,
         patientName,
