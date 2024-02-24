@@ -1,11 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-<<<<<<< HEAD
-    baseURL: "https://7701-2407-aa80-14-41fb-7c1f-9980-581e-e3b4.ngrok-free.app/",
-=======
     baseURL: "http://0.0.0.0:8000",
->>>>>>> 658fb8b (chore: patient profile endpoint)
 });
 
 axiosInstance.interceptors.response.use(
