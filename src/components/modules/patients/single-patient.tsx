@@ -4,9 +4,10 @@ import Link from "next/link";
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import PatientsServices from "@/services/patients/patients.service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {Card, CardContent} from "@/components/ui/card";
 import {Chat} from "@/lib/types/chat";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import {Calendar} from "@/components/ui/calendar";
+import {useState} from "react";
 
 
 const chatData: Chat[] = [
@@ -30,6 +31,8 @@ const chatData: Chat[] = [
 const SinglePatient = ({id}:{id:string}) => {
     const {useFetchSinglePatient}=PatientsServices();
     const {data:singlePatientData}=useFetchSinglePatient(id);
+    const [date, setDate] = useState<Date | undefined>(new Date())
+
     return (
         <div className="mx-auto max-w-242.5">
             <Breadcrumb pageName="Patient Profile" />
@@ -130,11 +133,16 @@ const SinglePatient = ({id}:{id:string}) => {
                                 </TabsContent>
                                 <TabsContent value="appointment">
                                     <div
-                                        className="col-span-12 rounded-sm border border-stroke bg-white py-6  dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+                                        className="col-span-12 rounded-sm border border-stroke bg-white py-6  flex flex-col justify-center items-center dark:border-strokedark dark:bg-boxdark xl:col-span-4">
                                         <h4 className="mb-2 px-7.5 text-xl font-semibold text-left text-black dark:text-white">
                                             Appointments
                                         </h4>
-                                        <p className={"px-7.5 text-left"}>No Appointments</p>
+                                        <Calendar
+                                            mode="single"
+                                            selected={date}
+                                            onSelect={setDate}
+                                            className="rounded-md border"
+                                        />
                                     </div>
                                 </TabsContent>
                             </Tabs>
