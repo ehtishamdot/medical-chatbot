@@ -1,8 +1,9 @@
 import SinglePatient from "@/components/modules/patients/single-patient";
 
-const SinglePatientPage=()=>{
+const SinglePatientPage=async ({params}:{params:{patientId:string}})=>{
+    const {patientId}=params;
     return(
-        <SinglePatient/>
+            <SinglePatient id={patientId}/>
     )
 
 }

@@ -41,6 +41,7 @@ export const patientFormSchema = z.object({
         required_error: "Medical History Is Required",
     }),
 })
+
 export const patientSchema = patientFormSchema.omit({ lastName: true });
 
 interface countryType{

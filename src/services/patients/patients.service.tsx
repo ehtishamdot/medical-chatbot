@@ -9,6 +9,8 @@ import {z} from "zod";
 import tokenService from "@/services/token/token.service";
 import {patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";
 import {invitePayloadType} from "@/components/modules/patients/patient-invite-form";
+import {useCallback} from "react";
+import {fetchSinglePatient} from "@/services/patients/patient.api";
 
 export default function PatientsServices() {
 
@@ -40,12 +42,11 @@ export default function PatientsServices() {
         function handleSendInvite(
             data: invitePayloadType,
         ): Promise<invitePayloadType> {
-            return axios.post("/api/patient/email", data).then((res) => res.data);
+            return axios.post("/api/patient/invite", data).then((res) => res.data);
         }
 
         const onSuccess = async () => {
             toast.success("Patient Invited Successfully");
-
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));
@@ -76,11 +77,20 @@ export default function PatientsServices() {
             retry: 0,
         });
     };
+    const useFetchSinglePatient = (id:string) => {
 
+        return useQuery({
+            queryFn: ()=>fetchSinglePatient(id),
+            queryKey: [`patient`,id],
+            retry: 0,
+
+        });
+    };
 
     return {
         useHandleAddPatientService,
         useFetchAllPatients,
-        useHandleSendInvite
+        useHandleSendInvite,
+        useFetchSinglePatient
     };
 }

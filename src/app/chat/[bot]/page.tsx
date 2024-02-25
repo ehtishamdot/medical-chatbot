@@ -95,12 +95,7 @@ export default function Chat() {
       content,
     }));
 
-    httpRequest
-<<<<<<< HEAD:src/app/chat/[bot]/page.tsx
-      .post(`/api/bot/chat?bot=orthopedic`, requestBody)
-=======
-      .post(`/api/bot/chat?bot=${bot}`, requestBody)
->>>>>>> 658fb8b (chore: patient profile endpoint):src/app/chat/page.tsx
+    httpRequest.post(`/api/bot/chat?bot=orthopedic`, requestBody)
       .then(({ data }) => {
         setMessages((prev) => [
           ...prev,
