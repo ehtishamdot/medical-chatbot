@@ -6,11 +6,10 @@ import { httpRequestLocal } from "@/lib/interceptor";
 import Menu from "@/components/Menu";
 import { Loader } from "lucide-react";
 import {phases, phasesApiResponseType} from "@/lib/types/questions";
-import {userType} from "@/lib/types/user";
 import {Card} from "@/components/ui/card";
 
 
-function QuestionsList({user}:{user:userType}) {
+function QuestionsList({id}:{id:string}) {
 
     const [phases, setPhases] = useState<phases[]>([]);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -19,7 +18,7 @@ function QuestionsList({user}:{user:userType}) {
     useEffect(() => {
         httpRequestLocal
             .get(
-                `/api/questions/?specialty=${user.specialty}`
+                `/api/bots/?specialtyId=${id}`
             )
             .then(({ data }:{data:phasesApiResponseType}) => {
                 console.log(data);
@@ -65,7 +64,7 @@ function QuestionsList({user}:{user:userType}) {
     return (
         <div className="question-answer-container p-5 md:w-full lg:w-4/5 xl:w-2/3">
             <h2 className=" text-3xl mb-10 mt-10">
-                Questions For {user?.specialty}
+                {/*Questions For {user?.specialty}*/}
             </h2>
             <div className="flex justify-end mb-3 pr-2">
                 <Button onClick={onUpdateAllPhaseHandler} className={'bg-primary'}>
