@@ -21,8 +21,20 @@ const phaseSchema = z.object({
 export async function PUT(req: NextRequest) {
   try {
     const phases = phaseSchema.array().parse(await req.json());
-    const token = req.cookies.get("accessToken")!.value!;
-    // const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
 
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
@@ -39,12 +51,10 @@ export async function PUT(req: NextRequest) {
                 update: {
                   question: q.question,
                   priority: q.priority,
-                  status: q.status,
                 },
                 create: {
                   question: q.question,
                   priority: q.priority,
-                  status: q.status,
                 },
               })),
             },
@@ -187,8 +197,7 @@ export async function GET(req: NextRequest) {
         error: "Invalid or missing specialty ID.",
       });
     }
-    const currentSpecificity =
-      specificity === "DISEASE_SPECIFIC" ? "diseases" : "generalPhases";
+
     const currentScaler =
       specificity === "DISEASE_SPECIFIC"
         ? {
