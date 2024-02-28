@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     });
     if (!user) throw new ServerError("User not found", 404);
 
-    const apiUrl = `http://0.0.0.0:8000/api/bot/question?specialist=orthopedic`;
+    const apiUrl = `https://a379-119-73-96-30.ngrok-free.app/api/bot/question?specialist=orthopedic`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
