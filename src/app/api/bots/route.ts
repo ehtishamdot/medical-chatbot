@@ -62,6 +62,8 @@ export async function PUT(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const { specialist, specificity, disease } = await req.json();
+    console.log(specialist, specificity, disease);
     const authorizationHeader = req.headers.get("Cookie");
     const refreshTokenStartIndex =
       authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
@@ -84,8 +86,7 @@ export async function POST(req: NextRequest) {
     });
     if (!user) throw new ServerError("User not found", 404);
 
-    const apiUrl = `https://a379-119-73-96-30.ngrok-free.app/api/bot/question?specialist=orthopedic`;
-
+    const apiUrl = `https://a379-119-73-96-30.ngrok-free.app/api/bot/question?specialist=${specialist}&specificity=${specificity}&disease=${disease}`;
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -97,9 +98,7 @@ export async function POST(req: NextRequest) {
       throw new Error(`Error calling API: ${response.statusText}`);
     }
     const responseData = await response.json();
-
-    const { specialist, specificity, phases } = await responseData;
-    if (phases.length === 0) throw new ServerError("Phases are missing", 409);
+    const { phases } = await responseData;
 
     const createdPhases = await Promise.all(
       phases.map(
@@ -115,10 +114,7 @@ export async function POST(req: NextRequest) {
               })
             )
           );
-
-          const phaseType =
-            specificity !== "general" ? "GENERAL" : "DISEASE_SPECIFIC"; // "DISEASE_SPECIFIC " "GENERAL"
-
+          const phaseType = specificity;
           const createdPhase = await prisma.phase.create({
             data: {
               name: phase.name,
@@ -128,7 +124,6 @@ export async function POST(req: NextRequest) {
               phaseType,
             },
           });
-
           return createdPhase;
         }
       )
@@ -138,22 +133,22 @@ export async function POST(req: NextRequest) {
         name: specialist,
         addedByUserId: id,
         countryAndLanguage: user.countryAndLanguage,
-        ...(specificity !== "DISEASE_SPECIFIC"
+        ...(specificity === "DISEASE_SPECIFIC"
           ? {
               diseases: {
                 create: {
                   phases: {
-                    connect: createdPhases.map((createdPhase) => ({
+                    connect: createdPhases.map((createdPhase: { id: any }) => ({
                       id: createdPhase.id,
                     })),
                   },
-                  name: "gandi beemaari",
+                  name: disease,
                 },
               },
             }
           : {
               generalPhases: {
-                connect: createdPhases.map((createdPhase) => ({
+                connect: createdPhases.map((createdPhase: { id: any }) => ({
                   id: createdPhase.id,
                 })),
               },
@@ -161,7 +156,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ createdSpecialty });
+    return NextResponse.json({ ...createdSpecialty, specificity });
   } catch (err) {
     console.error(err);
     return errorHandler(err);
@@ -208,7 +203,7 @@ export async function GET(req: NextRequest) {
             },
           }
         : {
-            [currentSpecificity]: {
+            generalPhases: {
               include: {
                 questions: true,
               },
@@ -218,16 +213,7 @@ export async function GET(req: NextRequest) {
       where: { id },
       include: currentScaler,
     });
-
-    // if (!specialty) {
-    //   return NextResponse.json({ error: "Specialty not found." });
-    // }
-
-    // const phases = name
-    //   ? specialty.diseases[0]?.phases
-    //   : specialty.generalPhases;
-
-    return NextResponse.json(specialty[currentSpecificity]);
+    return NextResponse.json(specialty);
   } catch (err) {
     console.error(err);
     return errorHandler(err);
