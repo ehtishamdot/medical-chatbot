@@ -17,10 +17,15 @@ enum UserRole {
   DOCTOR
 }
 
+enum PhaseType {
+  GENERAL
+  DISEASE_SPECIFIC
+}
+
 model User {
-  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
-  username           String    @unique
-  email              String    @unique
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  username           String      @unique
+  email              String      @unique
   password           String
   specialty          String
   jobTitle           String
@@ -31,9 +36,10 @@ model User {
   preferredLanguage  String
   role               UserRole
   queries            Query[]
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
   Patient            Patient[]
+  Specialty          Specialty[]
 }
 
 model Query {
@@ -47,24 +53,38 @@ model Query {
 }
 
 model Specialty {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  phases Phase[]
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  diseases           Disease[]
+  generalPhases      Phase[]
+  countryAndLanguage String
+  addedByUser        User      @relation(fields: [addedByUserId], references: [id])
+  addedByUserId      String    @db.ObjectId
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Disease {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phases      Phase[]
+  specialty   Specialty @relation(fields: [specialtyId], references: [id])
+  specialtyId String    @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Phase {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  specialtyId String
   questions   Question[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  specialty Specialty @relation(fields: [specialtyId], references: [id])
+  phaseType   PhaseType
+  specialtyId String?
+  specialty   Specialty?  @relation(fields: [specialtyId], references: [id])
+  disease     Disease?   @relation(fields: [diseaseId], references: [id])
+  diseaseId   String?    @db.ObjectId
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Question {
@@ -72,7 +92,6 @@ model Question {
   phaseId  String
   question String
   priority Int
-  status   String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

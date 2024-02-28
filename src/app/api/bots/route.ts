@@ -1,4 +1,5 @@
 import { prisma } from "@/db/config";
+import ServerError from "@/lib/types";
 import { decryptToken, errorHandler, getOpenAIApiInstance } from "@/lib/utils";
 import { deepEqual } from "assert";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,7 +22,7 @@ export async function PUT(req: NextRequest) {
   try {
     const phases = phaseSchema.array().parse(await req.json());
     const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+    // const { userId } = decryptToken(token, process.env.JWT_SECRET!);
 
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
@@ -61,59 +62,106 @@ export async function PUT(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const specialties = await req.json();
-    if (specialties.length === 0) return;
-    const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
 
-    const createdSpecialties = await Promise.all(
-      specialties.map(async (specialty) => {
-        const createdPhases = await Promise.all(
-          specialty.phases.map(async (phase) => {
-            const createdQuestions = await Promise.all(
-              phase.questions.map((q) => ({
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
+    let user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!user) throw new ServerError("User not found", 404);
+
+    const apiUrl = `http://0.0.0.0:8000/api/bot/question?specialist=orthopedic`;
+
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error calling API: ${response.statusText}`);
+    }
+    const responseData = await response.json();
+
+    const { specialist, specificity, phases } = await responseData;
+    if (phases.length === 0) throw new ServerError("Phases are missing", 409);
+
+    const createdPhases = await Promise.all(
+      phases.map(
+        async (phase: {
+          questions: { question: string; priority: number }[];
+          name: string;
+        }) => {
+          const createdQuestions = await Promise.all(
+            phase.questions.map(
+              (q: { question: string; priority: number }) => ({
                 question: q.question,
                 priority: q.priority,
-                status: q.status || "none",
-              }))
-            );
+              })
+            )
+          );
 
-            const createdPhase = await prisma.phase.create({
-              data: {
-                name: phase.phase,
-                specialty: {
-                  create: {
-                    name: specialty.name,
+          const phaseType =
+            specificity !== "general" ? "GENERAL" : "DISEASE_SPECIFIC"; // "DISEASE_SPECIFIC " "GENERAL"
+
+          const createdPhase = await prisma.phase.create({
+            data: {
+              name: phase.name,
+              questions: {
+                create: createdQuestions,
+              },
+              phaseType,
+            },
+          });
+
+          return createdPhase;
+        }
+      )
+    );
+    const createdSpecialty = await prisma.specialty.create({
+      data: {
+        name: specialist,
+        addedByUserId: id,
+        countryAndLanguage: user.countryAndLanguage,
+        ...(specificity !== "DISEASE_SPECIFIC"
+          ? {
+              diseases: {
+                create: {
+                  phases: {
+                    connect: createdPhases.map((createdPhase) => ({
+                      id: createdPhase.id,
+                    })),
                   },
-                },
-                questions: {
-                  create: createdQuestions,
+                  name: "gandi beemaari",
                 },
               },
-            });
+            }
+          : {
+              generalPhases: {
+                connect: createdPhases.map((createdPhase) => ({
+                  id: createdPhase.id,
+                })),
+              },
+            }),
+      },
+    });
 
-            return createdPhase;
-          })
-        );
-
-        console.log(specialty);
-
-        const createdSpecialty = await prisma.specialty.create({
-          data: {
-            name: specialty.name,
-            phases: {
-              connect: createdPhases.map((createdPhase) => ({
-                id: createdPhase.id,
-              })),
-            },
-          },
-        });
-
-        return createdSpecialty;
-      })
-    );
-
-    return NextResponse.json({ createdSpecialties });
+    return NextResponse.json({ createdSpecialty });
   } catch (err) {
     console.error(err);
     return errorHandler(err);
@@ -122,32 +170,98 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const specialty = req.nextUrl.searchParams.get("specialty");
-    if (!specialty) {
-      return NextResponse.status(400).json({
-        error: "Specialty name is required in the query parameters",
-      });
-    }
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
 
-    const phases = await prisma.specialty.findMany({
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
       where: {
-        name: specialty,
-        // phases: {
-        //   gt: 0,
-        // },
-      },
-      include: {
-        phases: {
-          include: {
-            questions: true,
-          },
-        },
+        token: accessToken,
       },
     });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
 
-    return NextResponse.json({ phases });
+    const id = req.nextUrl.searchParams.get("specialtyId");
+    const specificity = req.nextUrl.searchParams.get("specificity");
+    if (!specificity || !id) {
+      return NextResponse.json({
+        error: "Invalid or missing specialty ID.",
+      });
+    }
+    const currentSpecificity =
+      specificity === "DISEASE_SPECIFIC" ? "diseases" : "generalPhases";
+    const currentScaler =
+      specificity === "DISEASE_SPECIFIC"
+        ? {
+            diseases: {
+              include: {
+                phases: {
+                  include: {
+                    questions: true,
+                  },
+                },
+              },
+            },
+          }
+        : {
+            [currentSpecificity]: {
+              include: {
+                questions: true,
+              },
+            },
+          };
+    const specialty = await prisma.specialty.findUnique({
+      where: { id },
+      include: currentScaler,
+    });
+
+    // if (!specialty) {
+    //   return NextResponse.json({ error: "Specialty not found." });
+    // }
+
+    // const phases = name
+    //   ? specialty.diseases[0]?.phases
+    //   : specialty.generalPhases;
+
+    return NextResponse.json(specialty[currentSpecificity]);
   } catch (err) {
     console.error(err);
     return errorHandler(err);
   }
 }
+
+// export async function GET(req: NextRequest) {
+//   try {
+//     const specialty = req.nextUrl.searchParams.get("specialty");
+//     if (!specialty) {
+//       return NextResponse.json({
+//         error: "Specialty name is required in the query parameters",
+//       });
+//     }
+
+//     const phases = await prisma.specialty.findMany({
+//       where: {
+//         name: specialty,
+//         // phases: {
+//         //   gt: 0,
+//         // },
+//       },
+//       include: {
+//         phases: {
+//           include: {
+//             questions: true,
+//           },
+//         },
+//       },
+//     });
+
+//     return NextResponse.json({ phases });
+//   } catch (err) {
+//     console.error(err);
+//     return errorHandler(err);
+//   }
+// }

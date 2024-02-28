@@ -16,7 +16,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const patientId = req.nextUrl.searchParams.get("patientId") as string;
     if (!patientId) throw new ServerError("Patient Id is required", 500);
     const authorizationHeader = req.headers.get("Cookie");
-    console.log(authorizationHeader);
     const refreshTokenStartIndex =
       authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
     if (!refreshTokenStartIndex) {

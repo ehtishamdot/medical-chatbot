@@ -14,6 +14,17 @@ const emailSchema = z.object({
   notes: z.string(),
 });
 
+interface MailDataWithOptionalContentAndTemplate
+  extends Omit<sgMail.MailDataRequired, "content"> {
+  templateId?: string;
+  dynamicTemplateData?: {
+    uri: string;
+    patientName: string;
+    doctorName: string;
+    notes: string;
+  };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const authorizationHeader = req.headers.get("Cookie");
@@ -29,11 +40,10 @@ export async function POST(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
-
     const { uri, to, patientName, doctorName, notes } = emailSchema.parse(
       await req.json()
     );
-    const msg: sgMail.MailDataRequired = {
+    const msg: MailDataWithOptionalContentAndTemplate = {
       to,
       from: "contact@seedinov.com",
       subject: `EsperWise from ${doctorName}`,

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     const { id } = decryptToken(token, process.env.JWT_SECRET!);
 
     const createdSpecialties = await Promise.all(
-      specialties.map(async (specialty) => {
+      specialties.map(async (specialty: { phases: any[]; name: any; }) => {
         const createdPhases = await Promise.all(
           specialty.phases.map(async (phase) => {
             const createdQuestions = await Promise.all(
