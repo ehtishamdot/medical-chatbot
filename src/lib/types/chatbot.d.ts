@@ -1,6 +1,5 @@
 
 export type createChatbotApiResponse = {
-    createdSpecialty:{
         id: string;
         name: string;
         countryAndLanguage: string;
@@ -8,6 +7,4 @@ export type createChatbotApiResponse = {
         createdAt: string;
         updatedAt: string;
         specificity:string;
-    }
-
 };

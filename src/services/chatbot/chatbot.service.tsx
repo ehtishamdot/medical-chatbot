@@ -26,7 +26,7 @@ export default function ChatbotServices() {
         const onSuccess = async (response:createChatbotApiResponse) => {
             toast.success("Bot Created Successfully");
             await queryClient.invalidateQueries({queryKey:["bots"]});
-            router.push(`/chatbots/${response.createdSpecialty.id}`)
+            router.push(`/chatbots/${response.id}?specificity=${response.specificity}`)
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));

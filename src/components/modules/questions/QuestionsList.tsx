@@ -9,7 +9,7 @@ import {phases, phasesApiResponseType} from "@/lib/types/questions";
 import {Card} from "@/components/ui/card";
 
 
-function QuestionsList({id}:{id:string}) {
+function QuestionsList({id,specificity}:{id:string;specificity:string}) {
 
     const [phases, setPhases] = useState<phases[]>([]);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -18,7 +18,7 @@ function QuestionsList({id}:{id:string}) {
     useEffect(() => {
         httpRequestLocal
             .get(
-                `/api/bots/?specialtyId=${id}`
+                `/api/bots/?specialtyId=${id}&specificity=${specificity}`
             )
             .then(({ data }:{data:phasesApiResponseType}) => {
                 console.log(data);

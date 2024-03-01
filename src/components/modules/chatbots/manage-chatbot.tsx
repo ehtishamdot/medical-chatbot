@@ -63,6 +63,11 @@ const chatbotData=[
     }
 ]
 
+enum DISEASE_ENUM{
+    GENERAL="GENERAL",
+    DISEASE_SPECIFIC="DISEASE_SPECIFIC"
+}
+
 export const botSchema = z.object({
     specialist: z.string(),
     specificity: z.string(),
@@ -145,8 +150,8 @@ const ManageChatbot=()=>{
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value={"DISEASE_SPECIFIC"}>Disease Specific</SelectItem>
-                                                        <SelectItem value={"general"}>General</SelectItem>
+                                                        <SelectItem value={DISEASE_ENUM.DISEASE_SPECIFIC}>Disease Specific</SelectItem>
+                                                        <SelectItem value={DISEASE_ENUM.GENERAL}>General</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>
