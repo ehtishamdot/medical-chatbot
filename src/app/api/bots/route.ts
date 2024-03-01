@@ -8,7 +8,6 @@ import { z } from "zod";
 const questionSchema = z.object({
   id: z.string(),
   question: z.string(),
-  status: z.string(),
   priority: z.number(),
 });
 
@@ -18,10 +17,45 @@ const phaseSchema = z.object({
   questions: z.array(questionSchema),
 });
 
+interface Question {
+  id: string;
+  phaseId: string;
+  question: string;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Phase {
+  id: string;
+  name: string;
+  phaseType: string;
+  specialtyId: string | null;
+  diseaseId: string;
+  createdAt: string;
+  updatedAt: string;
+  questions: Question[];
+}
+interface Disease {
+  phases?: Phase[];
+}
+
+interface SpecialtyType {
+  id: string;
+  name: string;
+  countryAndLanguage: string;
+  addedByUserId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  diseases?: Disease[] | any;
+  generalPhases?: Phase[];
+}
+
+type SpecialtyTypeOrNull = SpecialtyType | null;
+
 export async function PUT(req: NextRequest) {
   try {
     const phases = phaseSchema.array().parse(await req.json());
-
     const authorizationHeader = req.headers.get("Cookie");
     const refreshTokenStartIndex =
       authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
@@ -35,7 +69,7 @@ export async function PUT(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
-
+    console.log(phases)
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
         return await prisma.phase.update({
@@ -138,6 +172,46 @@ export async function POST(req: NextRequest) {
         }
       )
     );
+
+    const existingSpecialty = await prisma.specialty.findFirst({
+      where: {
+        name: specialist,
+        addedByUserId: id,
+      },
+    });
+    if (existingSpecialty) {
+      const updatedSpecialty = await prisma.specialty.update({
+        where: {
+          id: existingSpecialty.id,
+        },
+        data: {
+          ...(specificity === "DISEASE_SPECIFIC"
+            ? {
+                diseases: {
+                  create: {
+                    phases: {
+                      connect: createdPhases.map(
+                        (createdPhase: { id: any }) => ({
+                          id: createdPhase.id,
+                        })
+                      ),
+                    },
+                    name: disease,
+                  },
+                },
+              }
+            : {
+                generalPhases: {
+                  connect: createdPhases.map((createdPhase: { id: any }) => ({
+                    id: createdPhase.id,
+                  })),
+                },
+              }),
+        },
+      });
+      return NextResponse.json({ ...updatedSpecialty, specificity });
+    }
+
     const createdSpecialty = await prisma.specialty.create({
       data: {
         name: specialist,
@@ -192,9 +266,14 @@ export async function GET(req: NextRequest) {
 
     const id = req.nextUrl.searchParams.get("specialtyId");
     const specificity = req.nextUrl.searchParams.get("specificity");
-    if (!specificity || !id) {
+    const diseaseId = req.nextUrl.searchParams.get("diseaseId");
+    if (
+      !specificity ||
+      !id
+      // !(diseaseId && specificity === "DISEASE_SPECIFIC")
+    ) {
       return NextResponse.json({
-        error: "Invalid or missing specialty ID.",
+        error: "Invalid or missing something in params.",
       });
     }
 
@@ -202,6 +281,9 @@ export async function GET(req: NextRequest) {
       specificity === "DISEASE_SPECIFIC"
         ? {
             diseases: {
+              where: {
+                id: diseaseId,
+              },
               include: {
                 phases: {
                   include: {
@@ -218,11 +300,28 @@ export async function GET(req: NextRequest) {
               },
             },
           };
-    const specialty = await prisma.specialty.findUnique({
+    const specialty: SpecialtyTypeOrNull = await prisma.specialty.findUnique({
       where: { id },
       include: currentScaler,
     });
-    return NextResponse.json(specialty);
+
+    if (specificity === "DISEASE_SPECIFIC") {
+      const phases = specialty?.diseases[0]?.phases;
+      const disease = specialty?.diseases[0]?.name;
+      return NextResponse.json({
+        ...specialty,
+        phases,
+        diseases: undefined,
+        specificity,
+        disease,
+      });
+    } else {
+      return NextResponse.json({
+        ...specialty,
+        phases: specialty?.generalPhases,
+        generalPhases: undefined,
+      });
+    }
   } catch (err) {
     console.error(err);
     return errorHandler(err);
