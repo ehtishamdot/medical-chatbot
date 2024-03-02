@@ -3,10 +3,9 @@ import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import {cookies} from "next/headers";
 import {notFound} from "next/navigation";
 
-const ChatbotDetails=({params,searchParams}:{params:{id:string};searchParams:{specificity:string}})=>{
+const ChatbotDetails=({params,searchParams}:{params:{id:string};searchParams:{specificity:string;diseaseId:string}})=>{
  const {id}=params;
- const {specificity}=searchParams;
- console.log(specificity,'specificity')
+ const {specificity,diseaseId}=searchParams;
 
  if(!id||!specificity){
      notFound();
@@ -14,7 +13,7 @@ const ChatbotDetails=({params,searchParams}:{params:{id:string};searchParams:{sp
  return(
      <div>
       {/*<Breadcrumb pageName={decodeURIComponent(name)}/>*/}
-      <QuestionsList specificity={specificity} id={id}/>
+      <QuestionsList diseaseId={diseaseId} specificity={specificity} id={id}/>
      </div>
  )
 }

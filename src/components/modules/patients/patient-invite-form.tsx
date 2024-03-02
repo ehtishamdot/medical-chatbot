@@ -50,7 +50,7 @@ export type invitePayloadType={
     notes:string;
     doctorName:string;
 }
-const PatientInviteForm=({email,name}:{email:string;name:string})=>{
+const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>{
     const form = useForm<z.infer<typeof InviteSchema>>({
         resolver: zodResolver(InviteSchema),
     })
@@ -58,7 +58,6 @@ const PatientInviteForm=({email,name}:{email:string;name:string})=>{
     const {mutate:sendInvite}=useHandleSendInvite();
     const type=form.watch("type");
     const user=TokenService.getUser();
-
     function onSubmit(data: z.infer<typeof InviteSchema>) {
         let uri="http://localhost:3000/chat/";
         if(data.specialty&&data.type==="specialized"){
@@ -67,6 +66,7 @@ const PatientInviteForm=({email,name}:{email:string;name:string})=>{
         else{
             uri+=data.type
         }
+        uri+=`?doctorId=${user?.id}&patientId=${id}`
         sendInvite({
             to:email,
             uri:uri,
@@ -75,7 +75,6 @@ const PatientInviteForm=({email,name}:{email:string;name:string})=>{
             notes:data.notes
         })
     }
-
     return(
     <Dialog>
     <DialogTrigger asChild>

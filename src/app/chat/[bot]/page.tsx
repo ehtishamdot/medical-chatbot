@@ -5,16 +5,15 @@ import Message, { Skeleton } from "@/components/Message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { httpRequest, httpRequestLocal } from "@/lib/interceptor";
-import axios, { AxiosError } from "axios";
+import { httpRequest } from "@/lib/interceptor";
+import { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { v4 as idGen } from "uuid";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
 import "./index.css";
-import { decryptToken } from "@/lib/utils";
-import {usePathname} from "next/navigation";
+import {notFound, usePathname} from "next/navigation";
+import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
 
 type Message = {
   id: string;
@@ -28,7 +27,12 @@ interface IHistory {
   content: string;
 }
 
-export default function Chat() {
+export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{doctorId:string;patientId:string}}) {
+  const {bot}=params;
+  const {doctorId,patientId}=searchParams;
+  if(!bot||!doctorId||!patientId){
+    notFound();
+  }
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("Hello");
   const [loading, setLoading] = useState(true);
@@ -39,6 +43,7 @@ export default function Chat() {
   const [warningModal, setWarningModal] = useState<Boolean>(false);
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
+  const [allowed,setAllowed]=useState(false);
 
   useEffect(() => {
     httpRequest
@@ -135,92 +140,95 @@ export default function Chat() {
   useEffect(updateScroll, [messages]);
   const pathname=usePathname();
   return (
-    <div>
-      <Menu clear={clear} />
-      <div className="input w-full flex flex-col justify-between h-screen">
-        <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
-          <p className="text-3xl font-semibold">Esper Wise</p>
-          <p className="text-3xl text-primary font-semibold">{pathname.split("/")[2]}</p>
-        </div>
-
-
-        <>
-          <div
-              className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
-              ref={scrollRef}
-            >
-              {messages.map((message) => (
-                <Message
-                  key={message.id}
-                  id={message.id}
-                  isUser={message.isUser}
-                  message={!message.message ? "Hello" : message.message}
-                  isNew={message.isNew ?? false}
-                />
-              ))}
-              {loading && <Skeleton />}
+      <>
+        {allowed ? <div>
+          <Menu clear={clear}/>
+          <div className="input w-full flex flex-col justify-between h-screen">
+            <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
+              <p className="text-3xl font-semibold">Esper Wise</p>
+              <p className="text-3xl text-primary font-semibold">{pathname.split("/")[2]}</p>
             </div>
-            <div className="w-[50%] max-[900px]:w-[90%] flex flex-row items-center gap-3 mx-auto mt-auto pb-6">
-              <Input
-                onKeyDown={(e) => {
-                  if (e.keyCode == 13 && message) {
-                    handleEmit();
-                  }
-                }}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Send a message"
-                className="h-12"
-              />
-              <Button
-                disabled={!message}
-                onClick={handleEmit}
-                className="font-semibold"
+
+
+            <>
+              <div
+                  className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
+                  ref={scrollRef}
               >
-                Send
-              </Button>
-            </div>
-          </>
-
-      </div>
-
-      <AlertDialog.Root open={warningModal}>
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay className="AlertDialogOverlay" />
-          <AlertDialog.Content className="AlertDialogContent">
-            <AlertDialog.Title className="AlertDialogTitle">
-              Are you sure?
-            </AlertDialog.Title>
-            <AlertDialog.Description className="AlertDialogDescription">
-              This action cannot be undone. This will permanently delete your
-              previous conversation with the bot!
-            </AlertDialog.Description>
-            <div
-              style={{ display: "flex", gap: 25, justifyContent: "flex-end" }}
-            >
-              <AlertDialog.Cancel asChild>
-                <button
-                  className="Button mauve"
-                  onClick={() => setWarningModal(false)}
+                {messages.map((message) => (
+                    <Message
+                        key={message.id}
+                        id={message.id}
+                        isUser={message.isUser}
+                        message={!message.message ? "Hello" : message.message}
+                        isNew={message.isNew ?? false}
+                    />
+                ))}
+                {loading && <Skeleton/>}
+              </div>
+              <div className="w-[50%] max-[900px]:w-[90%] flex flex-row items-center gap-3 mx-auto mt-auto pb-6">
+                <Input
+                    onKeyDown={(e) => {
+                      if (e.keyCode == 13 && message) {
+                        handleEmit();
+                      }
+                    }}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Send a message"
+                    className="h-12"
+                />
+                <Button
+                    disabled={!message}
+                    onClick={handleEmit}
+                    className="font-semibold"
                 >
-                  Cancel
-                </button>
-              </AlertDialog.Cancel>
-              <AlertDialog.Action asChild>
-                <button
-                  onClick={() => {
-                    // setBot(preConfirmationBot);
-                    setWarningModal(false);
-                  }}
-                  className="Button red"
+                  Send
+                </Button>
+              </div>
+            </>
+
+          </div>
+
+          <AlertDialog.Root open={warningModal}>
+            <AlertDialog.Portal>
+              <AlertDialog.Overlay className="AlertDialogOverlay"/>
+              <AlertDialog.Content className="AlertDialogContent">
+                <AlertDialog.Title className="AlertDialogTitle">
+                  Are you sure?
+                </AlertDialog.Title>
+                <AlertDialog.Description className="AlertDialogDescription">
+                  This action cannot be undone. This will permanently delete your
+                  previous conversation with the bot!
+                </AlertDialog.Description>
+                <div
+                    style={{display: "flex", gap: 25, justifyContent: "flex-end"}}
                 >
-                  Confirm
-                </button>
-              </AlertDialog.Action>
-            </div>
-          </AlertDialog.Content>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
-    </div>
+                  <AlertDialog.Cancel asChild>
+                    <button
+                        className="Button mauve"
+                        onClick={() => setWarningModal(false)}
+                    >
+                      Cancel
+                    </button>
+                  </AlertDialog.Cancel>
+                  <AlertDialog.Action asChild>
+                    <button
+                        onClick={() => {
+                          // setBot(preConfirmationBot);
+                          setWarningModal(false);
+                        }}
+                        className="Button red"
+                    >
+                      Confirm
+                    </button>
+                  </AlertDialog.Action>
+                </div>
+              </AlertDialog.Content>
+            </AlertDialog.Portal>
+          </AlertDialog.Root>
+        </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
+      </>
+
   );
 }

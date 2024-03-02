@@ -57,7 +57,7 @@ export const PATIENT_COLS: ColumnDef<PatientType>[] = [
             return(
                <div className={"flex justify-center gap-4 items-center"}>
                    <Link className={"text-graydark"} href={`/patient/view/${row.original.id}`}><Eye/></Link>
-                   <PatientInviteForm email={row.original.email} name={row.original.name}/>
+                   <PatientInviteForm id={row.original.id} email={row.original.email} name={row.original.name}/>
                </div>
            )
         },

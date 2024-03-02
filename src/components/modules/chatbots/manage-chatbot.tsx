@@ -1,11 +1,8 @@
 
 "use client";
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
-import {Switch} from "@/components/ui/switch";
 import {
     Card,
-    CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -16,12 +13,10 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {Label} from "@/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -29,17 +24,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {patientFormSchema} from "@/components/modules/patients/add-patient-form";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import Cookies from "js-cookie";
 import {userType} from "@/lib/types/user";
 import {Input} from "@/components/ui/input";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
+import LoadingPage from "@/components/common/loaders/loading-page";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 const chatbotData=[
     {
         name:"Esper 01",
@@ -63,7 +58,7 @@ const chatbotData=[
     }
 ]
 
-enum DISEASE_ENUM{
+export enum DISEASE_ENUM{
     GENERAL="GENERAL",
     DISEASE_SPECIFIC="DISEASE_SPECIFIC"
 }
@@ -79,7 +74,6 @@ export const botSchema = z.object({
     return true;
 });
 const ManageChatbot=()=>{
-    const router=useRouter();
     const form = useForm<z.infer<typeof botSchema>>({
         resolver: zodResolver(botSchema),
         mode:"onChange"
@@ -90,10 +84,14 @@ const ManageChatbot=()=>{
         unparsedUserData=JSON.parse(userData);
     }
     const specificity=form.watch("specificity")
-    const {useHandleAddChatbotService}=ChatbotServices();
-    const {mutate:handleCreateChatbot}=useHandleAddChatbotService();
+    const {useHandleAddChatbotService,useFetchAllChatbots}=ChatbotServices();
+    const {mutate:handleCreateChatbot,isPending:isHandleCreateChatbotPending}=useHandleAddChatbotService();
     function onSubmit(data: z.infer<typeof botSchema>) {
       handleCreateChatbot(data)
+    }
+    const {data:chatbotData,isLoading:isChatbotDataLoading}=useFetchAllChatbots();
+    if(isChatbotDataLoading){
+        return <LoadingPage/>
     }
     return(
         <div>
@@ -101,7 +99,8 @@ const ManageChatbot=()=>{
             <div className={'flex w-full justify-end'}>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className={'bg-primary text-white hover:bg-black-2 hover:text-white'} variant="outline">Create A Chatbot</Button>
+                        <Button className={'bg-primary text-white hover:bg-black-2 hover:text-white'} variant="outline">Create
+                            A Chatbot</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">
                         <DialogHeader>
@@ -128,7 +127,8 @@ const ManageChatbot=()=>{
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
+                                                        <SelectItem
+                                                            value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>
@@ -150,31 +150,32 @@ const ManageChatbot=()=>{
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value={DISEASE_ENUM.DISEASE_SPECIFIC}>Disease Specific</SelectItem>
-                                                        <SelectItem value={DISEASE_ENUM.GENERAL}>General</SelectItem>
+                                                        <SelectItem value={DISEASE_ENUM.DISEASE_SPECIFIC}>Disease
+                                                            Specific</SelectItem>
+                                                        {(!chatbotData?.generalPhases||chatbotData.generalPhases.length<=0)&&<SelectItem value={DISEASE_ENUM.GENERAL}>General</SelectItem>}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
-                                    {specificity==="DISEASE_SPECIFIC"&&<FormField
+                                    {specificity === "DISEASE_SPECIFIC" && <FormField
                                         control={form.control}
                                         name="disease"
                                         render={({field}) => (
                                             <FormItem className={'mb-5.5'}>
                                                 <FormLabel>Disease</FormLabel>
                                                 <FormControl>
-                                                    <Input  type={"text"}
-                                                            className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}
-                                                            placeholder="Enter Disease" {...field} />
+                                                    <Input type={"text"}
+                                                           className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}
+                                                           placeholder="Enter Disease" {...field} />
                                                 </FormControl>
                                                 <FormMessage/>
                                             </FormItem>
                                         )}
                                     />}
-                                    <Button  className={'bg-primary'} type={"submit"}>
-                                        Proceed
+                                    <Button className={'bg-primary'} type={"submit"}>
+                                        {isHandleCreateChatbotPending?<DefaultLoader/>:"Proceed"}
                                     </Button>
                                 </form>
                             </Form>
@@ -182,21 +183,42 @@ const ManageChatbot=()=>{
                     </DialogContent>
                 </Dialog>
             </div>
-
+            <h2 className={"text-2xl font-[700]"}>General</h2>
             <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
-                {chatbotData.map((el,index)=>{
-                    return(
+                {chatbotData?.generalPhases?.map((el, index) => {
+                    return (
                         <Card key={index} className="w-[350px]">
                             <CardHeader>
                                 <CardTitle className={'flex justify-between'}>
                                     {el.name}
-                                    <Switch/>
+                                    {/*<Switch/>*/}
                                 </CardTitle>
-                                <CardDescription>{el.type}</CardDescription>
+                                {/*<CardDescription>{el.type}</CardDescription>*/}
                             </CardHeader>
                             <CardFooter className="flex justify-between">
                                 <Button className={'bg-primary'}>
-                                    <Link href={`/chatbots/${el.name}`}>Manage</Link>
+                                    <Link href={`/chatbots/${el.specialtyId}?specificity=GENERAL`}>Manage</Link>
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    )
+                })}
+            </div>
+            <h2 className={"text-2xl font-[700] mt-10"}>Disease Specific</h2>
+            <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
+                {chatbotData?.diseases?.map((el, index) => {
+                    return (
+                        <Card key={index} className="w-[350px]">
+                            <CardHeader>
+                                <CardTitle className={'flex justify-between'}>
+                                    {el.name}
+                                    {/*<Switch/>*/}
+                                </CardTitle>
+                                {/*<CardDescription>{el.type}</CardDescription>*/}
+                            </CardHeader>
+                            <CardFooter className="flex justify-between">
+                                <Button className={'bg-primary'}>
+                                    <Link href={`/chatbots/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Manage</Link>
                                 </Button>
                             </CardFooter>
                         </Card>

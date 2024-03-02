@@ -59,6 +59,28 @@ export default function PatientsServices() {
             retry: 0,
         });
     };
+    const useHandlePatientVerification = (callback:()=>void) => {
+        function handleSendInvite(
+            data: {email:string},
+        ): Promise<invitePayloadType> {
+            return axios.post("/api/patient/verify", data).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Patient Verified Successfully");
+            callback();
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleSendInvite,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
     const useFetchAllPatients = () => {
         function fetchPatients(): Promise<z.infer<typeof patientSchema>[]> {
             return axios.get("/api/patient").then((res) => res.data);
@@ -91,6 +113,7 @@ export default function PatientsServices() {
         useHandleAddPatientService,
         useFetchAllPatients,
         useHandleSendInvite,
-        useFetchSinglePatient
+        useFetchSinglePatient,
+        useHandlePatientVerification
     };
 }

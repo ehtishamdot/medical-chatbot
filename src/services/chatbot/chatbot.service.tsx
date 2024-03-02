@@ -6,11 +6,10 @@ import {viewError} from "@/lib/helpers";
 import {errorType} from "@/lib/types";
 import {z} from "zod";
 import {patientSchema} from "@/components/modules/patients/add-patient-form";
-import {invitePayloadType} from "@/components/modules/patients/patient-invite-form";
 import {fetchSinglePatient} from "@/services/patients/patient.api";
-import {botSchema} from "@/components/modules/chatbots/manage-chatbot";
+import {botSchema, DISEASE_ENUM} from "@/components/modules/chatbots/manage-chatbot";
 import {useRouter} from "next/navigation";
-import {createChatbotApiResponse} from "@/lib/types/chatbot";
+import {createChatbotApiResponse, fetchAllChatbotsApiResponse} from "@/lib/types/chatbot";
 
 export default function ChatbotServices() {
 
@@ -26,7 +25,12 @@ export default function ChatbotServices() {
         const onSuccess = async (response:createChatbotApiResponse) => {
             toast.success("Bot Created Successfully");
             await queryClient.invalidateQueries({queryKey:["bots"]});
-            router.push(`/chatbots/${response.id}?specificity=${response.specificity}`)
+            if(response.specificity===DISEASE_ENUM.DISEASE_SPECIFIC){
+                router.push(`/chatbots/${response.id}?specificity=${response.specificity}&diseaseId=${response.diseaseId}`)
+            }
+            else{
+                router.push(`/chatbots/${response.id}?specificity=${response.specificity}`)
+            }
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));
@@ -39,59 +43,33 @@ export default function ChatbotServices() {
             retry: 0,
         });
     };
-    const useHandleSendInvite = () => {
-        function handleSendInvite(
-            data: invitePayloadType,
-        ): Promise<invitePayloadType> {
-            return axios.post("/api/patient/invite", data).then((res) => res.data);
+
+    const useFetchAllChatbots = () => {
+        function fetchChatbots(): Promise<fetchAllChatbotsApiResponse> {
+            return axios.get("/api/bots/all").then((res) => res.data);
         }
 
-        const onSuccess = async () => {
-            toast.success("Patient Invited Successfully");
-        };
-        const onError = (error: errorType) => {
-            toast.error(viewError(error));
-        };
-
-        return useMutation({
-            mutationFn: handleSendInvite,
-            onError,
-            onSuccess,
+        return useQuery({
+            queryFn: fetchChatbots,
+            queryKey: [`chatbots`],
             retry: 0,
         });
     };
-    const useFetchAllPatients = () => {
-        function fetchPatients(): Promise<z.infer<typeof patientSchema>[]> {
-            return axios.get("/api/patient").then((res) => res.data);
+    const useFetchAllChatbotQuestions = () => {
+        function fetchChatbots(): Promise<fetchAllChatbotsApiResponse> {
+            return axios.get("/api/bots/all").then((res) => res.data);
         }
 
-        const onSuccess = async () => {
-            toast.success("Patient Created Successfully");
-        };
-        const onError = (error: errorType) => {
-            toast.error(viewError(error));
-        };
-
         return useQuery({
-            queryFn: fetchPatients,
-            queryKey: [`patients`],
+            queryFn: fetchChatbots,
+            queryKey: [`chatbots`],
             retry: 0,
-        });
-    };
-    const useFetchSinglePatient = (id:string) => {
-
-        return useQuery({
-            queryFn: ()=>fetchSinglePatient(id),
-            queryKey: [`patient`,id],
-            retry: 0,
-
         });
     };
 
     return {
         useHandleAddChatbotService,
-        useFetchAllPatients,
-        useHandleSendInvite,
-        useFetchSinglePatient
+        useFetchAllChatbots,
+        useFetchAllChatbotQuestions
     };
 }

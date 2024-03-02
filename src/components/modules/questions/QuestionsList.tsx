@@ -7,30 +7,41 @@ import Menu from "@/components/Menu";
 import { Loader } from "lucide-react";
 import {phases, phasesApiResponseType} from "@/lib/types/questions";
 import {Card} from "@/components/ui/card";
+import DefaultLoader from "@/components/common/loaders/default-loader";
+import LoadingPage from "@/components/common/loaders/loading-page";
 
 
-function QuestionsList({id,specificity}:{id:string;specificity:string}) {
+function QuestionsList({id,specificity,diseaseId}:{id:string;specificity:string;diseaseId:string|undefined}) {
 
     const [phases, setPhases] = useState<phases[]>([]);
+    const [title,setTitle]=useState("");
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isLoading,setIsLoading]=useState(true);
 
 
     useEffect(() => {
+        setIsLoading(true);
+        let url=`/api/bots/?specialtyId=${id}&specificity=${specificity}`
+        if(diseaseId){
+            url+=`&diseaseId=${diseaseId}`
+        }
         httpRequestLocal
             .get(
-                `/api/bots/?specialtyId=${id}&specificity=${specificity}`
+              url
             )
             .then(({ data }:{data:phasesApiResponseType}) => {
                 console.log(data);
                 const phasesData = data.phases.filter(
-                    (phase) => phase.phases.length > 0
-                )[0]?.phases;
+                    (phase) => phase.questions.length > 0
+                );
                 console.log(phasesData);
+                setTitle(data.name)
                 setPhases(phasesData);
             })
             .catch((err) => {
             })
             .finally(() => {
+                setIsLoading(false);
             });
     }, []);
 
@@ -47,7 +58,7 @@ function QuestionsList({id,specificity}:{id:string;specificity:string}) {
     const onUpdateAllPhaseHandler = (data: any) => {
         setIsUpdating(true);
         httpRequestLocal
-            .put("/api/questions", phases)
+            .put("/api/bots", phases)
             .then(({ data }) => {
                 console.log(data);
                 setIsUpdating(false);
@@ -59,16 +70,18 @@ function QuestionsList({id,specificity}:{id:string;specificity:string}) {
             });
     };
 
-    console.log(phases);
+    if(isLoading){
+        return <LoadingPage/>
+    }
 
     return (
         <div className="question-answer-container p-5 md:w-full lg:w-4/5 xl:w-2/3">
-            <h2 className=" text-3xl mb-10 mt-10">
-                {/*Questions For {user?.specialty}*/}
-            </h2>
+            {title!==""&&<h2 className=" text-3xl mb-10 mt-10">
+                Questions For {title}
+            </h2>}
             <div className="flex justify-end mb-3 pr-2">
                 <Button onClick={onUpdateAllPhaseHandler} className={'bg-primary'}>
-                    {isUpdating ? <Loader /> : "Update All"}
+                    {isUpdating ? <DefaultLoader /> : "Update All"}
                 </Button>
             </div>
             <Menu />

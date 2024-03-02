@@ -243,7 +243,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
         <>
             <form onSubmit={handleAddQuestion} className="flex gap-2">
                 <div className="flex justify-between items-center w-full mb-8">
-                    <h2 className="p-2 py-4 w-15 text-2xl">{phase.name}</h2>
+                    <h2 className="p-2 py-4 w-fit text-2xl">{phase.name}</h2>
                     <Button type="submit" className={'bg-primary'}>
                         Add Question
                     </Button>
