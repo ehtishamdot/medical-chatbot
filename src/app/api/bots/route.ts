@@ -69,7 +69,7 @@ export async function PUT(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
-    console.log(phases)
+    console.log(phases);
     const updatedPhases = await Promise.all(
       phases.map(async (phase) => {
         return await prisma.phase.update({
@@ -208,8 +208,27 @@ export async function POST(req: NextRequest) {
                 },
               }),
         },
+        select: {
+          id: true,
+          diseases: Boolean(specificity === "DISEASE_SPECIFIC") && {
+            select: {
+              id: true,
+            },
+            orderBy: {
+              createdAt: "desc", // Sort by creation date in descending order
+            },
+            take: 1, // Limit to only the first disease
+          },
+        },
       });
-      return NextResponse.json({ ...updatedSpecialty, specificity });
+      return NextResponse.json({
+        ...updatedSpecialty,
+        specificity,
+        diseaseId: Boolean(specificity === "DISEASE_SPECIFIC")
+          ? updatedSpecialty?.diseases[0]?.id
+          : undefined,
+        diseases: undefined,
+      });
     }
 
     const createdSpecialty = await prisma.specialty.create({
@@ -222,7 +241,7 @@ export async function POST(req: NextRequest) {
               diseases: {
                 create: {
                   phases: {
-                    connect: createdPhases.map((createdPhase: { id: any }) => ({
+                    connect: createdPhases.map((createdPhase) => ({
                       id: createdPhase.id,
                     })),
                   },
@@ -232,15 +251,32 @@ export async function POST(req: NextRequest) {
             }
           : {
               generalPhases: {
-                connect: createdPhases.map((createdPhase: { id: any }) => ({
+                connect: createdPhases.map((createdPhase) => ({
                   id: createdPhase.id,
                 })),
               },
             }),
       },
+      select: {
+        id: true,
+        diseases: Boolean(specificity === "DISEASE_SPECIFIC") && {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ ...createdSpecialty, specificity });
+    console.log(createdSpecialty);
+
+    return NextResponse.json({
+      ...createdSpecialty,
+      specificity,
+      diseaseId: Boolean(specificity === "DISEASE_SPECIFIC")
+        ? createdSpecialty?.diseases[0]?.id
+        : undefined,
+      diseases: undefined,
+    });
   } catch (err) {
     console.error(err);
     return errorHandler(err);
