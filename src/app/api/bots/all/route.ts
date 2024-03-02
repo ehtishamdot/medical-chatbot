@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
             generalPhases: true,
           },
         },
+        
       },
     });
     return NextResponse.json(specialty?.Specialty[0]);
