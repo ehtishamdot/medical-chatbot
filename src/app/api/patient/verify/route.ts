@@ -29,7 +29,11 @@ export async function POST(req: NextRequest) {
         addedByUserId: id,
       },
     });
-    return NextResponse.json(availablePatientStatus);
+
+    if (availablePatientStatus) {
+      return NextResponse.json(availablePatientStatus);
+    }
+    throw new ServerError("Unauthorized", 401);
   } catch (err) {
     console.error(err);
     return errorHandler(err);
