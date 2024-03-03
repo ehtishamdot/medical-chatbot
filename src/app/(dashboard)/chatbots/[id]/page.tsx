@@ -1,6 +1,4 @@
 import QuestionsList from "@/components/modules/questions/QuestionsList";
-import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
-import {cookies} from "next/headers";
 import {notFound} from "next/navigation";
 
 const ChatbotDetails=({params,searchParams}:{params:{id:string};searchParams:{specificity:string;diseaseId:string}})=>{
@@ -10,9 +8,11 @@ const ChatbotDetails=({params,searchParams}:{params:{id:string};searchParams:{sp
  if(!id||!specificity){
      notFound();
  }
+ if(specificity==="DISEASE_SPECIFIC"&&!diseaseId){
+     notFound();
+ }
  return(
      <div>
-      {/*<Breadcrumb pageName={decodeURIComponent(name)}/>*/}
       <QuestionsList diseaseId={diseaseId} specificity={specificity} id={id}/>
      </div>
  )

@@ -2,11 +2,9 @@
 import React from "react";
 import ChartOne from "@/components/widgets/charts/ChartOne";
 import ChartThree from "@/components/widgets/charts/ChartThree";
-import ChartTwo from "@/components/widgets/charts/ChartTwo";
 import ChatCard from "@/components/widgets/chat/ChatCard";
-import TableOne from "@/components/common/tables/TableOne";
 import CardDataStats from "@/components/common/cards/CardDataStats";
-import MapOne from "@/components/widgets/maps/MapOne";
+import PatientsOverviewTable from "@/components/common/tables/TableOne";
 
 const DashboardPage: React.FC = () => {
     return (
@@ -112,7 +110,7 @@ const DashboardPage: React.FC = () => {
 
 
                 <div className="col-span-12 xl:col-span-8">
-                    <TableOne/>
+                    <PatientsOverviewTable/>
                 </div>
                 <ChatCard/>
             </div>

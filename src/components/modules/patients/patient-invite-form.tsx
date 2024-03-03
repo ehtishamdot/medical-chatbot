@@ -30,6 +30,7 @@ import {httpRequest} from "@/lib/interceptor";
 import {text} from "node:stream/consumers";
 import {userType} from "@/lib/types/user";
 import Cookies from "js-cookie";
+import ChatbotServices from "@/services/chatbot/chatbot.service";
 
 
 export const InviteSchema = z.object({
@@ -39,7 +40,8 @@ export const InviteSchema = z.object({
     specialty:z.string().optional(),
     notes:z.string({
         required_error: "Notes Are Required",
-    })
+    }),
+    diseaseId:z.string()
 
 }).superRefine(({ type, specialty }, refinementContext) => {
     if ((type !== 'general' && specialty === undefined)) {
@@ -47,6 +49,13 @@ export const InviteSchema = z.object({
             code: z.ZodIssueCode.custom,
             message: "Specialty is required for specialized bots",
             path: ['specialty'],
+        });
+    }
+    if ((type !== 'general' && specialty === undefined)) {
+        return refinementContext.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Disease ID is required for specialized bots",
+            path: ['diseaseId'],
         });
     }
 });
@@ -58,10 +67,9 @@ export type invitePayloadType={
     doctorName:string;
 }
 
-const getTranslatedText=(text:string)=>{
-    return text;
-}
 const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>{
+    const {useFetchAllChatbots}=ChatbotServices();
+    const {data:chatbotData}=useFetchAllChatbots();
     const form = useForm<z.infer<typeof InviteSchema>>({
         resolver: zodResolver(InviteSchema),
     })
@@ -95,12 +103,15 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
             uri+=data.type
         }
         uri+=`?doctorId=${user?.id}&patientId=${id}`
+        if(data.specialty&&data.type==="specialized"){
+            uri+=`&diseaseId=${data.diseaseId}`
+        }
         setFormData({
             to:email,
             uri:uri,
             patientName:name,
             doctorName:user?.username||"",
-            notes:data.notes
+            notes:data.notes,
         })
     }
     return(
@@ -168,6 +179,30 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                                     {/*<SelectItem value="neurologist">Neurologist</SelectItem>*/}
                                     <SelectItem
                                         value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />}
+                {type==="specialized"&&<FormField
+                    control={form.control}
+                    name="diseaseId"
+                    render={({ field }) => (
+                        <FormItem className={'mb-5.5'}>
+                            <FormLabel>Diseases</FormLabel>
+                            <Select {...field} onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}>
+                                        <SelectValue placeholder="Select diseases" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {chatbotData?.diseases.map((el,index)=>{
+                                        return(
+                                            <SelectItem key={el.id} value={el.id}>{el.name}</SelectItem>
+                                        )
+                                    })}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
