@@ -183,7 +183,7 @@ const ManageChatbot=()=>{
                     </DialogContent>
                 </Dialog>
             </div>
-            <h2 className={"text-2xl font-[700]"}>General</h2>
+            <h2 className={"text-2xl font-[700]"}>General Phases</h2>
             <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
                 {chatbotData?.generalPhases?.map((el, index) => {
                     return (

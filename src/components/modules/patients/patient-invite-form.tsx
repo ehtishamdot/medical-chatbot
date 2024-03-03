@@ -28,6 +28,8 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {httpRequest} from "@/lib/interceptor";
 import {text} from "node:stream/consumers";
+import {userType} from "@/lib/types/user";
+import Cookies from "js-cookie";
 
 
 export const InviteSchema = z.object({
@@ -63,6 +65,11 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     const form = useForm<z.infer<typeof InviteSchema>>({
         resolver: zodResolver(InviteSchema),
     })
+    let unparsedUserData:userType;
+    const userData=Cookies.get("user");
+    if(userData){
+        unparsedUserData=JSON.parse(userData);
+    }
     const {useHandleSendInvite}=PatientsServices();
     const {mutate:sendInvite}=useHandleSendInvite();
     const type=form.watch("type");
@@ -157,8 +164,10 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="orthopedic">Orthopedic</SelectItem>
-                                    <SelectItem value="neurologist">Neurologist</SelectItem>
+                                    {/*<SelectItem value="orthopedic">Orthopedic</SelectItem>*/}
+                                    {/*<SelectItem value="neurologist">Neurologist</SelectItem>*/}
+                                    <SelectItem
+                                        value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
