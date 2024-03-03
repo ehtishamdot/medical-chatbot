@@ -23,6 +23,11 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import TokenService from "@/services/token/token.service";
 import PatientsServices from "@/services/patients/patients.service";
 import {Textarea} from "@/components/ui/textarea";
+import TranslationService from "@/services/translations/translation.service";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {httpRequest} from "@/lib/interceptor";
+import {text} from "node:stream/consumers";
 
 
 export const InviteSchema = z.object({
@@ -50,6 +55,10 @@ export type invitePayloadType={
     notes:string;
     doctorName:string;
 }
+
+const getTranslatedText=(text:string)=>{
+    return text;
+}
 const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>{
     const form = useForm<z.infer<typeof InviteSchema>>({
         resolver: zodResolver(InviteSchema),
@@ -58,7 +67,19 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     const {mutate:sendInvite}=useHandleSendInvite();
     const type=form.watch("type");
     const user=TokenService.getUser();
-    function onSubmit(data: z.infer<typeof InviteSchema>) {
+    const {useHandleGetTranslatedText}=TranslationService();
+    const [formData,setFormData]=useState<invitePayloadType>();
+    const {mutate: handleGetTranslatedText,data:translationResponse,isPending:isTranslatedTextPending,isSuccess:isTextTranslationSuccess}=useHandleGetTranslatedText();
+    useEffect(()=>{
+        if(isTextTranslationSuccess&&formData){
+            sendInvite({
+                ...formData,
+                notes:translationResponse?.message
+            })
+        }
+    },[isTextTranslationSuccess,isTranslatedTextPending])
+    async function onSubmit(data: z.infer<typeof InviteSchema>) {
+        handleGetTranslatedText({message:data.notes});
         let uri="http://localhost:3000/chat/";
         if(data.specialty&&data.type==="specialized"){
             uri+=data.specialty
@@ -67,7 +88,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
             uri+=data.type
         }
         uri+=`?doctorId=${user?.id}&patientId=${id}`
-        sendInvite({
+        setFormData({
             to:email,
             uri:uri,
             patientName:name,
