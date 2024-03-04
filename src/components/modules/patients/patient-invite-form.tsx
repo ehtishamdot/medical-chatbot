@@ -38,7 +38,7 @@ export const InviteSchema = z.object({
     notes:z.string({
         required_error: "Notes Are Required",
     }),
-    diseaseId:z.string()
+    diseaseId:z.string().optional()
 
 }).superRefine(({ type, specialty }, refinementContext) => {
     if ((type !== 'general' && specialty === undefined)) {
