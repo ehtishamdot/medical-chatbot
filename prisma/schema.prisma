@@ -79,8 +79,8 @@ model Phase {
   name        String
   questions   Question[]
   phaseType   PhaseType
-  specialtyId String     @db.ObjectId //#TODO
-  specialty   Specialty? @relation(fields: [specialtyId], references: [id])
+  specialtyId String?    @db.ObjectId //#TODO
+  specialty   Specialty?  @relation(fields: [specialtyId], references: [id])
   disease     Disease?   @relation(fields: [diseaseId], references: [id])
   diseaseId   String?    @db.ObjectId
   createdAt   DateTime   @default(now())
