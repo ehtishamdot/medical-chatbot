@@ -27,10 +27,12 @@ interface IHistory {
   content: string;
 }
 
-export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{doctorId:string;patientId:string}}) {
+export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{patient_id:string;disease_bot_id:string}}) {
   const {bot}=params;
-  const {doctorId,patientId}=searchParams;
-  if(!bot||!doctorId||!patientId){
+  console.log(params)
+  console.log(searchParams)
+  const {patient_id,disease_bot_id}=searchParams;
+  if(!bot||!patient_id){
     notFound();
   }
   const [messages, setMessages] = useState<Message[]>([]);
@@ -100,7 +102,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
       content,
     }));
 
-    httpRequest.post(`/api/bot/chat?bot=orthopedic`, requestBody)
+    httpRequest.post(`/api/bot/chat?patient_id=${patient_id}&specialty_id=${bot}${disease_bot_id?`&disease_bot_id=${disease_bot_id}`:""}`, requestBody)
       .then(({ data }) => {
         setMessages((prev) => [
           ...prev,
@@ -146,9 +148,8 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
           <div className="input w-full flex flex-col justify-between h-screen">
             <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
               <p className="text-3xl font-semibold">Esper Wise</p>
-              <p className="text-3xl text-primary font-semibold">{pathname.split("/")[2]}</p>
+              <p className="text-3xl text-primary font-semibold">Neurologist</p>
             </div>
-
 
             <>
               <div

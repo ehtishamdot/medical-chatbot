@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
     });
     if (!user) throw new ServerError("User not found", 404);
 
-    const apiUrl = `http://0.0.0.0:8000/api/bot/question?specialist=${specialist}&specificity=${specificity}&disease=${disease}`;
+    const apiUrl = `https://9db0-2407-aa80-14-6ae2-cc6b-aa0a-6acd-2a10.ngrok-free.app/api/bot/question?specialist=${specialist}&specificity=${specificity}&disease=${disease}`;
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {

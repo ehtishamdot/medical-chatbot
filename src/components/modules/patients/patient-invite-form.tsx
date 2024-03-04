@@ -25,9 +25,6 @@ import PatientsServices from "@/services/patients/patients.service";
 import {Textarea} from "@/components/ui/textarea";
 import TranslationService from "@/services/translations/translation.service";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {httpRequest} from "@/lib/interceptor";
-import {text} from "node:stream/consumers";
 import {userType} from "@/lib/types/user";
 import Cookies from "js-cookie";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
@@ -95,16 +92,17 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     },[isTextTranslationSuccess,isTranslatedTextPending])
     async function onSubmit(data: z.infer<typeof InviteSchema>) {
         handleGetTranslatedText({message:data.notes});
-        let uri="http://localhost:3000/chat/";
+        let uri="http://localhost:3000/chat/65e5f426d21e05483d6fd4d8";
+        // if(data.specialty&&data.type==="specialized"){
+        //     // uri+=data.specialty
+        //     uri+="65e2ec8e5f970c711ed34b5f";
+        // }
+        // else{
+        //     uri+=data.type
+        // }
+        uri+=`?patient_id=${id}`
         if(data.specialty&&data.type==="specialized"){
-            uri+=data.specialty
-        }
-        else{
-            uri+=data.type
-        }
-        uri+=`?doctorId=${user?.id}&patientId=${id}`
-        if(data.specialty&&data.type==="specialized"){
-            uri+=`&diseaseId=${data.diseaseId}`
+            uri+=`&disease_bot_id=${data.diseaseId}`
         }
         setFormData({
             to:email,
