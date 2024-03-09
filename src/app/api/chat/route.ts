@@ -1,4 +1,5 @@
 import { prisma } from "@/db/config";
+import ServerError from "@/lib/types";
 import { decryptToken, errorHandler, getOpenAIApiInstance } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,16 +10,13 @@ const messageSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    
     const { message } = messageSchema.parse(await req.json());
     const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
     const chatgpt = getOpenAIApiInstance(process.env.OPENAI_GPT_KEY || "");
     const chat_completion = await chatgpt.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: message }],
     });
-
 
     await prisma.query.createMany({
       data: [
@@ -46,17 +44,22 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("accessToken")!.value!;
-    const { userId } = decryptToken(token, process.env.JWT_SECRET!);
-    const queries = await prisma.query.findMany({
-      orderBy: {
-        id: "asc",
-      },
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
       where: {
-        userId,
+        token: accessToken,
       },
     });
-    return NextResponse.json({ queries });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+
+    // return NextResponse.json({ queries });
   } catch (err) {
     return errorHandler(err);
   }

@@ -92,7 +92,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     },[isTextTranslationSuccess,isTranslatedTextPending])
     async function onSubmit(data: z.infer<typeof InviteSchema>) {
         handleGetTranslatedText({message:data.notes});
-        let uri="http://localhost:3000/chat/65e5f426d21e05483d6fd4d8";
+        let uri="http://localhost:3000/chat/65e6006a45bd24cb84262e47";
         // if(data.specialty&&data.type==="specialized"){
         //     // uri+=data.specialty
         //     uri+="65e2ec8e5f970c711ed34b5f";
