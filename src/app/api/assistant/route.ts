@@ -1,6 +1,10 @@
 import { prisma } from "@/db/config";
 import * as sgMail from "@sendgrid/mail";
-import { errorHandler, generateRandomPassword } from "@/lib/utils";
+import {
+  decryptToken,
+  errorHandler,
+  generateRandomPassword,
+} from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 import { hashSync } from "bcrypt";
 import { z } from "zod";
@@ -10,12 +14,9 @@ import { randomBytes } from "crypto";
 
 const AssistantType = z.enum(["MEDICAL", "ADMINISTRATIVE"]);
 const Assistant = z.object({
-  id: z.string(),
   email: z.string().email(),
   name: z.string(),
-  assistantType: AssistantType,
   additionalInfo: z.string().optional(),
-  role: z.enum(["ASSISTANT", "DOCTOR"]),
 });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
@@ -41,33 +42,54 @@ const emailSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const { email, name } = Assistant.parse(await req.json());
+
+    const authorizationHeader = req.headers.get("Cookie");
+    console.log(authorizationHeader);
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id: userId } = decryptToken(
+      accessToken,
+      process.env.JWT_REFRESH_SECRET!
+    );
     let assistant = await prisma.assistant.findUnique({
       where: {
         email,
+        userId,
       },
     });
     const password = generateRandomPassword(12);
     if (assistant) throw new ServerError("Assistant already exist", 409);
+    console.log(password);
     assistant = await prisma.assistant.create({
       data: {
         email,
         password: hashSync(password, 10),
         role: "ASSISTANT",
         name,
+        userId,
       },
     });
 
-    const { uri, to, assistantName } = emailSchema.parse(await req.json());
     const msg: MailDataWithOptionalContentAndTemplate = {
-      to,
+      to: email,
       from: "contact@seedinov.com",
-      subject: `EsperWise from ${doctorName}`,
-      templateId: process.env.SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID,
+      subject: `Your invitation to EsperWise Platform`,
+      templateId: process.env.SENDGRID_ASSISTANT_INVITATION_TEMPLATE_ID,
       dynamicTemplateData: {
-        uri,
+        uri: process.env.NEXT_PUBLIC_API_URL as string,
         email,
         password,
-        assistantName,
+        assistantName: name,
       },
     };
     await sgMail
@@ -78,7 +100,8 @@ export async function POST(req: NextRequest) {
       .catch((err) => {
         throw new Error(err);
       });
-    return NextResponse.json({ message: `email sent to ${assistant}` });
+
+    return NextResponse.json({ data: { password, assistant } });
 
     // const payload: JWTPayload = { id: assistant.id };
     // const accessToken = sign(payload, process.env.JWT_SECRET!, {
@@ -94,6 +117,7 @@ export async function POST(req: NextRequest) {
     //   },
     // });
   } catch (err) {
+    console.log(err);
     return errorHandler(err);
   }
 }
