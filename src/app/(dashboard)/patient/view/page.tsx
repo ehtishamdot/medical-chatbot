@@ -15,6 +15,7 @@ const ViewPatients=()=>{
   return(
       <div>
         <Breadcrumb pageName={"View Patients"}/>
+          {/*@ts-ignore*/}
         {patientData&&<DataTable columns={PATIENT_COLS} data={patientData}/>}
       </div>
 

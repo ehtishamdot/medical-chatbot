@@ -3,10 +3,13 @@
 import React, { useState } from "react";
 import Sidebar from "../components/widgets/sidebar";
 import Header from "../components/widgets/header";
+import {userType} from "@/lib/types/user";
 export default function DefaultLayout({
+    user,
                                           children,
                                       }: {
     children: React.ReactNode;
+    user:userType;
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
@@ -14,7 +17,7 @@ export default function DefaultLayout({
             {/* <!-- ===== Page Wrapper Start ===== --> */}
             <div className="flex h-screen overflow-hidden">
                 {/* <!-- ===== sidebar Start ===== --> */}
-                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+                <Sidebar user={user} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
                 {/* <!-- ===== sidebar End ===== --> */}
 
                 {/* <!-- ===== Content Area Start ===== --> */}

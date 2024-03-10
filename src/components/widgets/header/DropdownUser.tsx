@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import tokenService from "@/services/token/token.service";
+import TokenService from "@/services/token/token.service";
+import {useRouter} from "next/navigation";
+import Cookies from "js-cookie";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -25,7 +28,7 @@ const DropdownUser = () => {
     document.addEventListener("click", clickHandler);
     return () => document.removeEventListener("click", clickHandler);
   });
-
+ const router=useRouter();
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }: KeyboardEvent) => {

@@ -4,6 +4,7 @@ export type userType={
   createdAt:string;
   email:string;
   id:string;
+  role:"DOCTOR"|"ASSISTANT";
   specialty:string;
   updatedAt:string;
   username:string;

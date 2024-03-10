@@ -3,14 +3,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import SidebarLinkGroup from "@/components/widgets/sidebar/SidebarLinkGroup";
+import {userType} from "@/lib/types/user";
+import {ROLES} from "@/lib/constants/enums";
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
+  user:userType;
 }
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+const Sidebar = ({ sidebarOpen, setSidebarOpen,user }: SidebarProps) => {
   const pathname = usePathname();
 
   const trigger = useRef<any>(null);
@@ -141,7 +143,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </Link>
               </li>
 
-              <li>
+              {user.role===ROLES.DOCTOR&&<li>
                 <Link
                     href="/profile"
                     className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -167,7 +169,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Profile
                 </Link>
-              </li>
+              </li>}
               {/* <!-- Menu Item Profile --> */}
 
               {/* <!-- Menu Item Forms --> */}
@@ -279,7 +281,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </SidebarLinkGroup>
 
 
-              <SidebarLinkGroup
+              {user.role===ROLES.DOCTOR&&<SidebarLinkGroup
                   activeCondition={
                       pathname === "/assistant" || pathname.includes("assistant")
                   }
@@ -384,10 +386,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup>}
 
 
-              <SidebarLinkGroup
+              {user.role===ROLES.DOCTOR&&<SidebarLinkGroup
                   activeCondition={
                       pathname === "/chatbots" || pathname.includes("chatbots")
                   }
@@ -481,7 +483,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup>}
               <li>
                 <Link
                     href="/appointments"

@@ -30,6 +30,7 @@ export const PATIENT_COLS: ColumnDef<PatientType>[] = [
         accessorKey: "dateOfBirth",
         header: "Date Of Birth",
         cell: ({ row }) => {
+            {/*@ts-ignore*/}
             return <div>{row.getValue("dateOfBirth").split("T")[0]}</div>
         },
     },

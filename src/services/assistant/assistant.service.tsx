@@ -36,8 +36,8 @@ export default function AssistantService() {
     };
 
     const useFetchAllAssistants= () => {
-        function fetchPatients(): Promise<z.infer<typeof patientSchema>[]> {
-            return axios.get("/api/patient").then((res) => res.data);
+        function fetchPatients(): Promise<z.infer<typeof assistantFormSchema>[]> {
+            return axios.get("/api/assistant").then((res) => res.data);
         }
 
         const onSuccess = async () => {
