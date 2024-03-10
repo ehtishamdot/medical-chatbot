@@ -4,6 +4,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { NextResponse } from "next/server";
 import ServerError, { JWTPayload } from "./types";
 import { verify } from "jsonwebtoken";
+import { randomBytes } from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,6 +38,11 @@ export function errorHandler(err: unknown) {
 
 export function decryptToken(token: string, secret: string) {
   return <JWTPayload>verify(token, secret);
+}
+
+export function generateRandomPassword(length: number): string {
+  const randomBytesBuffer = randomBytes(length);
+  return randomBytesBuffer.toString("base64").slice(0, length);
 }
 
 export type CodeMessage = {
