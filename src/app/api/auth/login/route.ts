@@ -16,11 +16,19 @@ const loginSchema = z
 export async function POST(req: NextRequest) {
   try {
     const { input, password } = loginSchema.parse(await req.json());
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [{ email: input }, { username: input }],
-      },
-    });
+    let result = await prisma.$transaction([
+      prisma.user.findFirst({
+        where: {
+          OR: [{ email: input }, { username: input }],
+        },
+      }),
+      prisma.assistant.findFirst({
+        where: {
+          email: input,
+        },
+      }),
+    ]);
+    let user = result[0] || result[1];
     if (!user) throw new ServerError("User does not exist or Forbidden", 409);
     const correctPassword = compareSync(password, user.password);
     if (!correctPassword) throw new ServerError("Wrong email or passwrod", 401);

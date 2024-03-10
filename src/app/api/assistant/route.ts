@@ -61,16 +61,26 @@ export async function POST(req: NextRequest) {
       accessToken,
       process.env.JWT_REFRESH_SECRET!
     );
-    let assistant = await prisma.assistant.findUnique({
-      where: {
-        email,
-        userId,
-      },
-    });
+    let result = await prisma.$transaction([
+      prisma.user.findUnique({
+        where: {
+          email,
+          id: userId,
+        },
+      }),
+      prisma.assistant.findUnique({
+        where: {
+          email,
+          userId,
+        },
+      }),
+    ]);
     const password = generateRandomPassword(12);
-    if (assistant) throw new ServerError("Assistant already exist", 409);
+    console.log(result);
+    if (result[0] || result[1])
+      throw new ServerError("This email is already exist", 409);
     console.log(password);
-    assistant = await prisma.assistant.create({
+    let assistant = await prisma.assistant.create({
       data: {
         email,
         password: hashSync(password, 10),
