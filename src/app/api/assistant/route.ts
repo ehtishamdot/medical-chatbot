@@ -131,3 +131,86 @@ export async function POST(req: NextRequest) {
     return errorHandler(err);
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const authorizationHeader = req.headers.get("Cookie");
+    console.log(authorizationHeader);
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
+
+    let doctorAssistants = await prisma.assistant.findMany({
+      where: {
+        id,
+      },
+    });
+    return NextResponse.json(doctorAssistants);
+  } catch (err) {
+    console.error(err);
+    return errorHandler(err);
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id: assistantId } = await req.json();
+
+    const authorizationHeader = req.headers.get("Cookie");
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
+    const assistant = await prisma.assistant.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!assistant) {
+      throw new ServerError("Assistant not found", 404);
+    }
+    await prisma.assistant.delete({
+      where: {
+        id,
+      },
+    });
+
+    return NextResponse.json("Deleted assistant successfully");
+
+    // const payload: JWTPayload = { id: assistant.id };
+    // const accessToken = sign(payload, process.env.JWT_SECRET!, {
+    //   expiresIn: "50m",
+    // });
+    // const refreshToken = sign(
+    //   { id: assistant.id },
+    //   process.env.JWT_REFRESH_SECRET!
+    // );
+    // await prisma.token.create({
+    //   data: {
+    //     token: refreshToken,
+    //   },
+    // });
+  } catch (err) {
+    console.log(err);
+    return errorHandler(err);
+  }
+}
