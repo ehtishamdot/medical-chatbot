@@ -44,14 +44,14 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
   useEffect(() => {
     httpRequest
-      .get(`/api/patient/bot/history?patient_id=65d78546a3b0a329407a0823&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=65edee22088ff4f3deecb0f6`)
+      .post(`/api/patient/bot/history?patient_id=65d78546a3b0a329407a0823&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=65edee22088ff4f3deecb0f6`)
       .then((res) => {
+        console.log(res.data)
         setMessages(
-          res.data.queries.map((item: any) => {
+          res.data.chat.map((item: any) => {
             return {
-              id: item.id,
-              message: item.data,
-              isUser: item.isUser,
+              message: item.content,
+              isUser: item.role==="user",
             };
           })
         );
@@ -77,10 +77,13 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   }
 
   useEffect(updateScroll, [messages]);
+  useEffect(() => {
+    console.log(messages,"s")
+  }, [messages]);
   const pathname=usePathname();
   return (
       <>
-        {allowed ? <div>
+        {allowed ? <div className={""}>
           <div className="input w-full flex flex-col justify-between h-screen">
             <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
               <p className="text-3xl font-semibold">Esper Wise</p>
@@ -92,10 +95,10 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
                   className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
                   ref={scrollRef}
               >
-                {messages.map((message) => (
+                {messages.map((message,index) => (
                     <Message
-                        key={message.id}
-                        id={message.id}
+                        key={index}
+                        id={index}
                         isUser={message.isUser}
                         message={!message.message ? "Hello" : message.message}
                         isNew={message.isNew ?? false}

@@ -13,19 +13,12 @@ import {useState} from "react";
 const chatData: Chat[] = [
     {
         avatar: "/images/user/user-01.png",
-        name: "Ehtisham",
-        text: "I am having problems with my knees?",
+        name: "Neurologist",
+        text: "Hello",
         time: 12,
         textCount: 3,
         dot: 3,
-    },
-    {
-        avatar: "/images/user/user-01.png",
-        name: "General Bot",
-        text: "Welcome Do you have any previous issues?",
-        time: 12,
-        textCount: 3,
-        dot: 3,
+        uri:"/patient/chat-history/65e6006a45bd24cb84262e47?patient_id=65d78546a3b0a329407a0823&disease_bot_id=65edee22088ff4f3deecb0f6"
     },
 ];
 const SinglePatient = ({id}:{id:string}) => {
@@ -82,7 +75,7 @@ const SinglePatient = ({id}:{id:string}) => {
                                         <div>
                                             {chatData.map((chat, key) => (
                                                 <Link
-                                                    href="/dashboard"
+                                                    href={chat.uri}
                                                     className="flex items-center gap-5 px-7.5 py-3 hover:bg-gray-3 dark:hover:bg-meta-4"
                                                     key={key}
                                                 >

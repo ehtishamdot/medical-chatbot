@@ -2,7 +2,7 @@ import {Lato, Mulish} from "next/font/google";
 
 const MulishFont = Lato({ subsets: ["latin"],weight:["100","300","400","700"] });
 import DefaultLayout from "@/layouts/dashboard-layout";
-import {cookies} from "next/headers";
+import {cookies, headers} from "next/headers";
 
 const DashboardLayout=({children}:{children:React.ReactNode})=>{
     let unParsedUser;
@@ -10,7 +10,6 @@ const DashboardLayout=({children}:{children:React.ReactNode})=>{
     if(user){
         unParsedUser=JSON.parse(user);
     }
-
     return(
         <main className={`${MulishFont.className} bg-whiten dark:bg-neutral-950`}>
           <DefaultLayout user={unParsedUser}>
