@@ -14,7 +14,6 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import PatientsServices from "@/services/patients/patients.service";
-import BaseDropzone from "@/components/common/form/BaseDropzone";
 
 export const patientFormSchema = z.object({
     name:z.string({
@@ -48,17 +47,21 @@ const ACCEPTED_TYPES=[".csv"];
 export const BulkUploadSchema = z.object({
     patients: z
         .any()
-
+        .refine((files) => files?.length == 1, "CSV File is required.")
+        .refine(
+            (files) => ACCEPTED_TYPES.includes(files?.[0]?.type),
+            "Only .csv files are accepted"
+        ),
 });
 
-const AddPatientForm = () => {
+const AddAssistantForm = () => {
     const form = useForm<z.infer<typeof patientFormSchema>>({
         resolver: zodResolver(patientFormSchema),
     })
     const bulkUploadForm = useForm<z.infer<typeof BulkUploadSchema>>({
         resolver: zodResolver(BulkUploadSchema),
     })
-   const {useHandleAddPatientService,useHandleBulkUploadPatients}=PatientsServices();
+    const {useHandleAddPatientService,useHandleBulkUploadPatients}=PatientsServices();
     const {mutate:handleAddPatient,isPending:isHandleAddPatientPending}=useHandleAddPatientService();
     const {mutate:handleUpload,isPending:isHandleUploadPending}=useHandleBulkUploadPatients();
 
@@ -74,9 +77,7 @@ const AddPatientForm = () => {
         });
     }
     function onUploadSubmit(data: z.infer<typeof BulkUploadSchema>) {
-        const formData=new FormData();
-        formData.append("patients",data.patients);
-        handleUpload(formData);
+        handleUpload(data);
     }
     return (
         <div className="w-full mx-auto">
@@ -86,7 +87,7 @@ const AddPatientForm = () => {
                         className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                         <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
                             <h3 className="font-medium text-black dark:text-white">
-                                Add A Single Patient
+                                Add Assistant
                             </h3>
                         </div>
                         <div className="p-7">
@@ -169,8 +170,8 @@ const AddPatientForm = () => {
                                                     <FormLabel>Date Of Birth</FormLabel>
                                                     <FormControl>
                                                         <Input  type={"date"}
-                                                               className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}
-                                                               placeholder="11111111" {...field} />
+                                                                className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}
+                                                                placeholder="11111111" {...field} />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -228,42 +229,11 @@ const AddPatientForm = () => {
                                             className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                             type="submit"
                                         >
-                                            Add Patient
+                                            Add Assistant
                                         </button>
                                     </div>
                                 </form>
                             </Form>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-span-5 xl:col-span-2">
-                    <div
-                        className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                        <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
-                            <h3 className="font-medium text-black dark:text-white">
-                                Add Bulk Patients
-                            </h3>
-                        </div>
-                        <div className="p-7">
-                            <form onSubmit={bulkUploadForm.handleSubmit(onUploadSubmit)}>
-                                <BaseDropzone control={bulkUploadForm.control} name={"patients"} multiple={true} maxFiles={1}/>
-
-                                <div className="flex justify-end gap-4.5">
-                                    <button
-                                        onClick={()=>bulkUploadForm.reset()}
-                                        className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
-                                        type="button"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
-                                        type="submit"
-                                    >
-                                        Save
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -272,4 +242,4 @@ const AddPatientForm = () => {
     );
 };
 
-export default AddPatientForm;
+export default AddAssistantForm;

@@ -7,7 +7,7 @@ import {errorType} from "@/lib/types";
 import {userType} from "@/lib/types/user";
 import {z} from "zod";
 import tokenService from "@/services/token/token.service";
-import {patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";
+import {BulkUploadSchema, patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";
 import {invitePayloadType} from "@/components/modules/patients/patient-invite-form";
 import {useCallback} from "react";
 import {fetchSinglePatient} from "@/services/patients/patient.api";
@@ -38,6 +38,32 @@ export default function PatientsServices() {
             retry: 0,
         });
     };
+
+    const useHandleBulkUploadPatients = () => {
+        const queryClient=useQueryClient();
+        function handleAddPatient(
+            data: FormData,
+        ): Promise<z.infer<typeof BulkUploadSchema>> {
+            return axios.post("/api/patient/bulk-upload", data).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Patients Created Successfully");
+            await queryClient.invalidateQueries({queryKey:["patients"]})
+
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleAddPatient,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
+
     const useHandleSendInvite = () => {
         function handleSendInvite(
             data: invitePayloadType,
@@ -114,6 +140,7 @@ export default function PatientsServices() {
         useFetchAllPatients,
         useHandleSendInvite,
         useFetchSinglePatient,
-        useHandlePatientVerification
+        useHandlePatientVerification,
+        useHandleBulkUploadPatients
     };
 }
