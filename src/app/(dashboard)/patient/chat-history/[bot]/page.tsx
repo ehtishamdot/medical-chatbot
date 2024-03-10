@@ -44,7 +44,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
   useEffect(() => {
     httpRequest
-      .get(`/api/chat`)
+      .get(`/api/patient/bot/history?patient_id=65d78546a3b0a329407a0823&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=65edee22088ff4f3deecb0f6`)
       .then((res) => {
         setMessages(
           res.data.queries.map((item: any) => {

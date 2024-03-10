@@ -14,7 +14,7 @@ const ViewAssistants=()=>{
     }
     return(
         <div>
-            <Breadcrumb pageName={"View Patients"}/>
+            <Breadcrumb pageName={"View Assistants"}/>
             {/*@ts-ignore*/}
             {assistantData&&<DataTable columns={ASSISTANT_COLS} data={assistantData}/>}
         </div>

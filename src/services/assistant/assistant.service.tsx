@@ -5,9 +5,7 @@ import axios from "axios";
 import {viewError} from "@/lib/helpers";
 import {errorType} from "@/lib/types";
 import {z} from "zod";
-import {patientSchema} from "@/components/modules/patients/add-patient-form";
 import {assistantFormSchema} from "@/components/modules/assistants/add-assistant-form";
-
 export default function AssistantService() {
 
     const useHandleAddAssistantService = () => {
@@ -53,9 +51,35 @@ export default function AssistantService() {
             retry: 0,
         });
     };
+    const useHandleDeleteAssistant = () => {
+        const queryClient=useQueryClient();
+        function handleAddPatient(
+            data: {id:string},
+        ): Promise<z.infer<typeof assistantFormSchema>> {
+            return axios.delete("/api/assistant",  {
+                data
+            }).then((res) => res.data);
+        }
 
+        const onSuccess = async () => {
+            toast.success("Assistant Created Successfully");
+            await queryClient.invalidateQueries({queryKey:["assistant"]})
+
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleAddPatient,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
     return {
         useHandleAddAssistantService,
+        useHandleDeleteAssistant,
         useFetchAllAssistants,
     };
 }
