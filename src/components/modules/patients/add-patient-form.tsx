@@ -75,7 +75,7 @@ const AddPatientForm = () => {
     }
     function onUploadSubmit(data: z.infer<typeof BulkUploadSchema>) {
         const formData=new FormData();
-        formData.append("patients",data.patients);
+        formData.append("patients",data.patients[0]);
         handleUpload(formData);
     }
     return (
