@@ -152,7 +152,7 @@ export async function GET(req: NextRequest) {
 
     let doctorAssistants = await prisma.assistant.findMany({
       where: {
-        id,
+        userId: id,
       },
     });
     return NextResponse.json(doctorAssistants);
