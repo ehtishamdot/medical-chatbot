@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
     const patients: any[] = [];
     const csvText = await req.text();
 
-    // Parse CSV using csv-parser
     const results: any[] = [];
     const parser = csv();
     parser.write(csvText);
