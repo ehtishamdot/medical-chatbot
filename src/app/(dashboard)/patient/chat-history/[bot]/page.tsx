@@ -7,8 +7,10 @@ import { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
 import "../../../../../app/chat/[bot]/index.css";
-import {notFound, usePathname} from "next/navigation";
+import {notFound, usePathname, useRouter} from "next/navigation";
 import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
+import PatientsServices from "@/services/patients/patients.service";
+import LoadingPage from "@/components/common/loaders/loading-page";
 
 type Message = {
   id: string;
@@ -23,6 +25,9 @@ interface IHistory {
 }
 
 export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{patient_id:string;disease_bot_id:string}}) {
+
+
+
   const {bot}=params;
   console.log(params)
   console.log(searchParams)
@@ -30,6 +35,9 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   if(!bot||!patient_id){
     notFound();
   }
+  const {useFetchSinglePatient}=PatientsServices();
+  const {data:patientData,isLoading:isPatientLoading}=useFetchSinglePatient(patient_id);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("Hello");
   const [loading, setLoading] = useState(true);
@@ -44,7 +52,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
   useEffect(() => {
     httpRequest
-      .post(`/api/patient/bot/history?patient_id=65d78546a3b0a329407a0823&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=65edee22088ff4f3deecb0f6`)
+      .post(`/api/patient/bot/history?patient_id=${patient_id}&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=${disease_bot_id}`)
       .then((res) => {
         console.log(res.data)
         setMessages(
@@ -81,6 +89,9 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
     console.log(messages,"s")
   }, [messages]);
   const pathname=usePathname();
+  if(isPatientLoading||loading){
+    return <LoadingPage/>
+  }
   return (
       <>
         {allowed ? <div className={""}>
@@ -89,13 +100,15 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
               <p className="text-3xl font-semibold">Esper Wise</p>
               <p className="text-3xl text-primary font-semibold">Neurologist</p>
             </div>
-
+            <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
+              <p className="text-3xl font-semibold">Patient: {patientData?.name}</p>
+            </div>
             <>
               <div
                   className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"
                   ref={scrollRef}
               >
-                {messages.map((message,index) => (
+                {messages.map((message, index) => (
                     <Message
                         key={index}
                         id={index}

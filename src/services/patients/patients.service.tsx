@@ -4,7 +4,7 @@ import {toast} from "sonner";
 import axios from "axios";
 import {viewError} from "@/lib/helpers";
 import {errorType} from "@/lib/types";
-import {userType} from "@/lib/types/user";
+import {fetchAllSpecialtyApiResponse, userType} from "@/lib/types/user";
 import {z} from "zod";
 import tokenService from "@/services/token/token.service";
 import {BulkUploadSchema, patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";
@@ -134,11 +134,29 @@ export default function PatientsServices() {
 
         });
     };
+    const useFetchDoctorSpecialty = () => {
+        function fetchPatients(): Promise<fetchAllSpecialtyApiResponse> {
+            return axios.get("/api/specialty").then((res) => res.data);
+        }
 
+        const onSuccess = async () => {
+            toast.success("Patient Created Successfully");
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useQuery({
+            queryFn: fetchPatients,
+            queryKey: [`specialty`],
+            retry: 0,
+        });
+    };
     return {
         useHandleAddPatientService,
         useFetchAllPatients,
         useHandleSendInvite,
+        useFetchDoctorSpecialty,
         useFetchSinglePatient,
         useHandlePatientVerification,
         useHandleBulkUploadPatients

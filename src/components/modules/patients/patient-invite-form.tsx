@@ -67,6 +67,8 @@ export type invitePayloadType={
 const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>{
     const {useFetchAllChatbots}=ChatbotServices();
     const {data:chatbotData}=useFetchAllChatbots();
+    const {useFetchDoctorSpecialty}=PatientsServices();
+    const {data:specialtyData}=useFetchDoctorSpecialty();
     const form = useForm<z.infer<typeof InviteSchema>>({
         resolver: zodResolver(InviteSchema),
     })
@@ -92,7 +94,8 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     },[isTextTranslationSuccess,isTranslatedTextPending])
     async function onSubmit(data: z.infer<typeof InviteSchema>) {
         handleGetTranslatedText({message:data.notes});
-        let uri="http://localhost:3000/chat/65e6006a45bd24cb84262e47";
+        //Need a specialty Id Here
+        let uri=`http://localhost:3000/chat/${data.specialty}`;
         // if(data.specialty&&data.type==="specialized"){
         //     // uri+=data.specialty
         //     uri+="65e2ec8e5f970c711ed34b5f";
@@ -175,8 +178,11 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                                 <SelectContent>
                                     {/*<SelectItem value="orthopedic">Orthopedic</SelectItem>*/}
                                     {/*<SelectItem value="neurologist">Neurologist</SelectItem>*/}
-                                    <SelectItem
-                                        value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
+                                    {specialtyData?.map((el,index)=>(
+                                        <SelectItem key={index}
+                                            value={el.id}>{el.name}</SelectItem>
+                                    ))}
+
                                 </SelectContent>
                             </Select>
                             <FormMessage />

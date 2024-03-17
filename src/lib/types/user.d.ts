@@ -15,3 +15,17 @@ export type userType={
   countryOfPractice:string;
   preferredLanguage:string;
 }
+
+
+type doctorSpecialtyType = {
+  id: string;
+  name: string;
+  diseases: Disease[];
+  generalPhases: Phase[];
+  countryAndLanguage: string;
+  addedByUser: userType;
+  addedByUserId: ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+};
+export type fetchAllSpecialtyApiResponse=doctorSpecialtyType[];
