@@ -45,6 +45,8 @@
     "date-fns": "^3.3.1",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
+    "formidable": "^3.5.1",
+    "jose": "^5.2.3",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.1",
     "jsvectormap": "^1.5.3",
@@ -78,6 +80,7 @@
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.20.1",
     "@types/bcrypt": "^5.0.0",
+    "@types/formidable": "^3.4.5",
     "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/react-syntax-highlighter": "^15.5.7",

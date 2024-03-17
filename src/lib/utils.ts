@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import ServerError, { JWTPayload } from "./types";
 import { verify } from "jsonwebtoken";
 import { randomBytes } from "crypto";
+import { jwtVerify } from "jose";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,6 +39,10 @@ export function errorHandler(err: unknown) {
 
 export function decryptToken(token: string, secret: string) {
   return <JWTPayload>verify(token, secret);
+}
+
+export async function decryptTokenJose(token: string, secret: string) {
+  return (<JWTPayload>(<unknown>jwtVerify(token, secret)));
 }
 
 export function generateRandomPassword(length: number): string {

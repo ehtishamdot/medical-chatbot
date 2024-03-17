@@ -75,14 +75,13 @@ export async function GET(req: NextRequest) {
         },
       }),
     ]);
-    console.log(result);
     let user = result[0] || result[1];
     let userPatients;
-    let addedByUserId = user.id;
+    let addedByUserId = user?.id;
     if (user?.role === "ASSISTANT") {
-      addedByUserId = user?.user.id;
+      addedByUserId = user?.user?.id;
     } else {
-      addedByUserId = user.id;
+      addedByUserId = user?.id;
     }
     userPatients = await prisma.patient.findMany({
       where: {

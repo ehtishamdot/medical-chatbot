@@ -1,10 +1,10 @@
 import { prisma } from "@/db/config";
-import ServerError, { JWTPayload } from "@/lib/types";
+import ServerError from "@/lib/types";
 import { decryptToken, errorHandler, getOpenAIApiInstance } from "@/lib/utils";
-import { deepEqual } from "assert";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import csv from "csv-parser";
+import { Readable } from "stream";
 
 const patientSchema = z.object({
   name: z.string(),
@@ -37,89 +37,65 @@ export async function POST(req: NextRequest) {
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
 
-    const patients: any[] = [];
-    const csvText = await req.text();
+    const multipartFormData = await req.formData();
+    console.log(multipartFormData);
+    const csvFile = multipartFormData.get("patients");
+    if (!(csvFile instanceof File))
+      throw new ServerError("CSV file not found in form data", 400);
+    const csvText = await csvFile.text();
 
-    const results: any[] = [];
-    const parser = csv();
-    parser.write(csvText);
-    parser.end();
+    const patients: Patient[] = [];
 
-    parser.on("readable", () => {
-      let record;
-      while ((record = parser.read())) {
-        results.push(record);
-      }
-    });
+    const readableStream = Readable.from([csvText]);
+    const parser = readableStream.pipe(csv());
 
-    parser.on("error", (err) => {
-      throw new ServerError(`CSV parsing error: ${err.message}`, 400);
-    });
-    parser.on("end", async () => {
-      // Process the parsed CSV data (results array)
-      let transformedData: Patient[] = [];
-
-      let validPatients = results.map((patient) => {
-        try {
-          return patient;
-        } catch (error) {
-          console.log(error);
-          // throw new ServerError(`Invalid patient data: ${error.errors}`, 400);
-        }
+    let createdPatients: {
+      id: string;
+      name: string;
+      email: string;
+      gender: string;
+      dateOfBirth: Date;
+      phone: string;
+      address: string;
+      medicalHistory: string;
+      addedByUserId: string;
+    }[] = [];
+    parser
+      .on("error", (err) => {
+        throw new ServerError(`CSV parsing error: ${err.message}`, 400);
+      })
+      .on("data", (row) => {
+        console.log(row);
+        patients.push({
+          name: row.name,
+          email: row.email,
+          gender: row.gender,
+          dateOfBirth: row.dateOfBirth,
+          phone: row.phone,
+          address: row.address,
+          medicalHistory: row.medicalHistory,
+          addedByUserId: id,
+        });
       });
-
-      const filteredPatientsData = validPatients.filter(
-        (obj) =>
-          Object.keys(obj)[1] === "_1" &&
-          obj[Object.keys(obj)[1]] !== "column 2"
-      );
-
-      filteredPatientsData.forEach((item) => {
-        const key = Object.values(item)[0];
-        const value = item._1;
-
-        switch (key) {
-          case "name":
-            transformedData.push({
-              name: value,
-              email: "",
-              gender: "",
-              dateOfBirth: "",
-              phone: "",
-              address: "",
-              medicalHistory: "",
-              addedByUserId: id,
+    createdPatients = await new Promise((resolve) => {
+      parser.on("end", async () => {
+        const createdPatients = [];
+        for (const patient of patients) {
+          try {
+            const createdPatient = await prisma.patient.create({
+              data: patient,
             });
-            break;
-          case "email":
-            transformedData[transformedData.length - 1].email = value;
-            break;
-          case "gender":
-            transformedData[transformedData.length - 1].gender =
-              value.toLowerCase();
-            break;
-          case "dateOfbirth":
-            transformedData[transformedData.length - 1].dateOfBirth = value;
-            break;
-          case "Phone":
-            transformedData[transformedData.length - 1].phone = `+${value}`;
-            break;
-          case "Address":
-            transformedData[transformedData.length - 1].address = value;
-            break;
-          case "medicalHistory":
-            transformedData[transformedData.length - 1].medicalHistory = value;
-            break;
-          default:
-            break;
+            createdPatients.push(createdPatient);
+          } catch (error) {
+            console.error("Error creating patient:", error);
+          }
         }
+        resolve(createdPatients);
       });
-
-      console.log(transformedData);
-      const createdPatient = await prisma.patient.createMany({
-        data: transformedData,
-      });
-      return NextResponse.json(createdPatient);
+    });
+    return NextResponse.json({
+      message: "Patients created successfully",
+      patients: createdPatients,
     });
   } catch (err) {
     console.error(err);
