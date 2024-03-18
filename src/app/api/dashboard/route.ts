@@ -26,7 +26,7 @@ interface Patient {
   address: string;
   medicalHistory: string;
   addedByUserId: string;
-  Feedback: Feedback[]; // Adding the Feedback property as an array of Feedback objects
+  Feedback: Feedback[];
 }
 
 export async function GET(req: NextRequest) {
@@ -47,6 +47,28 @@ export async function GET(req: NextRequest) {
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
 
+    let result = await prisma.$transaction([
+      prisma.user.findFirst({
+        where: {
+          id,
+        },
+      }),
+      prisma.assistant.findFirst({
+        where: {
+          id,
+        },
+        include: {
+          user: true,
+        },
+      }),
+    ]);
+    let user = result[0] || result[1];
+    let addedByUserId = user?.id;
+    if (user?.role === "ASSISTANT") {
+      addedByUserId = user?.user?.id;
+    } else {
+      addedByUserId = user?.id;
+    }
     let createdAssistants = await prisma.assistant.count({
       where: {
         userId: id,
@@ -54,17 +76,18 @@ export async function GET(req: NextRequest) {
     });
     let patientAssisted = await prisma.patient.count({
       where: {
-        addedByUserId: id,
+        addedByUserId,
       },
     });
     let botUsage = await prisma.patient.count({
       where: {
-        addedByUserId: id,
+        addedByUserId,
       },
     });
+
     const patients: Patient[] = await prisma.patient.findMany({
       where: {
-        addedByUserId: id,
+        addedByUserId,
       },
       include: {
         Feedback: {
