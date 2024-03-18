@@ -1,0 +1,87 @@
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import React from "react";
+import { z } from "zod"
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Rating} from "react-simple-star-rating";
+import {Textarea} from "@/components/ui/textarea";
+import FeedbackService from "@/services/feedback/feedback.service";
+
+export const ratingFormSchema = z.object({
+    patientId: z.string(),
+    comment:z.string(),
+    rating:z.number()
+})
+const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=>{
+    const {useHandleAddFeedback}=FeedbackService();
+    const {mutate:handleAddFeedback,isPending:isHandleAddFeedbackPending}=useHandleAddFeedback();
+    const form = useForm<z.infer<typeof ratingFormSchema>>({
+        resolver: zodResolver(ratingFormSchema),
+        defaultValues: {
+            patientId: patientId,
+        },
+    })
+    function onSubmit(values: z.infer<typeof ratingFormSchema>) {
+       handleAddFeedback(values);
+    }
+    return(
+        <Dialog open={chatEnded}>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Feedback</DialogTitle>
+                    <DialogDescription>
+                        Please Give Us Your Valuable Feedback
+                    </DialogDescription>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+                        <FormField
+                            control={form.control}
+                            name="rating"
+                            render={({ field }) => (
+                                <FormItem className={"flex flex-col justify-center items-center w-full"}>
+                                    <FormControl>
+                                        <Rating SVGstyle={{display:"inline"}}  onClick={(rating)=>field.onChange(rating)}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="comment"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Comments:</FormLabel>
+                                    <FormControl>
+                                        <Textarea  placeholder={"Comments"}  {...field}/>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </form>
+                </Form>
+
+                <DialogFooter>
+                    <button
+                        className="flex cursor-pointer justify-center items-center mt-4 rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
+                        type="submit"
+                    >
+                        Submit
+                    </button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
+}
+export default ChatFeedback;

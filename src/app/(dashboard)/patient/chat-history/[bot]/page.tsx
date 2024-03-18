@@ -25,9 +25,6 @@ interface IHistory {
 }
 
 export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{patient_id:string;disease_bot_id:string}}) {
-
-
-
   const {bot}=params;
   console.log(params)
   console.log(searchParams)
@@ -52,7 +49,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
   useEffect(() => {
     httpRequest
-      .post(`/api/patient/bot/history?patient_id=${patient_id}&specialty_id=65e6006a45bd24cb84262e47&disease_bot_id=${disease_bot_id}`)
+      .post(`/api/patient/bot/history?patient_id=${patient_id}&specialty_id=${bot}&disease_bot_id=${disease_bot_id}`)
       .then((res) => {
         console.log(res.data)
         setMessages(

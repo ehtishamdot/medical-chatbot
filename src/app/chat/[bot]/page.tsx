@@ -14,7 +14,18 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import "./index.css";
 import {notFound, usePathname} from "next/navigation";
 import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import {Form} from "@/components/ui/form";
+import ChatFeedback from "@/components/modules/chat/chat-feedback";
 type Message = {
   id: string;
   message: string;
@@ -46,6 +57,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
   const [allowed,setAllowed]=useState(false);
+  const [chatEnded,setChatEnded]=useState(true);
 
   useEffect(() => {
     httpRequest
@@ -191,7 +203,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
           </div>
 
-          <AlertDialog.Root open={warningModal}>
+           <AlertDialog.Root open={warningModal}>
             <AlertDialog.Portal>
               <AlertDialog.Overlay className="AlertDialogOverlay"/>
               <AlertDialog.Content className="AlertDialogContent">
@@ -228,6 +240,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog.Root>
+          <ChatFeedback chatEnded={chatEnded}/>
         </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
       </>
 

@@ -182,7 +182,7 @@ export async function DELETE(req: NextRequest) {
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
     const assistant = await prisma.assistant.findUnique({
       where: {
-        id,
+        id: assistantId,
       },
     });
     if (!assistant) {
@@ -190,7 +190,7 @@ export async function DELETE(req: NextRequest) {
     }
     await prisma.assistant.delete({
       where: {
-        id,
+        id: assistantId,
       },
     });
 

@@ -12,6 +12,11 @@ import {invitePayloadType} from "@/components/modules/patients/patient-invite-fo
 import {useCallback} from "react";
 import {fetchSinglePatient} from "@/services/patients/patient.api";
 
+type patientType=z.infer<typeof patientSchema>;
+type bulkUploadResponseType={
+    message:string;
+    patients:patientType[]
+}
 export default function PatientsServices() {
 
     const useHandleAddPatientService = () => {
@@ -43,14 +48,15 @@ export default function PatientsServices() {
         const queryClient=useQueryClient();
         function handleAddPatient(
             data: FormData,
-        ): Promise<z.infer<typeof BulkUploadSchema>> {
+        ): Promise<bulkUploadResponseType> {
             return axios.post("/api/patient/bulk-upload", data).then((res) => res.data);
         }
 
-        const onSuccess = async () => {
-            toast.success("Patients Created Successfully");
+        const onSuccess = async (response:bulkUploadResponseType) => {
+            response.patients.forEach((el)=>{
+                toast.success(`${el.name} Added Successfully`);
+            })
             await queryClient.invalidateQueries({queryKey:["patients"]})
-
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));
@@ -108,6 +114,7 @@ export default function PatientsServices() {
         });
     };
     const useFetchAllPatients = () => {
+
         function fetchPatients(): Promise<z.infer<typeof patientSchema>[]> {
             return axios.get("/api/patient").then((res) => res.data);
         }
