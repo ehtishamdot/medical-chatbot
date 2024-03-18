@@ -30,6 +30,7 @@ const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=
         },
     })
     function onSubmit(values: z.infer<typeof ratingFormSchema>) {
+        console.log(values)
        handleAddFeedback(values);
     }
     return(
@@ -69,17 +70,18 @@ const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=
                                 </FormItem>
                             )}
                         />
+                        <DialogFooter>
+                            <button
+                                className="flex cursor-pointer justify-center items-center mt-4 rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
+                                type="submit"
+                            >
+                                Submit
+                            </button>
+                        </DialogFooter>
                     </form>
                 </Form>
 
-                <DialogFooter>
-                    <button
-                        className="flex cursor-pointer justify-center items-center mt-4 rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
-                        type="submit"
-                    >
-                        Submit
-                    </button>
-                </DialogFooter>
+
             </DialogContent>
         </Dialog>
     )

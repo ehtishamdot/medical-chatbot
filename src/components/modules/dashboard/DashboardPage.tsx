@@ -5,12 +5,19 @@ import ChartThree from "@/components/widgets/charts/ChartThree";
 import ChatCard from "@/components/widgets/chat/ChatCard";
 import CardDataStats from "@/components/common/cards/CardDataStats";
 import PatientsOverviewTable from "@/components/common/tables/TableOne";
+import DashboardService from "@/services/dashboard/dashboard.service";
+import LoadingPage from "@/components/common/loaders/loading-page";
 
 const DashboardPage: React.FC = () => {
+    const {useFetchDashboardInsights}=DashboardService();
+    const {data,isLoading}=useFetchDashboardInsights();
+    if(isLoading){
+        return <LoadingPage/>
+    }
     return (
         <>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-                <CardDataStats title="Created Assistants" total="100" rate="0.43%" levelUp>
+                <CardDataStats title="Created Assistants" total={data?.createdAssistants.toString()||"0"} rate="0.43%" levelUp>
                     <svg
                         className="fill-primary dark:fill-white"
                         width="22"
@@ -29,7 +36,7 @@ const DashboardPage: React.FC = () => {
                         />
                     </svg>
                 </CardDataStats>
-                <CardDataStats title="Patients Assisted" total="200" rate="4.35%" levelUp>
+                <CardDataStats title="Patients Assisted" total={data?.patientAssisted.toString()||"0"} rate="4.35%" levelUp>
                     <svg
                         className="fill-primary dark:fill-white"
                         width="22"
@@ -52,7 +59,7 @@ const DashboardPage: React.FC = () => {
                         />
                     </svg>
                 </CardDataStats>
-                <CardDataStats title="Patients Satisfactory" total="100" rate="2.59%" levelUp>
+                <CardDataStats title="Patients Satisfactory" total={data?.totalRatings.toString()||"0"} rate="2.59%" levelUp>
                     <svg
                         className="fill-primary dark:fill-white"
                         width="22"
@@ -75,7 +82,7 @@ const DashboardPage: React.FC = () => {
                         />
                     </svg>
                 </CardDataStats>
-                <CardDataStats title="Bot Usage" total="400" rate="0.95%" levelDown>
+                <CardDataStats title="Bot Usage" total={data?.botUsage.toString()||"0"} rate="0.95%" levelDown>
                     <svg
                         className="fill-primary dark:fill-white"
                         width="22"
@@ -109,7 +116,7 @@ const DashboardPage: React.FC = () => {
                 </div>
 
 
-                <div className="col-span-12 xl:col-span-8">
+                <div className="col-span-12 xl:col-span-8 max-h-[500px] overflow-y-auto">
                     <PatientsOverviewTable/>
                 </div>
                 <ChatCard/>

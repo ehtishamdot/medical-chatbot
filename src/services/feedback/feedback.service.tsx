@@ -13,6 +13,7 @@ import {invitePayloadType} from "@/components/modules/patients/patient-invite-fo
 import {useCallback} from "react";
 import {fetchSinglePatient} from "@/services/patients/patient.api";
 import {ratingFormSchema} from "@/components/modules/chat/chat-feedback";
+import {patientFeedbackType} from "@/lib/types/patients";
 
 type patientType=z.infer<typeof patientSchema>;
 type bulkUploadResponseType={
@@ -49,7 +50,7 @@ export default function FeedbackService() {
 
     const useFetchAllFeedback = () => {
 
-        function fetchPatients(): Promise<z.infer<typeof ratingFormSchema>[]> {
+        function fetchPatients(): Promise<patientFeedbackType[]> {
             return axios.get("/api/patient/feedback/all").then((res) => res.data);
         }
 

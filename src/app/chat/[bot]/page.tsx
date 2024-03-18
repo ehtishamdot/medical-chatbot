@@ -240,7 +240,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog.Root>
-          <ChatFeedback chatEnded={chatEnded}/>
+          <ChatFeedback patientId={patient_id} chatEnded={chatEnded}/>
         </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
       </>
 
