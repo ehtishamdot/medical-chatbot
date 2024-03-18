@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
 
     const multipartFormData = await req.formData();
-    console.log(multipartFormData);
     const csvFile = multipartFormData.get("patients");
     if (!(csvFile instanceof File))
       throw new ServerError("CSV file not found in form data", 400);
@@ -46,6 +45,7 @@ export async function POST(req: NextRequest) {
 
     const patients: Patient[] = [];
 
+    console.log(multipartFormData);
     const readableStream = Readable.from([csvText]);
     const parser = readableStream.pipe(csv());
 

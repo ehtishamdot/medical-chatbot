@@ -116,7 +116,7 @@ model Question {
 model Patient {
   id             String     @id @default(auto()) @map("_id") @db.ObjectId
   name           String
-  email          String     @unique
+  email          String     
   gender         String
   dateOfBirth    DateTime
   phone          String
