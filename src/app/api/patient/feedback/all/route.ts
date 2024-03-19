@@ -26,12 +26,7 @@ export async function GET(req: NextRequest) {
         addedByUserId: id,
       },
       include: {
-        Feedback: {
-          select: {
-            rating: true,
-            comment: true,
-          },
-        },
+        Feedback: true,
       },
     });
     return NextResponse.json(patientsFeedback);
