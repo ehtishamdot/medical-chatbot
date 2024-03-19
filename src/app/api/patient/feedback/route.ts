@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   try {
-    const { rating, comment, patientId, specialty, type, diseaseName } =
+    const { rating, comment, patientId, specialtyId, diseaseId } =
       await req.json();
     const authorizationHeader = req.headers.get("Cookie");
     const refreshTokenStartIndex =
@@ -30,15 +30,36 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const SpecialtyName = await prisma.specialty.findUnique({
+      where: {
+        id: specialtyId,
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    let diseaseName;
+    if (diseaseId) {
+      diseaseName = await prisma.disease.findUnique({
+        where: {
+          id: diseaseId,
+        },
+        select: {
+          name: true,
+        },
+      });
+    }
+
     if (availablePatientStatus) {
       const feedback = await prisma.feedback.create({
         data: {
           patientId,
           rating,
           comment,
-          specialty,
-          diseaseName,
-          phaseType: type,
+          specialty: SpecialtyName?.name,
+          diseaseName: diseaseName?.name,
+          phaseType: diseaseId ? "DISEASE_SPECIFIC" : "GENERAL",
         },
       });
       return NextResponse.json(feedback);
