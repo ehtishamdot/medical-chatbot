@@ -7,7 +7,8 @@ import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   try {
-    const { rating, comment, patientId } = await req.json();
+    const { rating, comment, patientId, specialty, type, diseaseName } =
+      await req.json();
     const authorizationHeader = req.headers.get("Cookie");
     const refreshTokenStartIndex =
       authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
@@ -35,6 +36,9 @@ export async function POST(req: NextRequest) {
           patientId,
           rating,
           comment,
+          specialty,
+          diseaseName,
+          phaseType: type,
         },
       });
       return NextResponse.json(feedback);
