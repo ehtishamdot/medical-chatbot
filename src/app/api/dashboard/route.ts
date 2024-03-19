@@ -135,7 +135,6 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    console.log(latestHistories);
     return NextResponse.json({
       createdAssistants,
       patientAssisted,
