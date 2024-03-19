@@ -11,6 +11,9 @@ import {BulkUploadSchema, patientFormSchema, patientSchema} from "@/components/m
 import {invitePayloadType} from "@/components/modules/patients/patient-invite-form";
 import {useCallback} from "react";
 import {fetchSinglePatient} from "@/services/patients/patient.api";
+import {fetchAllChatHistoryApiResponse} from "@/lib/types/history";
+import {cookies} from "next/headers";
+import Cookies from "js-cookie";
 
 type patientType=z.infer<typeof patientSchema>;
 type bulkUploadResponseType={
@@ -101,6 +104,7 @@ export default function PatientsServices() {
         const onSuccess = async () => {
             toast.success("Patient Verified Successfully");
             callback();
+            Cookies.set("verified",JSON.stringify(true))
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));
@@ -129,6 +133,25 @@ export default function PatientsServices() {
         return useQuery({
             queryFn: fetchPatients,
             queryKey: [`patients`],
+            retry: 0,
+        });
+    };
+    const useFetchPatientChatHistory = (id:string) => {
+
+        function fetchPatients(): Promise<fetchAllChatHistoryApiResponse> {
+            return axios.get(`/api/history/patient?patientId=${id}`).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Patient Created Successfully");
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useQuery({
+            queryFn: fetchPatients,
+            queryKey: [`patient-history`],
             retry: 0,
         });
     };
@@ -166,6 +189,7 @@ export default function PatientsServices() {
         useFetchDoctorSpecialty,
         useFetchSinglePatient,
         useHandlePatientVerification,
-        useHandleBulkUploadPatients
+        useHandleBulkUploadPatients,
+        useFetchPatientChatHistory
     };
 }

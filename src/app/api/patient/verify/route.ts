@@ -8,21 +8,21 @@ import { z } from "zod";
 export async function POST(req: NextRequest) {
   try {
     const patient = await req.json();
-    // const authorizationHeader = req.headers.get("Cookie");
-    // console.log(authorizationHeader);
-    // const refreshTokenStartIndex =
-    //   authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
-    // if (!refreshTokenStartIndex) {
-    //   throw new ServerError("Unauthorized", 401);
-    // }
-    // const accessToken = refreshTokenStartIndex;
-    // const dbToken = await prisma.token.findFirst({
-    //   where: {
-    //     token: accessToken,
-    //   },
-    // });
-    // if (!dbToken) throw new ServerError("Invalid token provided", 409);
-    // const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
+    const authorizationHeader = req.headers.get("Cookie");
+    console.log(authorizationHeader);
+    const refreshTokenStartIndex =
+      authorizationHeader?.match(/refreshToken=([^;]*)/)?.[1];
+    if (!refreshTokenStartIndex) {
+      throw new ServerError("Unauthorized", 401);
+    }
+    const accessToken = refreshTokenStartIndex;
+    const dbToken = await prisma.token.findFirst({
+      where: {
+        token: accessToken,
+      },
+    });
+    if (!dbToken) throw new ServerError("Invalid token provided", 409);
+    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
     console.log(patient);
     const availablePatientStatus = await prisma.patient.findFirst({
       where: {

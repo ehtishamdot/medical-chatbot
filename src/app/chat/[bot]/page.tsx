@@ -14,17 +14,6 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import "./index.css";
 import {notFound, usePathname} from "next/navigation";
 import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import {Form} from "@/components/ui/form";
 import ChatFeedback from "@/components/modules/chat/chat-feedback";
 type Message = {
   id: string;
@@ -57,7 +46,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
   const [allowed,setAllowed]=useState(false);
-  const [chatEnded,setChatEnded]=useState(true);
+  const [chatEnded,setChatEnded]=useState(false);
 
   useEffect(() => {
     httpRequest
@@ -126,6 +115,9 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
         } else {
           setHistory((prev) => [...prev, latestMessage, data]);
         }
+        if(data.action==="finished"){
+          setChatEnded(true)
+        }
       })
       .catch((err) => {
         if (err instanceof AxiosError) {
@@ -156,11 +148,11 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   return (
       <>
         {allowed ? <div>
-          <Menu clear={clear}/>
+          {/*<Menu clear={clear}/>*/}
+          <ChatFeedback setChatEnded={setChatEnded}  diseaseBotId={disease_bot_id}  specialtyId={bot} patientId={patient_id} chatEnded={chatEnded}/>
           <div className="input w-full flex flex-col justify-between h-screen">
             <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
               <p className="text-3xl font-semibold">Esper Wise</p>
-              <p className="text-3xl text-primary font-semibold">Neurologist</p>
             </div>
 
             <>
@@ -240,7 +232,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog.Root>
-          <ChatFeedback patientId={patient_id} chatEnded={chatEnded}/>
+
         </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
       </>
 
