@@ -1,14 +1,10 @@
 import { prisma } from "@/db/config";
-import * as sgMail from "@sendgrid/mail";
 import {
   decryptToken,
   errorHandler,
   generateRandomPassword,
 } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
-import { hashSync } from "bcrypt";
-import { z } from "zod";
-import { sign } from "jsonwebtoken";
 import ServerError, { JWTPayload } from "@/lib/types";
 
 interface Feedback {
@@ -110,11 +106,42 @@ export async function GET(req: NextRequest) {
     });
     const averageRating = totalRatings / numberOfFeedback;
     const scaledRating = (averageRating / 5) * 100;
+    let histories = await prisma.history.groupBy({
+      by: ["patientId"],
+      _max: {
+        updatedAt: true,
+      },
+      where: {
+        userId: id,
+      },
+    });
+
+    let latestHistoryDates = histories.map(
+      (history: { patientId: any; _max: { updatedAt: any } }) => ({
+        patientId: history.patientId,
+        latestUpdatedAt: history._max.updatedAt,
+      })
+    );
+
+    let latestHistories = await Promise.all(
+      latestHistoryDates.map(async ({ patientId, latestUpdatedAt }) => {
+        return await prisma.history.findFirst({
+          where: {
+            userId: id,
+            patientId: patientId,
+            updatedAt: latestUpdatedAt,
+          },
+        });
+      })
+    );
+
+    console.log(latestHistories);
     return NextResponse.json({
       createdAssistants,
       patientAssisted,
       botUsage,
       totalRatings: scaledRating,
+      latestHistories,
     });
   } catch (err) {
     console.error(err);
