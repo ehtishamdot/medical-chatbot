@@ -4,27 +4,21 @@ import Link from "next/link";
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import PatientsServices from "@/services/patients/patients.service";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {Chat} from "@/lib/types/chat";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Calendar} from "@/components/ui/calendar";
 import {useState} from "react";
+import LoadingPage from "@/components/common/loaders/loading-page";
 
 
-const chatData: Chat[] = [
-    {
-        avatar: "/images/user/user-01.png",
-        name: "Neurologist",
-        text: "Hello",
-        time: 12,
-        textCount: 3,
-        dot: 3,
-        uri:"/patient/chat-history/65e6006a45bd24cb84262e47?patient_id=65d78546a3b0a329407a0823&disease_bot_id=65edee22088ff4f3deecb0f6"
-    },
-];
 const SinglePatient = ({id}:{id:string}) => {
-    const {useFetchSinglePatient}=PatientsServices();
-    const {data:singlePatientData}=useFetchSinglePatient(id);
+    const {useFetchSinglePatient,useFetchPatientChatHistory}=PatientsServices();
+    const {data:singlePatientData,isLoading}=useFetchSinglePatient(id);
+    const {data:patientHistory,isLoading:isPatientHistoryLoading}=useFetchPatientChatHistory(id);
     const [date, setDate] = useState<Date | undefined>(new Date())
+
+    if(isLoading){
+        return <LoadingPage/>
+    }
 
     return (
         <div className="mx-auto max-w-242.5">
@@ -73,9 +67,9 @@ const SinglePatient = ({id}:{id:string}) => {
                                         </h4>
 
                                         <div>
-                                            {chatData.map((chat, key) => (
+                                            {patientHistory?.map((chat, key) => (
                                                 <Link
-                                                    href={chat.uri}
+                                                    href={`/patient/chat-history/${chat.id}?patient_id=${chat.patientId}`}
                                                     className="flex items-center gap-5 px-7.5 py-3 hover:bg-gray-3 dark:hover:bg-meta-4"
                                                     key={key}
                                                 >
@@ -97,16 +91,15 @@ const SinglePatient = ({id}:{id:string}) => {
                                                         {/*></span>*/}
                                                     </div>
 
-                                                    <div className="flex flex-1 items-center justify-between">
+                                                    <div className="flex flex-1 items-center justify-start">
                                                         <div>
                                                             <h5 className="font-medium text-left text-black dark:text-white">
-                                                                {chat.name}
+                                                                {chat.id}
                                                             </h5>
                                                             <p>
                   <span className="text-sm text-black dark:text-white">
-                    {chat.text}
+                    {chat.chatHistory[chat.chatHistory.length-1].content}
                   </span>
-                                                                <span className="text-xs"> . {chat.time} min</span>
                                                             </p>
                                                         </div>
                                                         {/*{chat.textCount !== 0 && (*/}

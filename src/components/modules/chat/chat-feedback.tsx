@@ -4,7 +4,7 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle
+    DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React from "react";
@@ -14,19 +14,26 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Rating} from "react-simple-star-rating";
 import {Textarea} from "@/components/ui/textarea";
 import FeedbackService from "@/services/feedback/feedback.service";
+import {Button} from "@/components/ui/button";
+import {Menu as MenuIcon} from "lucide-react";
+import {DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
 export const ratingFormSchema = z.object({
     patientId: z.string(),
     comment:z.string(),
-    rating:z.number()
+    rating:z.number(),
+    diseaseId:z.string().optional(),
+    specialtyId:z.string()
 })
-const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=>{
+const ChatFeedback=({chatEnded,patientId,diseaseBotId,specialtyId,setChatEnded}:{setChatEnded:any;chatEnded:boolean;patientId:string;diseaseBotId?:string|undefined;specialtyId:string})=>{
     const {useHandleAddFeedback}=FeedbackService();
     const {mutate:handleAddFeedback,isPending:isHandleAddFeedbackPending}=useHandleAddFeedback();
     const form = useForm<z.infer<typeof ratingFormSchema>>({
         resolver: zodResolver(ratingFormSchema),
         defaultValues: {
             patientId: patientId,
+            diseaseId:diseaseBotId,
+            specialtyId:specialtyId,
         },
     })
     function onSubmit(values: z.infer<typeof ratingFormSchema>) {
@@ -34,7 +41,16 @@ const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=
        handleAddFeedback(values);
     }
     return(
-        <Dialog open={chatEnded}>
+        <Dialog onOpenChange={()=>setChatEnded(!chatEnded)} open={chatEnded}>
+            <DialogTrigger asChild>
+                <Button
+                    className="absolute top-7 left-5 max-[500px]:left-2 border-2 dark:border-neutral-700 dark:bg-neutral-950 bg-neutral-100 border-neutral-300"
+                    variant="ghost"
+                >
+                    {/*<MenuIcon className="w-5 h-5" />{" "}*/}
+                    <span className="ml-2">Give Feedback</span>
+                </Button>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Feedback</DialogTitle>
@@ -80,8 +96,6 @@ const ChatFeedback=({chatEnded,patientId}:{chatEnded:boolean;patientId:string})=
                         </DialogFooter>
                     </form>
                 </Form>
-
-
             </DialogContent>
         </Dialog>
     )

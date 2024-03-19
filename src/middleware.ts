@@ -30,7 +30,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
   if (pathname === "/") {
-    return NextResponse.next();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
   if (
@@ -57,19 +58,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (pathname.startsWith("/api")) {
-    if (
-      !(pathname == "/api/auth/login" || pathname == "/api/auth/signup") &&
-      !token
-    ) {
-      return NextResponse.json(
-        {
-          message: "Unauthorised",
-        },
-        { status: 401 }
-      );
-    }
-  }
+  // if (pathname.startsWith("/api")) {
+  //   if (
+  //     !(pathname == "/api/auth/login" || pathname == "/api/auth/signup") &&
+  //     !token
+  //   ) {
+  //     return NextResponse.json(
+  //       {
+  //         message: "Unauthorised",
+  //       },
+  //       { status: 401 }
+  //     );
+  //   }
+  // }
 }
 
 export const config = {

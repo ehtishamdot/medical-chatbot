@@ -3,10 +3,10 @@
 import Message, { Skeleton } from "@/components/Message";
 import { useToast } from "@/components/ui/use-toast";
 import { httpRequest } from "@/lib/interceptor";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
-import "../../../../../app/chat/[bot]/index.css";
+import "../../../../chat/[bot]/index.css";
 import {notFound, usePathname, useRouter} from "next/navigation";
 import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
 import PatientsServices from "@/services/patients/patients.service";
@@ -24,12 +24,10 @@ interface IHistory {
   content: string;
 }
 
-export default function Chat({params,searchParams}:{params:{bot:string};searchParams:{patient_id:string;disease_bot_id:string}}) {
-  const {bot}=params;
-  console.log(params)
-  console.log(searchParams)
-  const {patient_id,disease_bot_id}=searchParams;
-  if(!bot||!patient_id){
+export default function Chat({params,searchParams}:{params:{id:string},searchParams:{patient_id:string;}}) {
+  const {id}=params;
+  const {patient_id}=searchParams;
+  if(!id){
     notFound();
   }
   const {useFetchSinglePatient}=PatientsServices();
@@ -46,14 +44,14 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
   const [allowed,setAllowed]=useState(true);
-
+  // `/api/patient/bot/history?patient_id=${patient_id}&specialty_id=${bot}&disease_bot_id=${disease_bot_id}`
   useEffect(() => {
-    httpRequest
-      .post(`/api/patient/bot/history?patient_id=${patient_id}&specialty_id=${bot}&disease_bot_id=${disease_bot_id}`)
+    axios
+      .get(`/api/history/single-patient?historyId=${id}`)
       .then((res) => {
         console.log(res.data)
         setMessages(
-          res.data.chat.map((item: any) => {
+          res.data.chatHistory.map((item: any) => {
             return {
               message: item.content,
               isUser: item.role==="user",
@@ -91,8 +89,8 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   }
   return (
       <>
-        {allowed ? <div className={""}>
-          <div className="input w-full flex flex-col justify-between h-screen">
+        {allowed ? <div className={"bg-white"}>
+          <div className="input w-full flex flex-col justify-between h-[80vh]">
             <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
               <p className="text-3xl font-semibold">Esper Wise</p>
               <p className="text-3xl text-primary font-semibold">Neurologist</p>
@@ -117,10 +115,8 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
                 {loading && <Skeleton/>}
               </div>
             </>
-
           </div>
         </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
       </>
-
   );
 }

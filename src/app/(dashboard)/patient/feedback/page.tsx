@@ -8,7 +8,9 @@ import {FEEDBACK_COLS} from "@/app/(dashboard)/patient/feedback/patient-columns"
 
 const ViewPatients=()=>{
   const {useFetchAllFeedback}=FeedbackService();
-  const {data:feedbackData,isLoading:isFeedbackLoading}=useFetchAllFeedback();
+  const {data:feedback,isLoading:isFeedbackLoading}=useFetchAllFeedback();
+  const feedbackData=feedback?.filter((el)=>el.Feedback.length>0);
+  console.log(feedbackData,"feedback")
     if(isFeedbackLoading){
         return <LoadingPage/>
     }
