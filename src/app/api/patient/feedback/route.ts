@@ -1,6 +1,7 @@
 import { prisma } from "@/db/config";
 import ServerError, { JWTPayload } from "@/lib/types";
 import { decryptToken, errorHandler, getOpenAIApiInstance } from "@/lib/utils";
+import { Patient } from "@prisma/client";
 import { deepEqual } from "assert";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -60,6 +61,8 @@ export async function POST(req: NextRequest) {
           specialty: SpecialtyName?.name,
           diseaseName: diseaseName?.name,
           phaseType: diseaseId ? "DISEASE_SPECIFIC" : "GENERAL",
+          diseaseId,
+          specialtyId,
         },
       });
       return NextResponse.json(feedback);
@@ -72,6 +75,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const specialtyId = req.nextUrl.searchParams.get("specialtyId") as string;
+    const diseaseId = req.nextUrl.searchParams.get("diseaseId") as string;
+    const phaseType = req.nextUrl.searchParams.get("phaseType") as string;
     const authorizationHeader = req.headers.get("Cookie");
     console.log(authorizationHeader);
     const refreshTokenStartIndex =
@@ -86,13 +92,32 @@ export async function GET(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
-    const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
-    const userPatients = await prisma.patient.findMany({
+    let feedback = await prisma.feedback.findMany({
       where: {
-        addedByUserId: id,
+        specialtyId,
+        diseaseId,
+        phaseType,
       },
     });
-    return NextResponse.json(userPatients);
+
+    if (!feedback.length) {
+      throw new ServerError("Feedbacks not found", 404);
+    }
+    const feedbacksWithPatients = await Promise.all(
+      feedback.map(async (feedback: { patientId: any }) => {
+        const patient: Patient | null = await prisma.patient.findUnique({
+          where: {
+            id: feedback.patientId,
+          },
+        });
+        return { feedback, patient };
+      })
+    );
+    const response = {
+      feedbacks: feedbacksWithPatients,
+    };
+
+    return NextResponse.json(feedbacksWithPatients);
   } catch (err) {
     console.error(err);
     return errorHandler(err);

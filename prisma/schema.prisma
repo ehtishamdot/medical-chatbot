@@ -140,6 +140,8 @@ model Feedback {
   specialty String  
   phaseType   PhaseType
   diseaseName String?
+  specialtyId String   @db.ObjectId
+  diseaseId   String?  @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
