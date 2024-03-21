@@ -92,13 +92,23 @@ export async function GET(req: NextRequest) {
       },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
-    let feedback = await prisma.feedback.findMany({
-      where: {
-        specialtyId,
-        diseaseId,
-        phaseType,
-      },
-    });
+    let feedback;
+    if (diseaseId) {
+      feedback = await prisma.feedback.findMany({
+        where: {
+          specialtyId,
+          diseaseId,
+          phaseType,
+        },
+      });
+    } else {
+      feedback = await prisma.feedback.findMany({
+        where: {
+          specialtyId,
+          phaseType,
+        },
+      });
+    }
 
     if (!feedback.length) {
       throw new ServerError("Feedbacks not found", 404);

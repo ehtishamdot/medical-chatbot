@@ -1,16 +1,7 @@
 import { prisma } from "@/db/config";
-import * as sgMail from "@sendgrid/mail";
-import {
-  decryptToken,
-  errorHandler,
-  generateRandomPassword,
-} from "@/lib/utils";
+import { decryptToken, errorHandler } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
-import { hashSync } from "bcrypt";
-import { z } from "zod";
-import { sign } from "jsonwebtoken";
 import ServerError, { JWTPayload } from "@/lib/types";
-import { randomBytes } from "crypto";
 
 export async function GET(req: NextRequest) {
   try {
