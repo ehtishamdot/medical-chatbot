@@ -18,6 +18,7 @@ import BaseAutoComplete from "@/components/common/form/BaseAutocomplete";
 import {LANGUAGES} from "@/lib/constants";
 import AuthServices from "@/services/auth/auth.service";
 import {userType} from "@/lib/types/user";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const profileFormSchema = z.object({
     specialty:z.string({
@@ -156,7 +157,7 @@ const ProfileUpdateForm = ({countries,user}:{countries:countryType[],user:userTy
                                             className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                             type="submit"
                                         >
-                                            Save
+                                            {isHandleUpdateProfile?<DefaultLoader/>:"Save"}
                                         </button>
                                     </div>
                                 </form>

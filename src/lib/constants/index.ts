@@ -280,3 +280,133 @@ export const DASHBOARD_PATIENTS = [
 ];
 
 export const BASE_URL=`https://17c4-119-73-96-67.ngrok-free.app`;
+
+
+export const SPECIALTY_OPTIONS=[ {
+    value: "cardiology",
+    label: "Cardiology",
+},
+    {
+        value: "dermatology",
+        label: "Dermatology",
+    },
+    {
+        value: "endocrinology",
+        label: "Endocrinology",
+    },
+    {
+        value: "gastroenterology",
+        label: "Gastroenterology",
+    },
+    {
+        value: "hematology",
+        label: "Hematology",
+    },
+    {
+        value: "infectious_disease",
+        label: "Infectious Disease",
+    },
+    {
+        value: "nephrology",
+        label: "Nephrology",
+    },
+    {
+        value: "neurology",
+        label: "Neurology",
+    },
+    {
+        value: "oncology",
+        label: "Oncology",
+    },
+    {
+        value: "pediatrics",
+        label: "Pediatrics",
+    },
+    {
+        value: "psychiatry",
+        label: "Psychiatry",
+    },
+    {
+        value: "pulmonology",
+        label: "Pulmonology",
+    },
+    {
+        value: "rheumatology",
+        label: "Rheumatology",
+    },
+    {
+        value: "surgery",
+        label: "General Surgery",
+    },
+    {
+        value: "urology",
+        label: "Urology",
+    },
+    {
+        value: "obgyn",
+        label: "Obstetrics and Gynecology (OB/GYN)",
+    },
+    {
+        value: "ophthalmology",
+        label: "Ophthalmology",
+    },
+    {
+        value: "ent",
+        label: "Otolaryngology (ENT - Ear, Nose, and Throat)",
+    },
+    {
+        value: "orthopedics",
+        label: "Orthopedics",
+    },
+    {
+        value: "plastic_surgery",
+        label: "Plastic Surgery",
+    },
+    {
+        value: "radiology",
+        label: "Radiology",
+    },
+    {
+        value: "anesthesiology",
+        label: "Anesthesiology",
+    },
+    {
+        value: "pathology",
+        label: "Pathology",
+    },
+    {
+        value: "emergency_medicine",
+        label: "Emergency Medicine",
+    },
+    {
+        value: "physical_medicine",
+        label: "Physical Medicine and Rehabilitation",
+    },
+    {
+        value: "allergy_immunology",
+        label: "Allergy and Immunology",
+    },
+    {
+        value: "geriatrics",
+        label: "Geriatrics",
+    },
+    {
+        value: "family_medicine",
+        label: "Family Medicine",
+    },
+    {
+        value: "internal_medicine",
+        label: "Internal Medicine",
+    },
+    {
+        value: "critical_care_medicine",
+        label: "Critical Care Medicine",
+    },
+    {
+        value: "orthopedic",
+        label: "Orthopedic",
+    },
+    {
+        value: "neurologist",
+        label: "Neurologist",
+    }]

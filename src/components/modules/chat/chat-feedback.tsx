@@ -17,6 +17,7 @@ import FeedbackService from "@/services/feedback/feedback.service";
 import {Button} from "@/components/ui/button";
 import {Menu as MenuIcon} from "lucide-react";
 import {DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const ratingFormSchema = z.object({
     patientId: z.string(),
@@ -91,7 +92,7 @@ const ChatFeedback=({chatEnded,patientId,diseaseBotId,specialtyId,setChatEnded}:
                                 className="flex cursor-pointer justify-center items-center mt-4 rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                 type="submit"
                             >
-                                Submit
+                                {isHandleAddFeedbackPending?<DefaultLoader/>:"Submit"}
                             </button>
                         </DialogFooter>
                     </form>

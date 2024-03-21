@@ -4,7 +4,7 @@ export type signUpFormType={
     email:string;
     password:string;
     username:string;
-    specialty:string;
+    specialty:string[];
     jobTitle:string;
     placeOfWork:string;
     licenseNumber:string;

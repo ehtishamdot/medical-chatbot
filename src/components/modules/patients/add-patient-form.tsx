@@ -15,6 +15,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Textarea} from "@/components/ui/textarea";
 import PatientsServices from "@/services/patients/patients.service";
 import BaseDropzone from "@/components/common/form/BaseDropzone";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const patientFormSchema = z.object({
     name:z.string({
@@ -228,7 +229,7 @@ const AddPatientForm = () => {
                                             className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                             type="submit"
                                         >
-                                            Add Patient
+                                            {isHandleAddPatientPending?<DefaultLoader/>:" Add Patient"}
                                         </button>
                                     </div>
                                 </form>
@@ -260,7 +261,7 @@ const AddPatientForm = () => {
                                         className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                         type="submit"
                                     >
-                                        Save
+                                        {isHandleUploadPending?<DefaultLoader/>:"Save"}
                                     </button>
                                 </div>
                             </form>

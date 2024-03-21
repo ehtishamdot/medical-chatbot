@@ -14,6 +14,7 @@ import {useSession} from "next-auth/react";
 import {Input} from "@/components/ui/input";
 import AuthServices from "@/services/auth/auth.service";
 import {userType} from "@/lib/types/user";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const securityFormSchema = z.object({
     username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50).optional(),
@@ -84,7 +85,7 @@ const AccountSettingsForm = ({user}:{user:userType}) => {
                                             className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                             type="submit"
                                         >
-                                            Save
+                                            {isHandleUpdateSecurityPending?<DefaultLoader/>:" Save"}
                                         </button>
                                     </div>
                                 </form>

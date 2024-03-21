@@ -8,6 +8,7 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Calendar} from "@/components/ui/calendar";
 import {useState} from "react";
 import LoadingPage from "@/components/common/loaders/loading-page";
+import {truncateString} from "@/lib/helpers";
 
 
 const SinglePatient = ({id}:{id:string}) => {
@@ -98,7 +99,8 @@ const SinglePatient = ({id}:{id:string}) => {
                                                             </h5>
                                                             <p>
                   <span className="text-sm text-black dark:text-white">
-                    {chat.chatHistory[chat.chatHistory.length-1].content}
+                                       {truncateString(chat.chatHistory[chat.chatHistory.length - 1].content,40)}
+
                   </span>
                                                             </p>
                                                         </div>

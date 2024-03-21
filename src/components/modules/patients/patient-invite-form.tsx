@@ -29,6 +29,7 @@ import {useEffect, useState} from "react";
 import {userType} from "@/lib/types/user";
 import Cookies from "js-cookie";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 
 export const InviteSchema = z.object({
@@ -79,7 +80,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
         unparsedUserData=JSON.parse(userData);
     }
     const {useHandleSendInvite}=PatientsServices();
-    const {mutate:sendInvite}=useHandleSendInvite();
+    const {mutate:sendInvite,isPending:isHandleInvitePending}=useHandleSendInvite();
     const type=form.watch("type");
     const user=TokenService.getUser();
     const {useHandleGetTranslatedText}=TranslationService();
@@ -229,7 +230,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                         </FormItem>
                     )}
                 />
-                <Button className={"bg-primary"} type="submit">Send Invite</Button>
+                <Button className={"bg-primary"} type="submit">{isHandleInvitePending?<DefaultLoader/>:"Send Invite"}</Button>
             </form>
         </Form>
     </DialogContent>

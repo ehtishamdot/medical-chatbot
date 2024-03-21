@@ -23,19 +23,17 @@ import {
 import { z } from "zod"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import AuthServices from "@/services/auth/auth.service";
 import CountrySelect from "@/components/common/form/CountrySelect";
 import BaseAutoComplete from "@/components/common/form/BaseAutocomplete";
-import {LANGUAGES} from "@/lib/constants";
+import {LANGUAGES, SPECIALTY_OPTIONS} from "@/lib/constants";
+import {MultiSelect} from "@/components/ui/multi-select";
 
 const formSchema = z.object({
     username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50),
     email: z.string().email("Should Be A Valid Email"),
     password:z.string().min(1,"Password Is Required").min(6,"Password Should be Atleast 6 Characters"),
-    specialty:z.string({
-        required_error: "Specialty Is Required",
-    }),
+    specialty:z.array(z.string()),
     jobTitle:z.string({
         required_error: "Job Title Is Required",
     }),
@@ -68,6 +66,7 @@ export default function SignupForm({countries}:{countries:countryType[]}) {
         mode:"onChange",
         defaultValues: {
             role: "DOCTOR",
+            specialty: []
         },
     })
     const {useHandleSignUpService}=AuthServices();
@@ -118,18 +117,15 @@ export default function SignupForm({countries}:{countries:countryType[]}) {
                                     name="specialty"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Specialty</FormLabel>
-                                            <Select {...field} onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select your specialty" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="orthopedic">Orthopedic</SelectItem>
-                                                    <SelectItem value="neurologist">Neurologist</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <FormLabel>Select Specialty</FormLabel>
+                                            <MultiSelect
+                                                placeholder={"Select Your Specialty"}
+                                                {...field}
+                                                selected={field.value}
+                                                options={SPECIALTY_OPTIONS}
+                                                {...field}
+                                                className="sm:w-[510px]"
+                                            />
                                             <FormMessage />
                                         </FormItem>
                                     )}
