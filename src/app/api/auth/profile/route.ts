@@ -8,7 +8,7 @@ import ServerError, { JWTPayload } from "@/lib/types";
 
 const profileSchema = z
   .object({
-    specialty: z.string().optional(),
+    specialty: z.any(),
     jobTitle: z.string().optional(),
     placeOfWork: z.string().optional(),
     licenseNumber: z.string().optional(),
