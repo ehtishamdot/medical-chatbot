@@ -153,6 +153,8 @@ model History {
   ragVecHit             Int?        @default(0)
   chatComplete          Boolean     @default(false)
   report                Json?
+  specialtyName         String?
+  diseaseName           String?
 
 
   userId              String      @db.ObjectId @map("userId")
