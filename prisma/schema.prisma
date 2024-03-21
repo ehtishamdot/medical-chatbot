@@ -28,7 +28,7 @@ model User {
   username           String      @unique
   email              String      @unique
   password           String
-  specialty          String
+  specialty          String[]
   jobTitle           String
   placeOfWork        String
   licenseNumber      String?
