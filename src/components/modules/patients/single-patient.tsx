@@ -40,7 +40,7 @@ const SinglePatient = ({id}:{id:string}) => {
                 <div className="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
                     <div className="relative z-30 mx-auto -mt-22 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3">
                             <Avatar className={"!w-full !h-full"}>
-                                <AvatarFallback className={"bg-primary text-2xl text-white font-[700]"}>{singlePatientData?.name.split(" ")[0][0]+" "+singlePatientData?.name.split(" ")[1][0]}</AvatarFallback>
+                                <AvatarFallback className={"bg-primary text-2xl text-white font-[700]"}>{singlePatientData?.name.split(" ")[0][0].toUpperCase()}</AvatarFallback>
                             </Avatar>
                     </div>
                     <div className="mt-4">

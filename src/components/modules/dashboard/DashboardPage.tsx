@@ -119,7 +119,7 @@ const DashboardPage: React.FC = () => {
                 <div className="col-span-12 xl:col-span-8 max-h-[500px] overflow-y-auto">
                     <PatientsOverviewTable/>
                 </div>
-                <ChatCard/>
+                <ChatCard latestHistory={data?.latestHistories}/>
             </div>
         </>
     );

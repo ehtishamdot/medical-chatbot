@@ -278,3 +278,5 @@ export const DASHBOARD_PATIENTS = [
         clinicalAssessment: "Joint pain management, cholesterol levels stable"
     }
 ];
+
+export const BASE_URL=`https://17c4-119-73-96-67.ngrok-free.app`;

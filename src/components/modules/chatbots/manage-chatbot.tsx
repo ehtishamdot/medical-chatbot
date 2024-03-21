@@ -199,6 +199,7 @@ const ManageChatbot=()=>{
                                 <Button className={'bg-primary'}>
                                     <Link href={`/chatbots/${el.specialtyId}?specificity=GENERAL`}>Manage</Link>
                                 </Button>
+                                    <Link className={"text-primary font-bold underline"} href={`/patient/feedback/${el.specialtyId}?specificity=GENERAL&phase=${el.name}`}>Reviews</Link>
                             </CardFooter>
                         </Card>
                     )
@@ -220,6 +221,7 @@ const ManageChatbot=()=>{
                                 <Button className={'bg-primary'}>
                                     <Link href={`/chatbots/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Manage</Link>
                                 </Button>
+                                    <Link className={"text-primary font-bold underline"} href={`/patient/feedback/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Reviews</Link>
                             </CardFooter>
                         </Card>
                     )

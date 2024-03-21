@@ -24,7 +24,9 @@ export default function ChatbotServices() {
 
         const onSuccess = async (response:createChatbotApiResponse) => {
             toast.success("Bot Created Successfully");
-            await queryClient.invalidateQueries({queryKey:["bots"]});
+            await queryClient.invalidateQueries({queryKey:["chatbots"]});
+            await queryClient.invalidateQueries({queryKey:["chatbots-questions"]});
+
             if(response.specificity===DISEASE_ENUM.DISEASE_SPECIFIC){
                 router.push(`/chatbots/${response.id}?specificity=${response.specificity}&diseaseId=${response.diseaseId}`)
             }
@@ -62,7 +64,7 @@ export default function ChatbotServices() {
 
         return useQuery({
             queryFn: fetchChatbots,
-            queryKey: [`chatbots`],
+            queryKey: [`chatbots-questions`],
             retry: 0,
         });
     };

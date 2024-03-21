@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "https://29a1-2407-aa80-14-39e-4c80-e73d-b2ce-84d2.ngrok-free.app",
+    baseURL: process.env.NEXT_PUBLIC_AI_URL,
 });
 
 axiosInstance.interceptors.response.use(

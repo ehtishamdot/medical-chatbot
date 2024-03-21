@@ -9,10 +9,26 @@ export const FEEDBACK_COLS: ColumnDef<patientFeedbackType>[] = [
     {
         accessorKey: "name",
         header: "Name",
+        cell: ({ row }) => {
+            console.log(row.getValue("id"))
+            return(
+                    <p>{row?.original?.patient?.name}</p>
+
+            )
+        },
     },
     {
         accessorKey: "email",
         header: "Email",
+        cell: ({ row }) => {
+            console.log(row.getValue("id"))
+            return(
+                <>
+                    <p>{row?.original?.patient?.email}</p>
+                </>
+
+            )
+        },
     },
     {
         accessorKey: "ratings",
@@ -21,8 +37,7 @@ export const FEEDBACK_COLS: ColumnDef<patientFeedbackType>[] = [
             console.log(row.getValue("id"))
             return(
                 <>
-                {row?.original?.Feedback[0]?.rating&&<Rating readonly={true} size={30} SVGstyle={{display:"inline"}} initialValue={row?.original?.Feedback[0]?.rating}/>}
-                    {!row?.original?.Feedback[0]?.rating&&<p>-</p>}
+                <Rating readonly={true} size={30} SVGstyle={{display:"inline"}} initialValue={row?.original?.feedback?.rating}/>
                 </>
 
             )
@@ -35,8 +50,7 @@ export const FEEDBACK_COLS: ColumnDef<patientFeedbackType>[] = [
             console.log(row.getValue("id"))
             return(
                 <>
-                    {row?.original?.Feedback[0]?.comment&&<p>{row.original.Feedback[0].comment}</p>}
-                    {!row?.original?.Feedback[0]?.comment&&<p>-</p>}
+                    {row?.original?.feedback?.comment&&<p>{row.original.feedback.comment}</p>}
                 </>
 
             )

@@ -59,7 +59,7 @@ export function DataTable<TData, TValue>({
         <Table className={"bg-white"}>
             <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow className={"border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4"}
+                    <TableRow className={"sticky border-b border-[#eee] bg-gray-2 text-left dark:bg-meta-4"}
                               key={headerGroup.id}>
                         {headerGroup.headers.map((header) => {
                                 return (
@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
                                 data-state={row.getIsSelected() && "selected"}
                             >
                                 {row.getVisibleCells().map((cell) => (
-                                    <TableCell className={"border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"} key={cell.id}>
+                                    <TableCell className={"border-b border-[#eee]  px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"} key={cell.id}>
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </TableCell>
                                 ))}

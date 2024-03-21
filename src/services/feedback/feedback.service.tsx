@@ -48,10 +48,10 @@ export default function FeedbackService() {
     };
 
 
-    const useFetchAllFeedback = () => {
+    const useFetchAllFeedback = (specificity:string,id:string,diseaseId:string|undefined) => {
 
         function fetchPatients(): Promise<patientFeedbackType[]> {
-            return axios.get("/api/patient/feedback/all").then((res) => res.data);
+            return axios.get(`/api/patient/feedback?specialtyId=${id}&phaseType=${specificity}&diseaseId=${diseaseId}`).then((res) => res.data);
         }
 
         const onSuccess = async () => {
@@ -63,7 +63,7 @@ export default function FeedbackService() {
 
         return useQuery({
             queryFn: fetchPatients,
-            queryKey: [`feedback`],
+            queryKey: [`feedback`,specificity,id,diseaseId],
             retry: 0,
         });
     };
