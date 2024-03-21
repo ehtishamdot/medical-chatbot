@@ -11,7 +11,7 @@ const signupSchema = z
     email: z.string().email(),
     username: z.string().min(6).max(12),
     password: z.string().min(8).max(16),
-    specialty: z.string(),
+    specialty: z.any(),
     jobTitle: z.string(),
     placeOfWork: z.string(),
     licenseNumber: z.string(),
