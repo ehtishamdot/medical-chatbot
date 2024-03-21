@@ -106,7 +106,7 @@ model Phase {
 
 model Question {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
-  phaseId  String
+  phaseId  String        @db.ObjectId
   question String
   priority Int
 
