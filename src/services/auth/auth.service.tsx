@@ -83,9 +83,31 @@ export default function AuthServices() {
             retry: 0,
         });
     };
+    const useHandleLogOutService = () => {
+        function handleSignupRequest(): Promise<userType> {
+            return axios.delete("/api/auth/logout").then((res) => res.data);
+        }
+
+        const onSuccess = async (response: userType) => {
+            toast.success("Logged Out Successfully");
+            tokenService.clearStorage();
+            router.push(`/auth/login`);
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleSignupRequest,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
     return {
         useHandleSignUpService,
         useHandleUpdateProfileService,
-        useHandleUpdateSecuritySettings
+        useHandleUpdateSecuritySettings,
+        useHandleLogOutService
     };
 }

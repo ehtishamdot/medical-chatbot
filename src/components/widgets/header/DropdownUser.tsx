@@ -5,6 +5,7 @@ import tokenService from "@/services/token/token.service";
 import TokenService from "@/services/token/token.service";
 import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
+import AuthServices from "@/services/auth/auth.service";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -38,7 +39,8 @@ const DropdownUser = () => {
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
-
+  const {useHandleLogOutService}=AuthServices()
+  const {mutate,isPending}=useHandleLogOutService();
   return (
     <div className="relative">
       <Link
@@ -121,8 +123,7 @@ const DropdownUser = () => {
           </li>
         </ul>
         <button onClick={()=>{
-          tokenService.clearStorage();
-          router.push("/auth/login")
+          mutate();
         }} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
           <svg
             className="fill-current"
