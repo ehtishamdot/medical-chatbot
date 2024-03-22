@@ -39,7 +39,6 @@ class TokenService {
         Cookies.remove("user");
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
-
     };
 }
 export default new TokenService();

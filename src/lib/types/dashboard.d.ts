@@ -22,7 +22,9 @@ type ChatHistoryEntry = {
     report: any; // Adjust this type as per your actual data structure
     userId: string;
     patientId: string;
+    specialtyName:string;
     specialtyId: string | null;
+    diseaseName:string;
     customBotId: string;
     createdAt: string;
     updatedAt: string;

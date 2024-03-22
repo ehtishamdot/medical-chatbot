@@ -59,7 +59,7 @@ const DashboardPage: React.FC = () => {
                         />
                     </svg>
                 </CardDataStats>
-                <CardDataStats title="Patients Satisfactory" total={`${data?.totalRatings?.toFixed(2)}%`||"0"} rate="2.59%" levelUp>
+                <CardDataStats title="Patients Satisfactory" total={data?.totalRatings?`${data?.totalRatings?.toFixed(2)}%`:"0"} rate="2.59%" levelUp>
                     <svg
                         className="fill-primary dark:fill-white"
                         width="22"

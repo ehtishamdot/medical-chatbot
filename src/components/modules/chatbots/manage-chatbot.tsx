@@ -127,8 +127,11 @@ const ManageChatbot=()=>{
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem
-                                                            value={unparsedUserData.specialty}>{unparsedUserData.specialty}</SelectItem>
+                                                        {unparsedUserData.specialty.map((el,index)=>(
+                                                            <SelectItem
+                                                                key={index}
+                                                                value={el}>{el}</SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>

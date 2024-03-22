@@ -7,6 +7,7 @@ type ChatHistoryItem = {
 export type chatSessionType = {
     id: string;
     chatHistory: ChatHistoryItem[];
+    diseaseName:string;
     penalty: number;
     ragVecHit: null | any;
     chatComplete: boolean;
@@ -16,6 +17,7 @@ export type chatSessionType = {
     specialtyId: null | any;
     customBotId: string;
     createdAt: string;
+    specialtyName:string;
     updatedAt: string;
 };
 

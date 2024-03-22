@@ -15,9 +15,9 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import {toast} from "sonner";
 import tokenService from "@/services/token/token.service";
 
 export default function Login() {
@@ -25,7 +25,6 @@ export default function Login() {
     input: "",
     password: "",
   });
-  const { toast } = useToast();
   const { push } = useRouter();
   const { data: session } = useSession();
 
@@ -44,10 +43,7 @@ export default function Login() {
       })
       .catch((err) => {
         if (err instanceof AxiosError)
-          toast({
-            title: "Login unsuccessful",
-            description: err.response?.data.message,
-          });
+          toast(err.response?.data.message);
       });
   }
 

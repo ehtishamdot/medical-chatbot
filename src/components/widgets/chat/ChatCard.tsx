@@ -15,7 +15,7 @@ const chatData: Chat[] = [
 
 ];
 
-const ChatCard = ({latestHistory}:{latestHistory:latestHistoryType}) => {
+const ChatCard = ({latestHistory}:{latestHistory:latestHistoryType|undefined}) => {
   return (
       <div
           className="col-span-12 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
@@ -50,9 +50,13 @@ const ChatCard = ({latestHistory}:{latestHistory:latestHistoryType}) => {
 
                       <div className="flex flex-1 items-center justify-start">
                           <div>
-                              <h5 className="font-medium text-left text-black dark:text-white">
-                                  {chat.id}
-                              </h5>
+                              {chat.diseaseName&&<h5 className="font-bold flex flex-col text-left text-black dark:text-white">
+                                  <p>{chat.diseaseName}</p> <span className={"text-primary"}>{chat.specialtyName}</span>
+                              </h5>}
+                              {!chat.diseaseName &&
+                                  <h5 className="font-bold text-left text-black dark:text-white">
+                                      {chat.specialtyName}
+                                  </h5>}
                               <p>
                   <span className="text-sm text-black dark:text-white">
                     {truncateString(chat.chatHistory[chat.chatHistory.length - 1].content,40)}

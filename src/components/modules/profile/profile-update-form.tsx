@@ -15,15 +15,14 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import CountrySelect from "@/components/common/form/CountrySelect";
 import BaseAutoComplete from "@/components/common/form/BaseAutocomplete";
-import {LANGUAGES} from "@/lib/constants";
+import {LANGUAGES, SPECIALTY_OPTIONS} from "@/lib/constants";
 import AuthServices from "@/services/auth/auth.service";
 import {userType} from "@/lib/types/user";
 import DefaultLoader from "@/components/common/loaders/default-loader";
+import {MultiSelect} from "@/components/ui/multi-select";
 
 export const profileFormSchema = z.object({
-    specialty:z.string({
-        required_error: "Specialty Is Required",
-    }),
+    specialty:z.array(z.string()),
     jobTitle:z.string({
         required_error: "Job Title Is Required",
     }),
@@ -100,19 +99,16 @@ const ProfileUpdateForm = ({countries,user}:{countries:countryType[],user:userTy
                                         control={form.control}
                                         name="specialty"
                                         render={({ field }) => (
-                                            <FormItem className={'mb-5.5'}>
-                                                <FormLabel>Specialty</FormLabel>
-                                                <Select {...field} onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}>
-                                                            <SelectValue placeholder="Select your specialty" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="orthopedic">Orthopedic</SelectItem>
-                                                        <SelectItem value="neurologist">Neurologist</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
+                                            <FormItem>
+                                                <FormLabel>Select Specialty</FormLabel>
+                                                <MultiSelect
+                                                    placeholder={"Select Your Specialty"}
+                                                    {...field}
+                                                    selected={field.value}
+                                                    options={SPECIALTY_OPTIONS}
+                                                    {...field}
+                                                    className="sm:w-[510px]"
+                                                />
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -165,7 +161,6 @@ const ProfileUpdateForm = ({countries,user}:{countries:countryType[],user:userTy
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );
