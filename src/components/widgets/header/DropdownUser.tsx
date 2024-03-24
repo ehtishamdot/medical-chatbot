@@ -6,6 +6,7 @@ import TokenService from "@/services/token/token.service";
 import {useRouter} from "next/navigation";
 import Cookies from "js-cookie";
 import AuthServices from "@/services/auth/auth.service";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -142,7 +143,7 @@ const DropdownUser = () => {
               fill=""
             />
           </svg>
-          Log Out
+          {isPending?<DefaultLoader/>:"Log Out"}
         </button>
       </div>
       {/* <!-- Dropdown End --> */}

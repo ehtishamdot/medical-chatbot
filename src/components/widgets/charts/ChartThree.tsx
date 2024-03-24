@@ -51,13 +51,13 @@ const options: ApexOptions = {
 
 const ChartThree: React.FC = () => {
   const [state, setState] = useState<ChartThreeState>({
-    series: [65, 34, 12, 56],
+    series: [100, 0, 0, 0],
   });
 
   const handleReset = () => {
     setState((prevState) => ({
       ...prevState,
-      series: [65, 34, 12, 56],
+      series: [100, 0, 0, 0],
     }));
   };
   handleReset;
@@ -124,7 +124,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-primary"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> General </span>
-              <span> 65% </span>
+              <span> 100% </span>
             </p>
           </div>
         </div>
@@ -133,7 +133,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#6577F3]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> Orthopedic </span>
-              <span> 34% </span>
+              <span>0 </span>
             </p>
           </div>
         </div>
@@ -142,7 +142,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#8FD0EF]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> Neurologist </span>
-              <span> 45% </span>
+              <span> 0 </span>
             </p>
           </div>
         </div>
@@ -150,8 +150,8 @@ const ChartThree: React.FC = () => {
           <div className="flex w-full items-center">
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#0FADCF]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
-              <span> Headache </span>
-              <span> 12% </span>
+              <span> Urologist </span>
+              <span> 0 </span>
             </p>
           </div>
         </div>
