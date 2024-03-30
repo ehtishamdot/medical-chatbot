@@ -7,7 +7,7 @@ import {
     DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { z } from "zod"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -15,8 +15,6 @@ import {Rating} from "react-simple-star-rating";
 import {Textarea} from "@/components/ui/textarea";
 import FeedbackService from "@/services/feedback/feedback.service";
 import {Button} from "@/components/ui/button";
-import {Menu as MenuIcon} from "lucide-react";
-import {DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const ratingFormSchema = z.object({
@@ -28,7 +26,7 @@ export const ratingFormSchema = z.object({
 })
 const ChatFeedback=({chatEnded,patientId,diseaseBotId,specialtyId,setChatEnded}:{setChatEnded:any;chatEnded:boolean;patientId:string;diseaseBotId?:string|undefined;specialtyId:string})=>{
     const {useHandleAddFeedback}=FeedbackService();
-    const {mutate:handleAddFeedback,isPending:isHandleAddFeedbackPending}=useHandleAddFeedback();
+    const {mutate:handleAddFeedback,isPending:isHandleAddFeedbackPending,isSuccess}=useHandleAddFeedback();
     const form = useForm<z.infer<typeof ratingFormSchema>>({
         resolver: zodResolver(ratingFormSchema),
         defaultValues: {
@@ -37,6 +35,11 @@ const ChatFeedback=({chatEnded,patientId,diseaseBotId,specialtyId,setChatEnded}:
             specialtyId:specialtyId,
         },
     })
+    useEffect(() => {
+        if(isSuccess){
+            setChatEnded(false);
+        }
+    }, [isSuccess]);
     function onSubmit(values: z.infer<typeof ratingFormSchema>) {
         console.log(values)
        handleAddFeedback(values);

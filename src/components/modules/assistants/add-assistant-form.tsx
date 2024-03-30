@@ -12,6 +12,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Input} from "@/components/ui/input";
 import AssistantService from "@/services/assistant/assistant.service";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const assistantFormSchema = z.object({
     name:z.string({
@@ -28,7 +29,7 @@ const AddAssistantForm = () => {
         resolver: zodResolver(assistantFormSchema),
     })
     const {useHandleAddAssistantService}=AssistantService();
-    const {mutate:handleAddAssistant}=useHandleAddAssistantService();
+    const {mutate:handleAddAssistant,isPending}=useHandleAddAssistantService();
     function onSubmit(data: z.infer<typeof assistantFormSchema>) {
         handleAddAssistant(data);
     }
@@ -85,7 +86,7 @@ const AddAssistantForm = () => {
                                             className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                             type="submit"
                                         >
-                                            Add Assistant
+                                            {isPending?<DefaultLoader/>:"Add Assistant"}
                                         </button>
                                     </div>
                                 </form>

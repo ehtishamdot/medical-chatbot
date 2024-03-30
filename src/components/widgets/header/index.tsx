@@ -5,6 +5,7 @@ import DropdownNotification from "./DropdownNotification";
 // import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 import dynamic from 'next/dynamic'
+import tokenService from "@/services/token/token.service";
 
 const DropdownUser = dynamic(() => import('./DropdownUser'), { ssr: false })
 const Header = (props: {
@@ -102,6 +103,7 @@ const Header = (props: {
           {/*    />*/}
           {/*  </div>*/}
           {/*</form>*/}
+          <h2 className={"text-lg font-[600]"}>You are logged In as : <span className={"text-primary"}>{tokenService.getUser()?.role}</span></h2>
         </div>
 
         <div className="flex items-center gap-3 2xsm:gap-7">

@@ -42,7 +42,7 @@ export const InviteSchema = z.object({
     }),
     diseaseId:z.string().optional()
 
-}).superRefine(({ type, specialty }, refinementContext) => {
+}).superRefine(({ type, specialty,diseaseId }, refinementContext) => {
     if ((type !== 'general' && specialty === undefined)) {
         return refinementContext.addIssue({
             code: z.ZodIssueCode.custom,
@@ -50,7 +50,7 @@ export const InviteSchema = z.object({
             path: ['specialty'],
         });
     }
-    if ((type !== 'general' && specialty === undefined)) {
+    if ((type !== 'general' && diseaseId === undefined)) {
         return refinementContext.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Disease ID is required for specialized bots",
@@ -62,6 +62,7 @@ export type invitePayloadType={
     to:string;
     uri:string;
     patientName:string;
+    id:string;
     notes:string;
     doctorName:string;
 }
@@ -90,6 +91,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
         if(isTextTranslationSuccess&&formData){
             sendInvite({
                 ...formData,
+                id:id,
                 notes:translationResponse?.message
             })
         }
@@ -114,6 +116,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
             uri:uri,
             patientName:name,
             doctorName:user?.username||"",
+            id:id,
             notes:data.notes,
         })
     }

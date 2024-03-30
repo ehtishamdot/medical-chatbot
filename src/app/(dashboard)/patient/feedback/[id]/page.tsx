@@ -31,7 +31,7 @@ const ViewPatients=({params,searchParams}:Props)=>{
       <div>
         <Breadcrumb pageName={"Patient Feedback"}/>
           {/*@ts-ignore*/}
-        {feedback&&<DataTable columns={FEEDBACK_COLS} data={feedback}/>}
+       <DataTable columns={FEEDBACK_COLS} data={feedback||[]}/>
       </div>
 
   )

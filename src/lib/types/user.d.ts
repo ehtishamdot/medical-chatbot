@@ -9,6 +9,7 @@ export type userType={
   updatedAt:string;
   username:string;
   jobTitle:string;
+  name:string;
   placeOfWork:string;
   licenseNumber:string;
   countryAndLanguage:string;
