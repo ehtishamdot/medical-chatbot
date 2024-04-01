@@ -28,6 +28,7 @@ import CountrySelect from "@/components/common/form/CountrySelect";
 import BaseAutoComplete from "@/components/common/form/BaseAutocomplete";
 import {LANGUAGES, SPECIALTY_OPTIONS} from "@/lib/constants";
 import {MultiSelect} from "@/components/ui/multi-select";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 const formSchema = z.object({
     username: z.string().min(1,"Username Is Required").min(2,"Username Should Be Atleast 2 Characters").max(50),
@@ -192,7 +193,7 @@ export default function SignupForm({countries}:{countries:countryType[]}) {
                                 variant="custom"
                                 className="w-full mt-4"
                             >
-                                Signup
+                                {isHandleSignupPending?<DefaultLoader/>:"Signup"}
                             </Button>
                         </form>
                     </Form>

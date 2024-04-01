@@ -19,12 +19,14 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import {toast} from "sonner";
 import tokenService from "@/services/token/token.service";
+import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
     input: "",
     password: "",
   });
+  const [isLoading,setIsLoading]=useState(false);
   const { push } = useRouter();
   const { data: session } = useSession();
 
@@ -33,17 +35,21 @@ export default function Login() {
   // }
 
   async function handleLogin() {
+    setIsLoading(true);
     const { input, password} = inputs;
     axios
       .post("/api/auth/login", { input, password })
       .then(({ data }) => {
         tokenService.setUser(data);
         push("/dashboard");
+
       })
       .catch((err) => {
         if (err instanceof AxiosError)
           toast(err.response?.data.message);
-      });
+      }).finally(()=>{
+        setIsLoading(false)
+    });
   }
 
   return (
@@ -91,7 +97,7 @@ export default function Login() {
             className="w-full"
             // disabled={!inputs.input || !inputs.password}
           >
-            Login
+            {isLoading?<DefaultLoader/>:"Login"}
           </Button>
         </CardFooter>
         <CardHeader style={{ textAlign: "center" }}>
