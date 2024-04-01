@@ -279,7 +279,7 @@ export const DASHBOARD_PATIENTS = [
     }
 ];
 
-export const BASE_URL=`https://17c4-119-73-96-67.ngrok-free.app`;
+export const BASE_URL=`https://16-171-43-240.nip.io`;
 
 
 export const SPECIALTY_OPTIONS=[ {
