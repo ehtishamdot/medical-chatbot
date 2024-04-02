@@ -15,6 +15,8 @@ import "./index.css";
 import {notFound, usePathname} from "next/navigation";
 import PatientVerificationForm from "@/components/modules/patients/patient-verification-form";
 import ChatFeedback from "@/components/modules/chat/chat-feedback";
+import Cookies from "js-cookie";
+import LoadingPage from "@/components/common/loaders/loading-page";
 type Message = {
   id: string;
   message: string;
@@ -35,6 +37,7 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   if(!bot||!patient_id){
     notFound();
   }
+  const permission=Cookies.get("verified");
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("Hello");
   const [loading, setLoading] = useState(true);
@@ -45,12 +48,12 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   const [warningModal, setWarningModal] = useState<Boolean>(false);
   const [dropdown, setDropdown] = useState<Boolean>(false);
   const [preConfirmationBot, setPreConfirmationBot] = useState<string>("");
-  const [allowed,setAllowed]=useState(false);
+  const [allowed,setAllowed]=useState(!!permission);
   const [chatEnded,setChatEnded]=useState(false);
 
   useEffect(() => {
     httpRequest
-      .get(`/api/chat`)
+      .get(`/api/bot/chat?patient_id=${patient_id}&specialty_id=${bot}${disease_bot_id?`&disease_bot_id=${disease_bot_id}`:""}`)
       .then((res) => {
         setMessages(
           res.data.queries.map((item: any) => {
@@ -105,10 +108,23 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
     httpRequest.post(`/api/bot/chat?patient_id=${patient_id}&specialty_id=${bot}${disease_bot_id?`&disease_bot_id=${disease_bot_id}`:""}`, requestBody)
       .then(({ data }) => {
-        setMessages((prev) => [
-          ...prev,
-          { id: idGen(), isUser: false, message: data.content, isNew: true },
-        ]);
+
+        if(data.chat_history){
+          const historychat= data.chat_history.map((el:any)=>{
+            return {id: idGen(),isUser:el.role === "user",isNew:false,message:el.content}
+          })
+          setMessages((prev) => [
+            ...prev,
+              ...historychat
+            // { id: idGen(), isUser: false, message: data.content, isNew: true },
+          ]);
+        }
+        else{
+          setMessages((prev) => [
+            ...prev,
+            { id: idGen(), isUser: false, message: data.content, isNew: true },
+          ]);
+        }
 
         if (t === "Hello") {
           setHistory((prev) => [latestMessage, data, ...prev]);
@@ -145,6 +161,9 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
 
   useEffect(updateScroll, [messages]);
   const pathname=usePathname();
+  if(loading){
+    return <LoadingPage/>
+  }
   return (
       <>
         {allowed ? <div>
