@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
         
       },
     });
-    return NextResponse.json(specialty?.Specialty[0]);
+    return NextResponse.json(specialty?.Specialty);
   } catch (err) {
     console.error(err);
     return errorHandler(err);
