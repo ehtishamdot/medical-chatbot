@@ -110,7 +110,8 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
       .then(({ data }) => {
 
         if(data.chat_history){
-          const historychat= data.chat_history.map((el:any)=>{
+          const filteredHistory=data.chat_history.filter((el:any)=>el.content!=="Hello");
+          const historychat= filteredHistory.map((el:any)=>{
             return {id: idGen(),isUser:el.role === "user",isNew:false,message:el.content}
           })
           setMessages((prev) => [
@@ -160,10 +161,6 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
   }
 
   useEffect(updateScroll, [messages]);
-  const pathname=usePathname();
-  if(loading){
-    return <LoadingPage/>
-  }
   return (
       <>
         {allowed ? <div>

@@ -2,7 +2,7 @@
 "use client";
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import {
-    Card,
+    Card, CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -24,7 +24,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -35,28 +34,11 @@ import {Input} from "@/components/ui/input";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
 import LoadingPage from "@/components/common/loaders/loading-page";
 import DefaultLoader from "@/components/common/loaders/default-loader";
-const chatbotData=[
-    {
-        name:"Esper 01",
-        type:"General",
-        usage:"50%"
-    },
-    {
-        name:"Esper 02",
-        type:"General",
-        usage:"50%"
-    },
-    {
-        name:"Esper 03",
-        type:"General",
-        usage:"50%"
-    },
-    {
-        name:"Esper 04",
-        type:"General",
-        usage:"50%"
-    }
-]
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {formatTitle} from "@/lib/helpers";
+import {Separator} from "@/components/ui/separator";
+import {useMemo} from "react";
+
 
 export enum DISEASE_ENUM{
     GENERAL="GENERAL",
@@ -90,6 +72,12 @@ const ManageChatbot=()=>{
       handleCreateChatbot(data)
     }
     const {data:chatbotData,isLoading:isChatbotDataLoading}=useFetchAllChatbots();
+    const specialist=form.watch("specialist");
+
+    const generalCount=useMemo(()=>{
+        const phases=chatbotData?.find((el)=>el.name===specialist)?.generalPhases;
+        return !phases||phases?.length<=0;
+    },[specialist,isChatbotDataLoading])
     if(isChatbotDataLoading){
         return <LoadingPage/>
     }
@@ -155,7 +143,7 @@ const ManageChatbot=()=>{
                                                     <SelectContent>
                                                         <SelectItem value={DISEASE_ENUM.DISEASE_SPECIFIC}>Disease
                                                             Specific</SelectItem>
-                                                        {(!chatbotData?.generalPhases||chatbotData.generalPhases.length<=0)&&<SelectItem value={DISEASE_ENUM.GENERAL}>General</SelectItem>}
+                                                        {generalCount&&<SelectItem value={DISEASE_ENUM.GENERAL}>General</SelectItem>}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage/>
@@ -186,50 +174,71 @@ const ManageChatbot=()=>{
                     </DialogContent>
                 </Dialog>
             </div>
-            <h2 className={"text-2xl font-[700]"}>General Phases</h2>
-            <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
-                {chatbotData?.generalPhases?.map((el, index) => {
-                    return (
-                        <Card key={index} className="w-[350px]">
-                            <CardHeader>
-                                <CardTitle className={'flex justify-between'}>
-                                    {el.name}
-                                    {/*<Switch/>*/}
-                                </CardTitle>
-                                {/*<CardDescription>{el.type}</CardDescription>*/}
-                            </CardHeader>
-                            <CardFooter className="flex justify-between">
-                                <Button className={'bg-primary'}>
-                                    <Link href={`/chatbots/${el.specialtyId}?specificity=GENERAL`}>Manage</Link>
-                                </Button>
-                                    <Link className={"text-primary font-bold underline"} href={`/patient/feedback/${el.specialtyId}?specificity=GENERAL&phase=${el.name}`}>Reviews</Link>
-                            </CardFooter>
-                        </Card>
-                    )
+            {chatbotData&&chatbotData?.length>0&&<div className={"p-4"}>
+                {chatbotData?.map((el,index)=>{
+                                return (
+                                    <div key={index}>
+                                        <h2 className={"font-semibold text-2xl my-4"}>{formatTitle(el.name)}</h2>
+                                        <Tabs defaultValue="general">
+                                            <TabsList>
+                                                <TabsTrigger value="general">General</TabsTrigger>
+                                                <TabsTrigger value="specific">Disease Specific</TabsTrigger>
+                                            </TabsList>
+                                            <TabsContent value="general">
+                                                {el.generalPhases.length>0&&<Card key={index} className="w-[350px]">
+                                                    <CardHeader>
+                                                        <CardTitle className={'flex justify-between'}>
+                                                            Phases
+                                                        </CardTitle>
+                                                        <CardDescription className={"grid grid-cols-2 gap-2 mt-6"}>{el.generalPhases.map((innerEl,innerIndex)=>{
+                                                            return(
+                                                                <div key={innerIndex}>{innerEl.name}</div>
+                                                            )
+                                                        })}</CardDescription>
+                                                    </CardHeader>
+                                                        <CardFooter className="flex justify-between">
+                                                            <Button className={'bg-primary'}>
+                                                              <Link href={`/chatbots/${el.id}?specificity=GENERAL`}>Manage</Link>
+                                                            </Button>
+                                                              <Link className={"text-primary font-bold underline"} href={`/patient/feedback/${el.id}?specificity=GENERAL&phase=${el.name}`}>Reviews</Link>
+                                                       </CardFooter>
+                                                </Card>}
+                                                {el.generalPhases.length<=0&&<p>No General Bot Created</p>}
+                                            </TabsContent>
+                                            <TabsContent value="specific">
+                                                <div
+                                                    className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
+                                                    {el.diseases.length>0&&el?.diseases?.map((el, index) => {
+                                                        return (
+                                                            <Card key={index} className="w-[350px]">
+                                                                <CardHeader>
+                                                                    <CardTitle className={'flex justify-between'}>
+                                                                        {formatTitle(el.name)}
+                                                                        {/*<Switch/>*/}
+                                                                    </CardTitle>
+                                                                    {/*<CardDescription>{el.type}</CardDescription>*/}
+                                                                </CardHeader>
+                                                                <CardFooter className="flex justify-between">
+                                                                    <Button className={'bg-primary'}>
+                                                                        <Link
+                                                                            href={`/chatbots/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Manage</Link>
+                                                                    </Button>
+                                                                    <Link className={"text-primary font-bold underline"}
+                                                                          href={`/patient/feedback/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Reviews</Link>
+                                                                </CardFooter>
+                                                            </Card>
+                                                        )
+                                                    })}
+                                                    {el.diseases.length<=0&&<p>No Specialized Bot Created</p>}
+                                                </div>
+                                            </TabsContent>
+                                        </Tabs>
+                                        <Separator className={"mt-4"}/>
+                                    </div>
+                                )
                 })}
-            </div>
-            <h2 className={"text-2xl font-[700] mt-10"}>Disease Specific</h2>
-            <div className={'mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8'}>
-                {chatbotData?.diseases?.map((el, index) => {
-                    return (
-                        <Card key={index} className="w-[350px]">
-                            <CardHeader>
-                                <CardTitle className={'flex justify-between'}>
-                                    {el.name}
-                                    {/*<Switch/>*/}
-                                </CardTitle>
-                                {/*<CardDescription>{el.type}</CardDescription>*/}
-                            </CardHeader>
-                            <CardFooter className="flex justify-between">
-                                <Button className={'bg-primary'}>
-                                    <Link href={`/chatbots/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Manage</Link>
-                                </Button>
-                                    <Link className={"text-primary font-bold underline"} href={`/patient/feedback/${el.specialtyId}?specificity=DISEASE_SPECIFIC&diseaseId=${el.id}`}>Reviews</Link>
-                            </CardFooter>
-                        </Card>
-                    )
-                })}
-            </div>
+            </div>}
+            {!chatbotData||chatbotData?.length<=0&&<div>No Bots Are Created!</div>}
         </div>
     )
 }

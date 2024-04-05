@@ -25,7 +25,7 @@ import TokenService from "@/services/token/token.service";
 import PatientsServices from "@/services/patients/patients.service";
 import {Textarea} from "@/components/ui/textarea";
 import TranslationService from "@/services/translations/translation.service";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {userType} from "@/lib/types/user";
 import Cookies from "js-cookie";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
@@ -120,6 +120,10 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
             notes:data.notes,
         })
     }
+    const selectedSpecialty=form.watch("specialty");
+    const botByDisease=useMemo(()=>{
+      return chatbotData?.find((el)=>el.id===selectedSpecialty)?.diseases;
+    },[selectedSpecialty])
     return(
     <Dialog>
     <DialogTrigger asChild>
@@ -174,7 +178,10 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                     render={({ field }) => (
                         <FormItem className={'mb-5.5'}>
                             <FormLabel>Specialty</FormLabel>
-                            <Select {...field} onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select {...field} onValueChange={(el)=>{
+                                field.onChange(el);
+                                form.setValue("diseaseId","")
+                            }} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger className={'w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black dark:bg-meta-4 dark:text-white'}>
                                         <SelectValue placeholder="Select your specialty" />
@@ -187,7 +194,6 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                                         <SelectItem key={index}
                                             value={el.id}>{el.name}</SelectItem>
                                     ))}
-
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -207,7 +213,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {chatbotData?.diseases.map((el,index)=>{
+                                    {botByDisease?.map((el,index)=>{
                                         return(
                                             <SelectItem key={el.id} value={el.id}>{el.name}</SelectItem>
                                         )

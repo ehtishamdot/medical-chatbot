@@ -37,4 +37,4 @@ export  type fetchAllChatbotsApiResponse = {
         updatedAt: string;
         diseases: diseasesType[];
         generalPhases: generalphasesType[];
-};
+}[];

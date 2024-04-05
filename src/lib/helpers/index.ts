@@ -15,3 +15,7 @@ export function truncateString(str: string, maxLength: number) {
         return str.slice(0, maxLength) + "...";
     }
 }
+export function formatTitle(title:string) {
+    let words = title.split('_');
+    return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
