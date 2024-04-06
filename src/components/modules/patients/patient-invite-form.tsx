@@ -99,7 +99,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     async function onSubmit(data: z.infer<typeof InviteSchema>) {
         handleGetTranslatedText({message:data.notes});
         //Need a specialty Id Here
-        let uri=`https://medical-chatbot-indol.vercel.app/chat/${data.specialty}`;
+        let uri=`${process.env.NEXT_PUBLIC_API_URL}/chat/${data.specialty}`;
         // if(data.specialty&&data.type==="specialized"){
         //     // uri+=data.specialty
         //     uri+="65e2ec8e5f970c711ed34b5f";
