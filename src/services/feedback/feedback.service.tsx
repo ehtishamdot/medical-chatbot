@@ -51,7 +51,7 @@ export default function FeedbackService() {
     const useFetchAllFeedback = (specificity:string,id:string,diseaseId:string|undefined) => {
 
         function fetchPatients(): Promise<patientFeedbackType[]> {
-            return axios.get(`/api/patient/feedback?specialtyId=${id}&phaseType=${specificity}&diseaseId=${diseaseId}`).then((res) => res.data);
+            return axios.get(`/api/patient/feedback?specialtyId=${id}&phaseType=${specificity}${diseaseId?`&diseaseId=${diseaseId}`:""}`).then((res) => res.data);
         }
 
         const onSuccess = async () => {
