@@ -9,7 +9,7 @@ import ServerError, { JWTPayload } from "@/lib/types";
 const loginSchema = z
   .object({
     input: z.string(),
-    password: z.string().min(8).max(16),
+    password: z.string(),
   })
   .strict();
 
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         },
       }),
     ]);
-    console.log(result)
+    console.log(result);
     let user = result[0] || result[1];
     if (!user) throw new ServerError("User does not exist or Forbidden", 409);
     const correctPassword = compareSync(password, user.password);
