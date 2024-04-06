@@ -165,7 +165,7 @@ const ManageChatbot=()=>{
                                             </FormItem>
                                         )}
                                     />}
-                                    <Button className={'bg-primary'} type={"submit"}>
+                                    <Button disabled={isHandleCreateChatbotPending} className={'bg-primary'} type={"submit"}>
                                         {isHandleCreateChatbotPending?<DefaultLoader/>:"Proceed"}
                                     </Button>
                                 </form>

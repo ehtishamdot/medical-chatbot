@@ -14,6 +14,7 @@ import {fetchSinglePatient} from "@/services/patients/patient.api";
 import {fetchAllChatHistoryApiResponse} from "@/lib/types/history";
 import {cookies} from "next/headers";
 import Cookies from "js-cookie";
+import {useRouter} from "next/navigation";
 
 type patientType=z.infer<typeof patientSchema>;
 type bulkUploadResponseType={
@@ -24,6 +25,7 @@ export default function PatientsServices() {
 
     const useHandleAddPatientService = () => {
         const queryClient=useQueryClient();
+        const router=useRouter();
         function handleAddPatient(
             data: z.infer<typeof patientSchema>,
         ): Promise<z.infer<typeof patientSchema>> {
@@ -32,7 +34,8 @@ export default function PatientsServices() {
 
         const onSuccess = async () => {
             toast.success("Patient Created Successfully");
-            await queryClient.invalidateQueries({queryKey:["patients"]})
+            await queryClient.invalidateQueries({queryKey:["patients"]});
+            router.push("/patient/view");
 
         };
         const onError = (error: errorType) => {
@@ -48,6 +51,7 @@ export default function PatientsServices() {
     };
 
     const useHandleBulkUploadPatients = () => {
+        const router=useRouter();
         const queryClient=useQueryClient();
         function handleAddPatient(
             data: FormData,
@@ -60,6 +64,7 @@ export default function PatientsServices() {
                 toast.success(`${el.name} Added Successfully`);
             })
             await queryClient.invalidateQueries({queryKey:["patients"]})
+            router.push("/patient/view");
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));

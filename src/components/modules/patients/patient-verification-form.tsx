@@ -77,6 +77,7 @@ const AddPatientForm = ({setIsVerified}:Props) => {
                             <button
                                 className="flex cursor-pointer justify-center items-center mt-4 rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
                                 type="submit"
+                                disabled={isHandleAddPatientPending}
                             >
                                 {isHandleAddPatientPending?<DefaultLoader/>:"Verify"}
                             </button>

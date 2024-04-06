@@ -239,7 +239,7 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
                         </FormItem>
                     )}
                 />
-                <Button className={"bg-primary"} type="submit">{isHandleInvitePending?<DefaultLoader/>:"Send Invite"}</Button>
+                <Button disabled={isHandleInvitePending} className={"bg-primary"} type="submit">{isHandleInvitePending?<DefaultLoader/>:"Send Invite"}</Button>
             </form>
         </Form>
     </DialogContent>
