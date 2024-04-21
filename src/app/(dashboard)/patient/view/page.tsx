@@ -5,6 +5,8 @@ import PatientsServices from "@/services/patients/patients.service";
 import {DataTable} from "@/components/ui/data-table";
 import {PATIENT_COLS} from "@/app/(dashboard)/patient/view/patient-columns";
 import LoadingPage from "@/components/common/loaders/loading-page";
+import PatientTour from "@/components/widgets/tours/patient-tour";
+import {PatientsDataTable} from "@/components/ui/data-table/patients";
 
 const ViewPatients=()=>{
   const {useFetchAllPatients}=PatientsServices();
@@ -15,8 +17,9 @@ const ViewPatients=()=>{
   return(
       <div>
         <Breadcrumb pageName={"View Patients"}/>
+          <PatientTour/>
           {/*@ts-ignore*/}
-        {patientData&&<DataTable columns={PATIENT_COLS} data={patientData}/>}
+        {patientData&&<PatientsDataTable columns={PATIENT_COLS} data={patientData}/>}
       </div>
 
   )

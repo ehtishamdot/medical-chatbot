@@ -99,6 +99,27 @@ export default function PatientsServices() {
             retry: 0,
         });
     };
+    const useHandleSendBulkInvite = () => {
+        function handleSendInvite(
+            data: invitePayloadType,
+        ): Promise<invitePayloadType> {
+            return axios.post("/api/patient/invite/bulk", data).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Patient Invited Successfully");
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleSendInvite,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
     const useHandlePatientVerification = (callback:()=>void) => {
         function handleSendInvite(
             data: {email:string},
@@ -195,6 +216,7 @@ export default function PatientsServices() {
         useFetchSinglePatient,
         useHandlePatientVerification,
         useHandleBulkUploadPatients,
-        useFetchPatientChatHistory
+        useFetchPatientChatHistory,
+        useHandleSendBulkInvite
     };
 }

@@ -36,3 +36,7 @@
     background: rgb(204, 212, 253);
     background: linear-gradient(45deg, rgba(204, 212, 253, 1) 15%, rgba(242, 206, 255, 1) 100%);
 }
+
+.rbc-event{
+    background: #3C50E0 !important;
+}

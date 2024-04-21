@@ -98,6 +98,7 @@ export default function Chat({params,searchParams}:{params:{id:string},searchPar
             <div className="flex gap-4 justify-center mx-auto w-full max-w-3xl p-4">
               <p className="text-3xl font-semibold">Patient: {patientData?.name}</p>
             </div>
+            <p>{message?.report}</p>
             <>
               <div
                   className="messages w-full mx-auto h-full mb-4 overflow-auto flex flex-col gap-10 pt-10 max-[900px]:pt-20 scroll-smooth"

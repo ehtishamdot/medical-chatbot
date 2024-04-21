@@ -159,6 +159,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
             <>
                 <div
                     className="py-3 flex justify-between mb-3 dark:bg-neutral-900 bg-neutral-100"
+                    id={"question"}
                     style={{
                         padding: "0px 10px",
                         borderRadius: "7px",
@@ -189,6 +190,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
                         {editingQuestionId === question.id ? (
                             <button
                                 className="border-1 mr-3"
+                                id={"save"}
                                 onClick={() => handleSaveClick(question.id)}
                             >
                                 <Save color="black" size={20} />
@@ -196,6 +198,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
                         ) : (
                             <button
                                 className="border-1 mr-3"
+                                id={"edit"}
                                 onClick={() => handleEditClick(question.id, question.question)}
                             >
                                 <Edit color="black" size={20} />
@@ -204,6 +207,7 @@ const Question=({phase,updatePhase,updateAllPhases}:Props) => {
                         <button
                             className="border-1"
                             onClick={() => handleDeleteQuestion(question.id)}
+                            id={"delete"}
                         >
                             <Trash2 color="black" size={20} />
                         </button>

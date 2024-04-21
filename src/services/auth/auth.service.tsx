@@ -12,6 +12,7 @@ import {securityFormSchema} from "@/components/modules/profile/account-settings-
 import {httpRequestLocal} from "@/lib/interceptor";
 import tokenService from "@/services/token/token.service";
 import TokenService from "@/services/token/token.service";
+import Cookies from "js-cookie";
 
 export default function AuthServices() {
     const router=useRouter();
@@ -27,6 +28,11 @@ export default function AuthServices() {
             toast.success("Account Created Successfully");
             tokenService.setUser(response);
             router.push(`/dashboard`);
+            Cookies.set("chatbot-guide","yes");
+            Cookies.set("chatbot-question-guide","yes");
+            Cookies.set("dashboard-guide","yes");
+            Cookies.set("patient-guide","yes");
+            Cookies.set("profile-guide","yes")
         };
         const onError = (error: errorType) => {
             toast.error(viewError(error));

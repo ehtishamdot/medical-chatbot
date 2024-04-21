@@ -80,7 +80,7 @@ function QuestionsList({id,specificity,diseaseId}:{id:string;specificity:string;
                 Questions For {title}
             </h2>}
             <div className="flex justify-end mb-3 pr-2">
-                <Button onClick={onUpdateAllPhaseHandler} className={'bg-primary'}>
+                <Button id={"updateall"} onClick={onUpdateAllPhaseHandler} className={'bg-primary'}>
                     {isUpdating ? <DefaultLoader /> : "Update All"}
                 </Button>
             </div>

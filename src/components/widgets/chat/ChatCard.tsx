@@ -12,12 +12,12 @@ const chatData: Chat[] = [
     textCount: 3,
     dot: 3,
   },
-
 ];
 
-const ChatCard = ({latestHistory}:{latestHistory:latestHistoryType|undefined}) => {
+const ChatCard = ({latestHistory,id}:{latestHistory:latestHistoryType|undefined;id?:string}) => {
   return (
       <div
+          id={id}
           className="col-span-12 rounded-sm border border-stroke bg-white py-6 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
           <h4 className="mb-6 px-7.5 text-xl font-semibold text-black dark:text-white">
               Patient Bot History

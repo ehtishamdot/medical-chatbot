@@ -38,6 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {formatTitle} from "@/lib/helpers";
 import {Separator} from "@/components/ui/separator";
 import {useMemo} from "react";
+import ChatbotTour from "@/components/widgets/tours/chatbot-tour";
 
 
 export enum DISEASE_ENUM{
@@ -85,9 +86,10 @@ const ManageChatbot=()=>{
         <div>
             <Breadcrumb pageName={"Chatbots"}/>
             <div className={'flex w-full justify-end'}>
+                <ChatbotTour/>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className={'bg-primary text-white hover:bg-black-2 hover:text-white'} variant="outline">Create
+                        <Button id={"createbot"} className={'bg-primary text-white hover:bg-black-2 hover:text-white'} variant="outline">Create
                             A Chatbot</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md">

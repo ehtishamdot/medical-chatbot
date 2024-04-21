@@ -9,6 +9,7 @@ import AccountSettingsForm from "@/components/modules/profile/account-settings-f
 import Breadcrumb from "@/components/common/breadcrumbs/Breadcrumb";
 import {getCountries} from "@/services/misc/misc.api";
 import {cookies} from "next/headers";
+import ProfileTour from "@/components/widgets/tours/profile-tour";
 
 export async function UserProfileUpdate() {
     const data=await getCountries();
@@ -20,10 +21,10 @@ export async function UserProfileUpdate() {
     return (
         <Tabs defaultValue="account">
             <Breadcrumb pageName="Profile" />
-
-            <TabsList  className="grid w-[400px] mb-4 grid-cols-2">
-                <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="account">Account</TabsTrigger>
+            <ProfileTour/>
+            <TabsList defaultValue={"profile"}  className="grid w-[400px] mb-4 grid-cols-2">
+                <TabsTrigger id={"profile"} value="profile">Profile</TabsTrigger>
+                <TabsTrigger id={"account"} value="account">Account</TabsTrigger>
             </TabsList>
             <TabsContent className={'!w-full'} value="profile">
               <ProfileUpdateForm user={user} countries={data}/>

@@ -59,15 +59,24 @@ export const InviteSchema = z.object({
     }
 });
 export type invitePayloadType={
-    to:string;
-    uri:string;
-    patientName:string;
-    id:string;
+    to:string|string[];
+    uri:string|string[];
+    patientName?:string;
+    patientNames?:string[];
+    id?:string;
     notes:string;
     doctorName:string;
 }
 
-const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>{
+export type bulkInvitePayloadType={
+    to:string[];
+    uri:string[];
+    patientNames:string[];
+    notes:string;
+    doctorName:string;
+}
+
+const PatientInviteForm=({email,name,id}:{email:string|string[];name:string|string[];id:string|string[]})=>{
     const {useFetchAllChatbots}=ChatbotServices();
     const {data:chatbotData}=useFetchAllChatbots();
     const {useFetchDoctorSpecialty}=PatientsServices();
@@ -80,8 +89,10 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     if(userData){
         unparsedUserData=JSON.parse(userData);
     }
-    const {useHandleSendInvite}=PatientsServices();
+    const {useHandleSendInvite,useHandleSendBulkInvite}=PatientsServices();
     const {mutate:sendInvite,isPending:isHandleInvitePending}=useHandleSendInvite();
+    const {mutate:sendBulkInvite,isPending:isHandleUploadBulkInvitePending}=useHandleSendBulkInvite();
+
     const type=form.watch("type");
     const user=TokenService.getUser();
     const {useHandleGetTranslatedText}=TranslationService();
@@ -89,36 +100,58 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     const {mutate: handleGetTranslatedText,data:translationResponse,isPending:isTranslatedTextPending,isSuccess:isTextTranslationSuccess}=useHandleGetTranslatedText();
     useEffect(()=>{
         if(isTextTranslationSuccess&&formData){
-            sendInvite({
-                ...formData,
-                id:id,
-                notes:translationResponse?.message
-            })
+           if(Array.isArray(id)){
+               sendBulkInvite({
+                   ...formData,
+                   notes:translationResponse?.message
+               })
+           }
+           else{
+               sendInvite({
+                   ...formData,
+                   id:id,
+                   notes:translationResponse?.message
+               })
+           }
         }
     },[isTextTranslationSuccess,isTranslatedTextPending])
     async function onSubmit(data: z.infer<typeof InviteSchema>) {
         handleGetTranslatedText({message:data.notes});
-        //Need a specialty Id Here
-        let uri=`${process.env.NEXT_PUBLIC_API_URL}/chat/${data.specialty}`;
-        // if(data.specialty&&data.type==="specialized"){
-        //     // uri+=data.specialty
-        //     uri+="65e2ec8e5f970c711ed34b5f";
-        // }
-        // else{
-        //     uri+=data.type
-        // }
-        uri+=`?patient_id=${id}`
-        if(data.specialty&&data.type==="specialized"){
-            uri+=`&disease_bot_id=${data.diseaseId}`
+        if(Array.isArray(id)&&Array.isArray(name)&&Array.isArray(email)){
+            let patientURI:string[]=[];
+            id.forEach((el)=>{
+                let uri=`${process.env.NEXT_PUBLIC_API_URL}/chat/${data.specialty}`;
+                uri+=`?patient_id=${el}`
+                if(data.specialty&&data.type==="specialized"){
+                    uri+=`&disease_bot_id=${data.diseaseId}`
+                }
+                patientURI.push(uri);
+            })
+
+            setFormData({
+                to:email,
+                uri:patientURI,
+                patientNames:name,
+                doctorName:user?.username||"",
+                notes:data.notes,
+            })
         }
-        setFormData({
-            to:email,
-            uri:uri,
-            patientName:name,
-            doctorName:user?.username||"",
-            id:id,
-            notes:data.notes,
-        })
+        else{
+            let uri=`${process.env.NEXT_PUBLIC_API_URL}/chat/${data.specialty}`;
+            uri+=`?patient_id=${id}`
+            if(data.specialty&&data.type==="specialized"){
+                uri+=`&disease_bot_id=${data.diseaseId}`
+            }
+            setFormData({
+                to:email,
+                uri:uri,
+                patientName:name,
+                doctorName:user?.username||"",
+                id:id,
+                notes:data.notes,
+            })
+        }
+
     }
     const selectedSpecialty=form.watch("specialty");
     const botByDisease=useMemo(()=>{
@@ -127,17 +160,18 @@ const PatientInviteForm=({email,name,id}:{email:string;name:string;id:string})=>
     return(
     <Dialog>
     <DialogTrigger asChild>
-        <span className={"text-primary cursor-pointer"}>Invite</span>
-    </DialogTrigger>
-    <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
+        {Array.isArray(id) ? <Button className={"bg-primary text-white"}>Invite All</Button> :
+            <span className={"text-primary cursor-pointer"}>Invite</span>}
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
             <DialogTitle>Invite Patient</DialogTitle>
             <DialogDescription>
-                Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you're done.
             </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            </DialogHeader>
+            <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                     control={form.control}
                     name="type"

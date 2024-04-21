@@ -55,10 +55,10 @@ const SinglePatient = ({id}:{id:string}) => {
                         </div>
 
                         <div className={"mt-6"}>
-                            <Tabs defaultValue="account" className="!w-full">
+                            <Tabs defaultValue="chat" className="!w-full">
                                 <TabsList>
                                     <TabsTrigger value="chat">Chat History</TabsTrigger>
-                                    <TabsTrigger value="appointment">Appointment History</TabsTrigger>
+                                    {/*<TabsTrigger value="appointment">Appointment History</TabsTrigger>*/}
                                 </TabsList>
                                 <TabsContent value="chat">
                                     <div
