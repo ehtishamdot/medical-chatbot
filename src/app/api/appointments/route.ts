@@ -23,16 +23,14 @@ export async function POST(req: NextRequest) {
     const dbToken = await prisma.token.findFirst({
       where: {
         token: accessToken,
-      },
+      }, 
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
     const createdAppointment = await prisma.appointment.create({
       data: {
         ...appointmentData,
-        createdBy: {
-          connect: { id },
-        },
+        createdById: id,
       },
     });
     return NextResponse.json(createdAppointment);
@@ -59,7 +57,6 @@ export async function GET(req: NextRequest) {
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
 
-    // Find appointments created by the user
     const userAppointments = await prisma.appointment.findMany({
       where: {
         createdBy: {

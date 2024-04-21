@@ -178,7 +178,6 @@ model Appointment {
   startDate   DateTime
   patientName String
   notes       String?
-  isChecked   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdBy   User     @relation(fields: [createdById], references: [id])
