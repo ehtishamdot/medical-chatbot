@@ -6,7 +6,8 @@ import { z } from "zod";
 
 const appointmentSchema = z.object({
   startDate: z.string(),
-  patientName: z.string(),
+  patien: z.string().optional(),
+  patientEmail: z.string(),
   notes: z.string().optional(),
 });
 
