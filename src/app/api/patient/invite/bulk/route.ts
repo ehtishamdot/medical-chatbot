@@ -8,7 +8,7 @@ import { prisma } from "@/db/config";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 const emailSchema = z.object({
-  uri: z.string(),
+  uri: z.array(z.string()),
   to: z.array(z.string()),
   patientNames: z.array(z.string()),
   doctorName: z.string(),
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         subject: `EsperWise from ${doctorName}`,
         templateId: process.env.SENDGRID_EMAIL_VERIFICATION_TEMPLATE_ID,
         dynamicTemplateData: {
-          uri,
+          uri: uri[index],
           patientName: patientNames[index],
           doctorName,
           notes,
