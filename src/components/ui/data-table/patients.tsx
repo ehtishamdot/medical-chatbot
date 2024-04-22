@@ -92,7 +92,7 @@ export function PatientsDataTable<TData, TValue>({
     return (
         <div>
             <div className="flex items-center py-4">
-                <PatientInviteForm  id={selectedPatientsID} email={selectedPatients} name={selectedPatientsName}/>
+                <PatientInviteForm   id={selectedPatientsID} email={selectedPatients} name={selectedPatientsName}/>
             </div>
             <div className="rounded-md">
                 <Table className={"bg-white"}>

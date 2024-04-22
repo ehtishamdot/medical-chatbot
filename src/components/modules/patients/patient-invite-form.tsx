@@ -66,15 +66,10 @@ export type invitePayloadType={
     id?:string;
     notes:string;
     doctorName:string;
+    jobTitle:string,
+    preferedLanguage:string
 }
 
-export type bulkInvitePayloadType={
-    to:string[];
-    uri:string[];
-    patientNames:string[];
-    notes:string;
-    doctorName:string;
-}
 
 const PatientInviteForm=({email,name,id}:{email:string|string[];name:string|string[];id:string|string[]})=>{
     const {useFetchAllChatbots}=ChatbotServices();
@@ -103,14 +98,16 @@ const PatientInviteForm=({email,name,id}:{email:string|string[];name:string|stri
            if(Array.isArray(id)){
                sendBulkInvite({
                    ...formData,
-                   notes:translationResponse?.message
+                   notes:translationResponse?.message,
+
                })
            }
            else{
                sendInvite({
                    ...formData,
                    id:id,
-                   notes:translationResponse?.message
+                   notes:translationResponse?.message,
+
                })
            }
         }
@@ -134,6 +131,8 @@ const PatientInviteForm=({email,name,id}:{email:string|string[];name:string|stri
                 patientNames:name,
                 doctorName:user?.username||"",
                 notes:data.notes,
+                jobTitle:user?.jobTitle||"",
+                preferedLanguage:user?.preferredLanguage||""
             })
         }
         else{
@@ -149,6 +148,8 @@ const PatientInviteForm=({email,name,id}:{email:string|string[];name:string|stri
                 doctorName:user?.username||"",
                 id:id,
                 notes:data.notes,
+                jobTitle:user?.jobTitle||"",
+                preferedLanguage:user?.preferredLanguage||""
             })
         }
 
