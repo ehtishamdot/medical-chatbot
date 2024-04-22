@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     const msg: MailDataWithOptionalContentAndTemplate = {
       to: email,
-      from: "contact@seedinov.com",
+      from: process.env.SENDGRID_FROM_EMAIL as string,
       subject: `Your invitation to EsperWise Platform`,
       templateId: process.env.SENDGRID_ASSISTANT_INVITATION_TEMPLATE_ID,
       dynamicTemplateData: {
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
       },
     };
     await sgMail
-      .send(msg)
+      .send(msg as any)
       .then((res) => {
         console.log(res);
       })
