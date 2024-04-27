@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     const translatedExplanation = await gptTranslate(
       chatgpt,
       preferedLanguage,
-      EXPLANATION
+      EXPLANATION 
     );
     const translatedHelperText = await gptTranslate(
       chatgpt,

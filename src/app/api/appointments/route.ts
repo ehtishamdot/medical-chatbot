@@ -60,9 +60,7 @@ export async function GET(req: NextRequest) {
 
     const userAppointments = await prisma.appointment.findMany({
       where: {
-        createdBy: {
-          id,
-        },
+        createdById:id
       },
     });
 
