@@ -248,7 +248,6 @@ export default function Chat({params,searchParams}:{params:{bot:string};searchPa
               </AlertDialog.Content>
             </AlertDialog.Portal>
           </AlertDialog.Root>
-
         </div> : <PatientVerificationForm setIsVerified={setAllowed}/>}
       </>
 
