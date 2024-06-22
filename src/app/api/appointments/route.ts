@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const appointmentSchema = z.object({
   startDate: z.string(),
-  patien: z.string().optional(),
+  patient: z.string().optional(),
   patientEmail: z.string(),
   notes: z.string().optional(),
 });
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const dbToken = await prisma.token.findFirst({
       where: {
         token: accessToken,
-      }, 
+      },
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
@@ -57,12 +57,13 @@ export async function GET(req: NextRequest) {
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
     const { id } = decryptToken(accessToken, process.env.JWT_REFRESH_SECRET!);
-
     const userAppointments = await prisma.appointment.findMany({
       where: {
-        createdById:id
+        createdById: id,
       },
     });
+
+    console.log(userAppointments);
 
     return NextResponse.json(userAppointments);
   } catch (err) {
