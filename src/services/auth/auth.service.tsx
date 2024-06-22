@@ -45,6 +45,29 @@ export default function AuthServices() {
             retry: 0,
         });
     };
+    const useHandleForgotPasswordService = () => {
+        function handleSignupRequest(
+            data: any,
+        ): Promise<userType> {
+            return axios.post("/api/forgot-password", data).then((res) => res.data);
+        }
+
+        const onSuccess = async () => {
+            toast.success("Please Check Your Email");
+            router.push(`/auth/login`);
+        };
+        const onError = (error: errorType) => {
+            toast.error(viewError(error));
+        };
+
+        return useMutation({
+            mutationFn: handleSignupRequest,
+            onError,
+            onSuccess,
+            retry: 0,
+        });
+    };
+
     const useHandleUpdateProfileService = () => {
         function handleSignupRequest(
             data: z.infer<typeof profileFormSchema>,
@@ -114,6 +137,7 @@ export default function AuthServices() {
         useHandleSignUpService,
         useHandleUpdateProfileService,
         useHandleUpdateSecuritySettings,
-        useHandleLogOutService
+        useHandleLogOutService,
+        useHandleForgotPasswordService
     };
 }

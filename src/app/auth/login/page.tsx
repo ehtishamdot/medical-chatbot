@@ -101,6 +101,8 @@ export default function Login() {
           </Button>
         </CardFooter>
         <CardHeader style={{ textAlign: "center" }}>
+          <Link className={"text-center mb-2"} href={"/auth/forgot-password"}>Forgot Password?</Link>
+
           <CardTitle>OR</CardTitle>
         </CardHeader>
         <CardFooter className="flex mt-1">
