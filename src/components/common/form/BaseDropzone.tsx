@@ -17,6 +17,7 @@ type Props<T extends FieldValues> = {
     multiple: boolean;
     maxFiles: number;
     media?: string[]; // New prop to specify the maximum number of files allowed
+    placeholder:string;
 } & WithRequiredProperty<UseControllerProps<T>, "control">;
 
 const BaseDropzone = <T extends FieldValues>({
@@ -26,6 +27,7 @@ const BaseDropzone = <T extends FieldValues>({
                                                  multiple,
                                                  maxFiles,
                                                  media,
+    placeholder,
                                                  rules = {},
                                              }: Props<T>) => {
     const {
@@ -145,7 +147,7 @@ const BaseDropzone = <T extends FieldValues>({
                                     <p>
                                         <span className="text-primary">Click to upload</span>
                                     </p>
-                                    <p className="mt-1.5">Upload Your Patient Details In CSV Format</p>
+                                    <p className="mt-1.5">{placeholder??"Upload Your Patient Details In CSV Format"}</p>
 
                                 </div>
                             </div>
