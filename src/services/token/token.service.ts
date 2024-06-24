@@ -1,7 +1,7 @@
 "use client";
 import Cookies from "js-cookie";
 
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 class TokenService {
     getLocalAccessToken = () => {
         return Cookies.get("accessToken");

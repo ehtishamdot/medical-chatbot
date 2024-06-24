@@ -26,7 +26,7 @@ import PatientsServices from "@/services/patients/patients.service";
 import {Textarea} from "@/components/ui/textarea";
 import TranslationService from "@/services/translations/translation.service";
 import {useEffect, useMemo, useState} from "react";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 import Cookies from "js-cookie";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
 import DefaultLoader from "@/components/common/loaders/default-loader";

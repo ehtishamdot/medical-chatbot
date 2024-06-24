@@ -6,7 +6,7 @@ import {toast} from "sonner";
 import axios from "axios";
 import {viewError} from "@/lib/helpers";
 import {errorType} from "@/lib/types";
-import {fetchAllSpecialtyApiResponse, userType} from "@/lib/types/user";
+import {fetchAllSpecialtyApiResponse, userType} from "@/lib/types/user.dts";
 import {z} from "zod";
 import tokenService from "@/services/token/token.service";
 import {BulkUploadSchema, patientFormSchema, patientSchema} from "@/components/modules/patients/add-patient-form";

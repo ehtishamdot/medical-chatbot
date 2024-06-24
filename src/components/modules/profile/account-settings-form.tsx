@@ -13,7 +13,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSession} from "next-auth/react";
 import {Input} from "@/components/ui/input";
 import AuthServices from "@/services/auth/auth.service";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 import DefaultLoader from "@/components/common/loaders/default-loader";
 
 export const securityFormSchema = z.object({

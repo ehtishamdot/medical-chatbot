@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Sidebar from "../components/widgets/sidebar";
 import Header from "../components/widgets/header";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 export default function DefaultLayout({
     user,
                                           children,

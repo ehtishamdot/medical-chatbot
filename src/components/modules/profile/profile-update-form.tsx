@@ -17,7 +17,7 @@ import CountrySelect from "@/components/common/form/CountrySelect";
 import BaseAutoComplete from "@/components/common/form/BaseAutocomplete";
 import {LANGUAGES, SPECIALTY_OPTIONS} from "@/lib/constants";
 import AuthServices from "@/services/auth/auth.service";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 import DefaultLoader from "@/components/common/loaders/default-loader";
 import {MultiSelect} from "@/components/ui/multi-select";
 

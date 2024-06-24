@@ -5,7 +5,7 @@ import axios from "axios";
 import {signUpFormType} from "@/lib/types/auth";
 import {viewError} from "@/lib/helpers";
 import {errorType} from "@/lib/types";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 import {z} from "zod";
 import {profileFormSchema} from "@/components/modules/profile/profile-update-form";
 import {securityFormSchema} from "@/components/modules/profile/account-settings-form";

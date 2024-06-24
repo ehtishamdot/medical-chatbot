@@ -29,7 +29,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import Cookies from "js-cookie";
-import {userType} from "@/lib/types/user";
+import {userType} from "@/lib/types/user.dts";
 import {Input} from "@/components/ui/input";
 import ChatbotServices from "@/services/chatbot/chatbot.service";
 import LoadingPage from "@/components/common/loaders/loading-page";
