@@ -17,7 +17,39 @@ export async function GET(req: NextRequest, res: NextResponse) {
     });
     if (!dbToken) throw new ServerError("Invalid token provided", 409);
 
-    const allUsers = await prisma.user.findMany({
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("id");
+
+    if (!userId) {
+      const allUsers = await prisma.user.findMany({
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: true,
+          jobTitle: true,
+          placeOfWork: true,
+          licenseNumber: true,
+          countryAndLanguage: true,
+          countryOfPractice: true,
+          preferredLanguage: true,
+          role: true,
+          queries: true,
+          createdAt: true,
+          updatedAt: true,
+          Patient: true,
+          Specialty: true,
+          Assistant: true,
+          history: true,
+          Appointment: true,
+          documents: true,
+        },
+      });
+      return NextResponse.json(allUsers);
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
       select: {
         id: true,
         username: true,
@@ -39,10 +71,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
         history: true,
         Appointment: true,
         documents: true,
-        // specialty: false, // Exclude this field
       },
     });
-    return NextResponse.json(allUsers);
+
+    if (!user) {
+      throw new ServerError("User not found", 404);
+    }
+
+    return NextResponse.json(user);
   } catch (err) {
     console.error(err);
     return errorHandler(err);
